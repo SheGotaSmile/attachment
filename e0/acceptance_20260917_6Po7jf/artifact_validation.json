@@ -1,0 +1,396 @@
+{
+  "tensorboard": {
+    "training": {
+      "status": "PASS",
+      "directory": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed",
+      "scalars": {
+        "E0/Loss/surrogate_loss": [
+          {
+            "step": 96,
+            "value": -0.12053310126066208
+          },
+          {
+            "step": 192,
+            "value": -0.10979323834180832
+          }
+        ],
+        "E0/Loss/value_loss": [
+          {
+            "step": 96,
+            "value": 7.556055545806885
+          },
+          {
+            "step": 192,
+            "value": 5.157132625579834
+          }
+        ],
+        "E0/Loss/entropy": [
+          {
+            "step": 96,
+            "value": -41.153465270996094
+          },
+          {
+            "step": 192,
+            "value": -41.158870697021484
+          }
+        ],
+        "E0/Loss/total_loss": [
+          {
+            "step": 96,
+            "value": 7.10629415512085
+          },
+          {
+            "step": 192,
+            "value": 4.718069076538086
+          }
+        ],
+        "Episode_Reward/termination_penalty": [
+          {
+            "step": 0,
+            "value": -0.17499999701976776
+          }
+        ],
+        "Episode_Reward/track_lin_vel_xy_exp": [
+          {
+            "step": 0,
+            "value": 0.0029536280781030655
+          }
+        ],
+        "Episode_Reward/track_ang_vel_z_exp": [
+          {
+            "step": 0,
+            "value": 0.0011673325207084417
+          }
+        ],
+        "Episode_Reward/feet_air_time": [
+          {
+            "step": 0,
+            "value": 3.125000148429535e-05
+          }
+        ],
+        "Episode_Reward/feet_slide": [
+          {
+            "step": 0,
+            "value": -0.00041055885958485305
+          }
+        ],
+        "Episode_Reward/flat_orientation_l2": [
+          {
+            "step": 0,
+            "value": -9.230098658008501e-05
+          }
+        ],
+        "Episode_Reward/stand_still": [
+          {
+            "step": 0,
+            "value": 0.0
+          }
+        ],
+        "Episode_Reward/dof_pos_limits": [
+          {
+            "step": 0,
+            "value": -1.5248802810674533e-05
+          }
+        ],
+        "Episode_Reward/joint_deviation_hip": [
+          {
+            "step": 0,
+            "value": -0.00029714833362959325
+          }
+        ],
+        "Episode_Reward/joint_deviation_arms": [
+          {
+            "step": 0,
+            "value": -0.0007831254042685032
+          }
+        ],
+        "Episode_Reward/joint_deviation_torso": [
+          {
+            "step": 0,
+            "value": -0.00025704235304147005
+          }
+        ],
+        "Episode_Reward/joint_deviation_knee": [
+          {
+            "step": 0,
+            "value": -8.474713831674308e-05
+          }
+        ],
+        "Episode_Reward/lin_vel_z_l2": [
+          {
+            "step": 0,
+            "value": -5.8183370128972456e-05
+          }
+        ],
+        "Episode_Reward/action_rate_l2": [
+          {
+            "step": 0,
+            "value": -0.01991068571805954
+          }
+        ],
+        "Episode_Reward/dof_acc_l2": [
+          {
+            "step": 0,
+            "value": -0.00018229409761261195
+          }
+        ],
+        "Episode_Reward/dof_torques_l2": [
+          {
+            "step": 0,
+            "value": -8.375609468203038e-05
+          }
+        ],
+        "Episode/Metrics/base_velocity/error_vel_xy": [
+          {
+            "step": 0,
+            "value": 0.007098478730767965
+          }
+        ],
+        "Episode/Metrics/base_velocity/error_vel_yaw": [
+          {
+            "step": 0,
+            "value": 0.028176765888929367
+          }
+        ],
+        "Episode_Termination/time_out": [
+          {
+            "step": 0,
+            "value": 0.0
+          }
+        ],
+        "Episode_Termination/base_contact": [
+          {
+            "step": 0,
+            "value": 0.7291666865348816
+          }
+        ],
+        "Loss/surrogate_loss": [
+          {
+            "step": 0,
+            "value": -0.12053310126066208
+          }
+        ],
+        "Loss/value_loss": [
+          {
+            "step": 0,
+            "value": 7.556055545806885
+          }
+        ],
+        "Loss/entropy": [
+          {
+            "step": 0,
+            "value": -41.153465270996094
+          }
+        ],
+        "Loss/total_loss": [
+          {
+            "step": 0,
+            "value": 7.10629415512085
+          }
+        ],
+        "Train/grad_norm": [
+          {
+            "step": 0,
+            "value": 2.643584966659546
+          }
+        ],
+        "Loss/learning_rate": [
+          {
+            "step": 0,
+            "value": 9.999999747378752e-06
+          }
+        ],
+        "Policy/mean_noise_std": [
+          {
+            "step": 0,
+            "value": 1.000238060951233
+          }
+        ],
+        "Perf/total_fps": [
+          {
+            "step": 0,
+            "value": 62.0
+          }
+        ],
+        "Perf/collection_time": [
+          {
+            "step": 0,
+            "value": 1.268293857574463
+          }
+        ],
+        "Perf/learning_time": [
+          {
+            "step": 0,
+            "value": 0.26032519340515137
+          }
+        ],
+        "Perf/gpu_allocated": [
+          {
+            "step": 0,
+            "value": 0.018463611602783203
+          }
+        ],
+        "Perf/gpu_total": [
+          {
+            "step": 0,
+            "value": 7.525146484375
+          }
+        ],
+        "Perf/gpu_global_free_mem": [
+          {
+            "step": 0,
+            "value": 4.86395263671875
+          }
+        ],
+        "Train/mean_reward_each_timestep_0": [
+          {
+            "step": 0,
+            "value": -0.05702345445752144
+          }
+        ],
+        "Train/mean_reward_0": [
+          {
+            "step": 0,
+            "value": -4.458105564117432
+          }
+        ],
+        "Train/ratio_above_mean_reward_0": [
+          {
+            "step": 0,
+            "value": 0.75
+          }
+        ],
+        "Train/time/mean_reward_0": [
+          {
+            "step": 1,
+            "value": -4.458105564117432
+          }
+        ],
+        "Train/mean_episode_length": [
+          {
+            "step": 0,
+            "value": 8.75
+          }
+        ],
+        "Train/median_episode_length": [
+          {
+            "step": 0,
+            "value": 7.5
+          }
+        ],
+        "Train/min_episode_length": [
+          {
+            "step": 0,
+            "value": 4.0
+          }
+        ],
+        "Train/max_episode_length": [
+          {
+            "step": 0,
+            "value": 18.0
+          }
+        ],
+        "Train/time/mean_episode_length": [
+          {
+            "step": 1,
+            "value": 8.75
+          }
+        ]
+      },
+      "event_files": [
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/events.out.tfevents.1789631584.xiexuhui-Legion-Y9000P-IAX10"
+      ]
+    },
+    "resume": {
+      "status": "PASS",
+      "directory": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259",
+      "scalars": {
+        "E0/Loss/surrogate_loss": [
+          {
+            "step": 288,
+            "value": -0.09811852872371674
+          }
+        ],
+        "E0/Loss/value_loss": [
+          {
+            "step": 288,
+            "value": 6.487095832824707
+          }
+        ],
+        "E0/Loss/entropy": [
+          {
+            "step": 288,
+            "value": -41.16010665893555
+          }
+        ],
+        "E0/Loss/total_loss": [
+          {
+            "step": 288,
+            "value": 6.059695720672607
+          }
+        ]
+      },
+      "event_files": [
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/events.out.tfevents.1789631871.xiexuhui-Legion-Y9000P-IAX10"
+      ]
+    }
+  },
+  "configuration_files": {
+    "training": [
+      {
+        "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/params/env.yaml",
+        "size_bytes": 36408,
+        "sha256": "3419d4896f6cbd8dd3e5128ebc11b044891170b7c82b2fdd1cefec3e886fe267"
+      },
+      {
+        "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/params/agent.yaml",
+        "size_bytes": 888,
+        "sha256": "01f561f3619c53d920e396be71b4811020d45b8f1f6bddae3b7ee7e82d56b3fb"
+      }
+    ],
+    "resume": [
+      {
+        "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/params/env.yaml",
+        "size_bytes": 36408,
+        "sha256": "3419d4896f6cbd8dd3e5128ebc11b044891170b7c82b2fdd1cefec3e886fe267"
+      },
+      {
+        "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/params/agent.yaml",
+        "size_bytes": 1070,
+        "sha256": "28e5cd8af74e2615e767a6da84bbdba88c99e2ad5e3ed9d59a5cdb64a51d0142"
+      }
+    ]
+  },
+  "intermediate_tensorboard": {
+    "train_2_updates": {
+      "directory": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42",
+      "scalar_tags": []
+    },
+    "checkpoint_restore_and_update_fixed": {
+      "directory": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_154730_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_fixed_from20260917_154055",
+      "scalar_tags": []
+    }
+  },
+  "continued_model_update": {
+    "status": "PASS",
+    "parameter_max_absolute_change": {
+      "std": 0.004888296127319336,
+      "actor.0.weight": 0.005715849343687296,
+      "actor.0.bias": 0.004381008446216583,
+      "actor.2.weight": 0.006284613162279129,
+      "actor.2.bias": 0.004024982452392578,
+      "actor.4.weight": 0.006157428026199341,
+      "actor.4.bias": 0.004083134233951569,
+      "actor.6.weight": 0.006317593157291412,
+      "actor.6.bias": 0.0034192875027656555,
+      "critic.0.weight": 0.006816312670707703,
+      "critic.0.bias": 0.007838353514671326,
+      "critic.2.weight": 0.0071141161024570465,
+      "critic.2.bias": 0.007676444947719574,
+      "critic.4.weight": 0.007496990263462067,
+      "critic.4.bias": 0.00688338465988636,
+      "critic.6.weight": 0.006155423820018768,
+      "critic.6.bias": 0.004952928051352501
+    }
+  }
+}

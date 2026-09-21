@@ -1,0 +1,70 @@
+COMMAND: /home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/list_envs.py
+CWD: /home/xiexuhui/InstinctLab
+[INFO][AppLauncher]: Using device: cuda:0
+[INFO][AppLauncher]: Loading experience file: /home/xiexuhui/IsaacLab-Instinct/apps/isaaclab.python.headless.kit
+Loading user config located at: '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: /home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_153459.log
+2026-09-17T07:34:59Z [156ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-09-17T07:35:00Z [906ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-17T07:35:00Z [918ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+2026-09-17T07:35:03Z [4,183ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+2026-09-17T07:35:03Z [4,183ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Laptop.. | Yes: 0 |     | 8151    MB | 10de      | 0          |
+|     |                                  |        |     |            | 2d58      | e21cdd6c.. |
+|     |                                  |        |     |            | 2         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (ARL)          |        |     | 23633   MB | 8086      | 0          |
+|     |                                  |        |     |            | 7d67      | 8680677d.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.3 LTS (Noble Numbat) ubuntu, Version: 24.04.3, Kernel: 7.0.0-30-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101011 (1.21.1.11)
+| Processor: Intel(R) Core(TM) Ultra 9 275HX
+| Cores: 24 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31511 | Free Memory: 22312
+| Total Page/Swap (MB): 15624 | Free Page/Swap: 15624
+|---------------------------------------------------------------------------------------------|
+2026-09-17T07:35:03Z [4,465ms] [Warning] [gpu.foundation.plugin] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-17T07:35:03Z [4,474ms] [Warning] [gpu.foundation.plugin] PCIe link width current (8) and maximum (16) for device 0 don't match.
+2026-09-17T07:35:03Z [4,474ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-09-17T07:35:03Z [4,474ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 263.36 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.07 
+
+   CPU     0 
+     0   1.85 
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                            Available Environments in Isaac Lab Template Extension                                                                           |
++--------+-----------------------------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------+
+| S. No. | Task Name                                     | Entry Point                    | Config                                                                                                            |
++--------+-----------------------------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------+
+|   1    | Instinct-Locomotion-Flat-G1-v0                | instinctlab.envs:InstinctRlEnv | <class 'instinctlab.tasks.locomotion.config.g1.flat_env_cfg.G1FlatEnvCfg'>                                        |
+|   2    | Instinct-Locomotion-Flat-G1-Play-v0           | instinctlab.envs:InstinctRlEnv | <class 'instinctlab.tasks.locomotion.config.g1.flat_env_cfg.G1FlatEnvCfg_PLAY'>                                   |
+|   3    | Instinct-Parkour-Target-Amp-G1-v0             | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.parkour.config.g1.g1_parkour_target_amp_cfg:G1ParkourEnvCfg                                     |
+|   4    | Instinct-Parkour-Target-Amp-G1-Play-v0        | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.parkour.config.g1.g1_parkour_target_amp_cfg:G1ParkourEnvCfg_PLAY                                |
+|   5    | Instinct-BeyondMimic-Plane-G1-v0              | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.beyondmimic.config.g1.beyondmimic_plane_cfg:G1BeyondMimicPlaneEnvCfg                  |
+|   6    | Instinct-BeyondMimic-Plane-G1-Play-v0         | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.beyondmimic.config.g1.beyondmimic_plane_cfg:G1BeyondMimicPlaneEnvCfg_PLAY             |
+|   7    | Instinct-Perceptive-Shadowing-G1-v0           | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive.config.g1.perceptive_shadowing_cfg:G1PerceptiveShadowingEnvCfg             |
+|   8    | Instinct-Perceptive-Shadowing-G1-Play-v0      | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive.config.g1.perceptive_shadowing_cfg:G1PerceptiveShadowingEnvCfg_PLAY        |
+|   9    | Instinct-Perceptive-Vae-G1-v0                 | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive.config.g1.perceptive_vae_cfg:G1PerceptiveVaeEnvCfg                         |
+|   10   | Instinct-Perceptive-Vae-G1-Play-v0            | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive.config.g1.perceptive_vae_cfg:G1PerceptiveVaeEnvCfg_PLAY                    |
+|   11   | Instinct-Perceptive-HOI-Shadowing-G1-v0       | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive_hoi.config.g1.perceptive_shadowing_cfg:G1PerceptiveHoiShadowingEnvCfg      |
+|   12   | Instinct-Perceptive-HOI-Shadowing-G1-Play-v0  | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.perceptive_hoi.config.g1.perceptive_shadowing_cfg:G1PerceptiveHoiShadowingEnvCfg_PLAY |
+|   13   | Instinct-Shadowing-WholeBody-Plane-G1-v0      | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.whole_body.config.g1.plane_shadowing_cfg:G1PlaneShadowingEnvCfg                       |
+|   14   | Instinct-Shadowing-WholeBody-Plane-G1-Play-v0 | instinctlab.envs:InstinctRlEnv | instinctlab.tasks.shadowing.whole_body.config.g1.plane_shadowing_cfg:G1PlaneShadowingEnvCfg_PLAY                  |
++--------+-----------------------------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------+
+
+E0_COMMAND_RESULT: {"label": "registration", "argv": ["/home/xiexuhui/miniconda3/envs/instinctlab/bin/python", "-B", "-u", "scripts/list_envs.py"], "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/list_envs.py", "cwd": "/home/xiexuhui/InstinctLab", "started_at": "2026-09-17T15:34:59+0800", "timeout_seconds": 240, "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/registration.log", "status": "PASS", "returncode": 0, "elapsed_seconds": 7.076363650994608, "finished_at": "2026-09-17T15:35:06+0800"}

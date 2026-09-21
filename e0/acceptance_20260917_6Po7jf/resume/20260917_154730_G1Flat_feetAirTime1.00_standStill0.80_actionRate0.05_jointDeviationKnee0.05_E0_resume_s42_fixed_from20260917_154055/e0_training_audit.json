@@ -1,0 +1,435 @@
+{
+  "status": "PASS",
+  "steps": 24,
+  "updates": [
+    {
+      "iteration": 2,
+      "losses": {
+        "surrogate_loss": -0.09811852872371674,
+        "value_loss": 6.487095832824707,
+        "entropy": -41.16010665893555,
+        "total_loss": 6.059695720672607
+      },
+      "stats": {
+        "grad_norm": 5.050967693328857
+      }
+    }
+  ],
+  "minibatch_loss_checks": 20,
+  "gradient_parameter_checks": 20,
+  "checkpoints": [
+    {
+      "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_154730_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_fixed_from20260917_154055/model_3.pt",
+      "sha256": "22c11f4c48e8d959dd046dd1cc1eb8cfc313d87e507a66c32b192d49bafbf7e9",
+      "iter": 3,
+      "keys": [
+        "critic_normalizer_state_dict",
+        "infos",
+        "iter",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "policy_normalizer_state_dict"
+      ],
+      "reference": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_154730_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_fixed_from20260917_154055/model_3.pt.reference.pt"
+    }
+  ],
+  "starting_iteration": 2,
+  "runtime": {
+    "task": "Instinct-Locomotion-Flat-G1-v0",
+    "registered_tasks": [
+      "Instinct-BeyondMimic-Plane-G1-Play-v0",
+      "Instinct-BeyondMimic-Plane-G1-v0",
+      "Instinct-Locomotion-Flat-G1-Play-v0",
+      "Instinct-Locomotion-Flat-G1-v0",
+      "Instinct-Parkour-Target-Amp-G1-Play-v0",
+      "Instinct-Parkour-Target-Amp-G1-v0",
+      "Instinct-Perceptive-HOI-Shadowing-G1-Play-v0",
+      "Instinct-Perceptive-HOI-Shadowing-G1-v0",
+      "Instinct-Perceptive-Shadowing-G1-Play-v0",
+      "Instinct-Perceptive-Shadowing-G1-v0",
+      "Instinct-Perceptive-Vae-G1-Play-v0",
+      "Instinct-Perceptive-Vae-G1-v0",
+      "Instinct-Shadowing-WholeBody-Plane-G1-Play-v0",
+      "Instinct-Shadowing-WholeBody-Plane-G1-v0"
+    ],
+    "num_envs": 4,
+    "num_actions": 29,
+    "observation_terms": {
+      "policy": {
+        "base_ang_vel": [
+          3
+        ],
+        "projected_gravity": [
+          3
+        ],
+        "velocity_commands": [
+          3
+        ],
+        "joint_pos": [
+          29
+        ],
+        "joint_vel": [
+          29
+        ],
+        "actions": [
+          29
+        ]
+      },
+      "critic": {
+        "base_lin_vel": [
+          3
+        ],
+        "base_ang_vel": [
+          3
+        ],
+        "projected_gravity": [
+          3
+        ],
+        "velocity_commands": [
+          3
+        ],
+        "joint_pos": [
+          29
+        ],
+        "joint_vel": [
+          29
+        ],
+        "actions": [
+          29
+        ]
+      }
+    },
+    "resolved_joint_names": [
+      "left_shoulder_pitch_joint",
+      "right_shoulder_pitch_joint",
+      "waist_pitch_joint",
+      "left_shoulder_roll_joint",
+      "right_shoulder_roll_joint",
+      "waist_roll_joint",
+      "left_shoulder_yaw_joint",
+      "right_shoulder_yaw_joint",
+      "waist_yaw_joint",
+      "left_elbow_joint",
+      "right_elbow_joint",
+      "left_hip_pitch_joint",
+      "right_hip_pitch_joint",
+      "left_wrist_roll_joint",
+      "right_wrist_roll_joint",
+      "left_hip_roll_joint",
+      "right_hip_roll_joint",
+      "left_wrist_pitch_joint",
+      "right_wrist_pitch_joint",
+      "left_hip_yaw_joint",
+      "right_hip_yaw_joint",
+      "left_wrist_yaw_joint",
+      "right_wrist_yaw_joint",
+      "left_knee_joint",
+      "right_knee_joint",
+      "left_ankle_pitch_joint",
+      "right_ankle_pitch_joint",
+      "left_ankle_roll_joint",
+      "right_ankle_roll_joint"
+    ],
+    "action_scale": [
+      [
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928
+      ],
+      [
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928
+      ],
+      [
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928
+      ],
+      [
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.5475464463233948,
+        0.5475464463233948,
+        0.07450087368488312,
+        0.07450087368488312,
+        0.3506614565849304,
+        0.3506614565849304,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928,
+        0.4385773241519928
+      ]
+    ],
+    "action_offset": [
+      [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.0,
+        0.20000000298023224,
+        -0.20000000298023224,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.6000000238418579,
+        -0.31200000643730164,
+        -0.31200000643730164,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6690000295639038,
+        0.6690000295639038,
+        -0.3630000054836273,
+        -0.3630000054836273,
+        0.0,
+        0.0
+      ],
+      [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.0,
+        0.20000000298023224,
+        -0.20000000298023224,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.6000000238418579,
+        -0.31200000643730164,
+        -0.31200000643730164,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6690000295639038,
+        0.6690000295639038,
+        -0.3630000054836273,
+        -0.3630000054836273,
+        0.0,
+        0.0
+      ],
+      [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.0,
+        0.20000000298023224,
+        -0.20000000298023224,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.6000000238418579,
+        -0.31200000643730164,
+        -0.31200000643730164,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6690000295639038,
+        0.6690000295639038,
+        -0.3630000054836273,
+        -0.3630000054836273,
+        0.0,
+        0.0
+      ],
+      [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.0,
+        0.20000000298023224,
+        -0.20000000298023224,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6000000238418579,
+        0.6000000238418579,
+        -0.31200000643730164,
+        -0.31200000643730164,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6690000295639038,
+        0.6690000295639038,
+        -0.3630000054836273,
+        -0.3630000054836273,
+        0.0,
+        0.0
+      ]
+    ],
+    "physics_dt": 0.005,
+    "step_dt": 0.02,
+    "decimation": 4,
+    "rollout_length": 24,
+    "actuators": {
+      "legs": "ImplicitActuator",
+      "feet": "ImplicitActuator",
+      "waist": "ImplicitActuator",
+      "waist_yaw": "ImplicitActuator",
+      "arms": "ImplicitActuator"
+    },
+    "shapes": {
+      "policy": [
+        4,
+        96
+      ],
+      "critic": [
+        4,
+        99
+      ],
+      "action": [
+        4,
+        29
+      ]
+    }
+  },
+  "checkpoint_roundtrip": {
+    "checkpoint": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt",
+    "reference": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt.reference.pt",
+    "max_absolute_error": 0.0,
+    "atol": 1e-06,
+    "rtol": 1e-05,
+    "actions_equal": true,
+    "iteration": 2,
+    "iteration_equal": true,
+    "model_equal": true,
+    "optimizer_equal": true,
+    "normalizers_equal": {
+      "policy": true,
+      "critic": true
+    },
+    "algorithm_learning_rate": 2.2500000000000008e-05,
+    "optimizer_learning_rates": [
+      2.2500000000000008e-05
+    ],
+    "adaptive_learning_rate_equal": true,
+    "status": "PASS"
+  },
+  "ending_iteration": 3,
+  "transitions": 96
+}

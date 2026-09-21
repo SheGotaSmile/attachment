@@ -1,0 +1,80 @@
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/instinct_rl/train.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	docs/
+	scripts/diagnostics/
+	scripts/instinct_rl/e0_reset_probe.py
+	scripts/instinct_rl/e0_training_audit.py
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/instinct_rl/train.py b/scripts/instinct_rl/train.py
+index 5a0e906..6c98459 100644
+--- a/scripts/instinct_rl/train.py
++++ b/scripts/instinct_rl/train.py
+@@ -44,6 +44,8 @@ parser.add_argument(
+ parser.add_argument("--debug", action="store_true", default=False, help="Enable debug mode.")
+ # train.py specific arguments
+ parser.add_argument("--cprofile", action="store_true", default=False, help="Enable cProfile.")
++parser.add_argument("--e0_audit", action="store_true", help="Record E0 runtime checks without changing the task.")
++parser.add_argument("--e0_reference", type=str, default=None, help="E0 pre-save action reference for a resumed run.")
+ # append Instinct-RL cli arguments
+ cli_args.add_instinct_rl_args(parser)
+ # append AppLauncher cli args
+@@ -209,6 +211,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
+         # load previously trained model
+         runner.load(resume_path)
++        # The current external PPO checkpoint restores the optimizer but not the
++        # scalar used by its adaptive KL schedule. Keep both states consistent.
++        if getattr(runner.alg, "schedule", None) == "adaptive":
++            learning_rates = {group["lr"] for group in runner.alg.optimizer.param_groups}
++            if len(learning_rates) != 1:
++                raise RuntimeError("Adaptive PPO resume requires one common optimizer learning rate.")
++            restored_lr = learning_rates.pop()
++            print(f"[INFO]: Restoring adaptive learning rate: {runner.alg.learning_rate} -> {restored_lr}")
++            runner.alg.learning_rate = restored_lr
+ 
+     # dump the configuration into log-directory
+     if not ("LOCAL_RANK" in os.environ and dist.get_rank() > 0):
+@@ -226,11 +237,26 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         )
+         cprofile.enable()
+ 
++    audit = None
++    if args_cli.e0_audit:
++        from e0_training_audit import E0TrainingAudit
++
++        audit = E0TrainingAudit(runner, env, log_dir, args_cli.e0_reference)
++
+     # run training
+-    runner.learn(
+-        num_learning_iterations=agent_cfg.max_iterations,
+-        init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
+-    )
++    success = False
++    try:
++        runner.learn(
++            num_learning_iterations=agent_cfg.max_iterations,
++            init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
++        )
++        success = True
++    finally:
++        if audit is not None:
++            audit.finish(success)
++        if runner.writer is not None:
++            runner.writer.flush()
++            runner.writer.close()
+ 
+     if args_cli.cprofile:
+         cprofile.disable()

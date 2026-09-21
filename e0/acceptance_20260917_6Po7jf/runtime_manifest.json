@@ -1,0 +1,1097 @@
+{
+  "created_at": "2026-09-17T15:25:08+0800",
+  "run_directory": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf",
+  "cwd": "/home/xiexuhui/InstinctLab",
+  "python": {
+    "executable": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+    "version": "3.11.15 (main, Jun 11 2026, 15:20:16) [GCC 14.3.0]"
+  },
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "repositories": {
+    "/home/xiexuhui/InstinctLab": {
+      "commit": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/InstinctLab",
+          "rev-parse",
+          "HEAD"
+        ],
+        "returncode": 0,
+        "stdout": "ba28d3d2655b15a19b729476a630937a19610a3b\n",
+        "stderr": ""
+      },
+      "status": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/InstinctLab",
+          "status",
+          "--short",
+          "--untracked-files=all"
+        ],
+        "returncode": 0,
+        "stdout": "?? \"docs/Research Decision Record v0.1.md\"\n?? docs/experiment_protocol_v0.1.md\n?? docs/repo_audit.md\n?? docs/repo_fact_check.md\n?? scripts/diagnostics/e0_runtime.py\n?? scripts/instinct_rl/e0_reset_probe.py\n",
+        "stderr": ""
+      }
+    },
+    "/home/xiexuhui/instinct_rl": {
+      "commit": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/instinct_rl",
+          "rev-parse",
+          "HEAD"
+        ],
+        "returncode": 0,
+        "stdout": "ba45ed231ebbf0a4099cd31d607e2886814fd165\n",
+        "stderr": ""
+      },
+      "status": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/instinct_rl",
+          "status",
+          "--short",
+          "--untracked-files=all"
+        ],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "/home/xiexuhui/IsaacLab-Instinct": {
+      "commit": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/IsaacLab-Instinct",
+          "rev-parse",
+          "HEAD"
+        ],
+        "returncode": 0,
+        "stdout": "f73c33173801f5f8afea4142482e47b7710c2b75\n",
+        "stderr": ""
+      },
+      "status": {
+        "argv": [
+          "git",
+          "-C",
+          "/home/xiexuhui/IsaacLab-Instinct",
+          "status",
+          "--short",
+          "--untracked-files=all"
+        ],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  },
+  "packages": {
+    "torch": {
+      "version": "2.7.0+cu128",
+      "metadata_path": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages",
+      "module_origin": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/torch/__init__.py"
+    },
+    "isaacsim": {
+      "version": "5.1.0.0",
+      "metadata_path": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages",
+      "module_origin": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/__init__.py"
+    },
+    "isaaclab": {
+      "version": "0.54.4",
+      "metadata_path": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages",
+      "module_origin": "/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/__init__.py"
+    },
+    "instinct-rl": {
+      "version": "1.0.2",
+      "metadata_path": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages",
+      "module_origin": "/home/xiexuhui/instinct_rl/instinct_rl/__init__.py"
+    },
+    "instinctlab": {
+      "version": "0.1.0",
+      "metadata_path": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages",
+      "module_origin": "/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/__init__.py"
+    }
+  },
+  "commands": [
+    {
+      "label": "registration",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/list_envs.py"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/list_envs.py",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:34:59+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/registration.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 7.076363650994608,
+      "finished_at": "2026-09-17T15:35:06+0800"
+    },
+    {
+      "label": "train_2_updates",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/train.py",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--max_iterations",
+        "2",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--logroot",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train",
+        "--run_name",
+        "E0_s42",
+        "--e0_audit"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 2 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train --run_name E0_s42 --e0_audit",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:40:49+0800",
+      "timeout_seconds": 300,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 17.69595999599551,
+      "finished_at": "2026-09-17T15:41:07+0800"
+    },
+    {
+      "label": "reset_probe",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/e0_reset_probe.py",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/e0_reset_probe.py --headless --device cuda:0 --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --output-dir /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:43:15+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 12.942019948008237,
+      "finished_at": "2026-09-17T15:43:28+0800"
+    },
+    {
+      "label": "checkpoint_restore_and_update",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/train.py",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--max_iterations",
+        "1",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--logroot",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume",
+        "--run_name",
+        "E0_resume_s42",
+        "--resume",
+        "--load_run",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42",
+        "--checkpoint",
+        "model_2.pt",
+        "--e0_audit",
+        "--e0_reference",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt.reference.pt"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 1 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume --run_name E0_resume_s42 --resume --load_run /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42 --checkpoint model_2.pt --e0_audit --e0_reference /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt.reference.pt",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:45:34+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update.log",
+      "status": "FAIL",
+      "returncode": 1,
+      "elapsed_seconds": 11.184263642004225,
+      "finished_at": "2026-09-17T15:45:45+0800"
+    },
+    {
+      "label": "checkpoint_restore_and_update_fixed",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/train.py",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--max_iterations",
+        "1",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--logroot",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume",
+        "--run_name",
+        "E0_resume_s42_fixed",
+        "--resume",
+        "--load_run",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42",
+        "--checkpoint",
+        "^model_2[.]pt$",
+        "--e0_audit",
+        "--e0_reference",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt.reference.pt"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 1 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume --run_name E0_resume_s42_fixed --resume --load_run /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42 --checkpoint '^model_2[.]pt$' --e0_audit --e0_reference /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_154055_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42/model_2.pt.reference.pt",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:47:24+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_fixed.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 13.088896665984066,
+      "finished_at": "2026-09-17T15:47:37+0800"
+    },
+    {
+      "label": "train_2_updates_final",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/train.py",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--max_iterations",
+        "2",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--logroot",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train",
+        "--run_name",
+        "E0_s42_logs_fixed",
+        "--e0_audit"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 2 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train --run_name E0_s42_logs_fixed --e0_audit",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:52:54+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 13.64802284599864,
+      "finished_at": "2026-09-17T15:53:07+0800"
+    },
+    {
+      "label": "checkpoint_restore_and_update_final",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "scripts/instinct_rl/train.py",
+        "--task",
+        "Instinct-Locomotion-Flat-G1-v0",
+        "--num_envs",
+        "4",
+        "--seed",
+        "42",
+        "--max_iterations",
+        "1",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--logroot",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume",
+        "--run_name",
+        "E0_resume_s42_logs_fixed",
+        "--resume",
+        "--load_run",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed",
+        "--checkpoint",
+        "^model_2[.]pt$",
+        "--e0_audit",
+        "--e0_reference",
+        "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt.reference.pt"
+      ],
+      "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 1 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume --run_name E0_resume_s42_logs_fixed --resume --load_run /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed --checkpoint '^model_2[.]pt$' --e0_audit --e0_reference /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt.reference.pt",
+      "cwd": "/home/xiexuhui/InstinctLab",
+      "started_at": "2026-09-17T15:57:40+0800",
+      "timeout_seconds": 240,
+      "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_final.log",
+      "status": "PASS",
+      "returncode": 0,
+      "elapsed_seconds": 13.053634195995983,
+      "finished_at": "2026-09-17T15:57:53+0800"
+    }
+  ],
+  "initial_user_file_sha256": {
+    "docs/repo_audit.md": "dda971ff9f02d7c40cf165e300bd134c41c7cb4cc2cbffdddeac7b69e0c3ea4b",
+    "docs/Research Decision Record v0.1.md": "83ace85c303689a4aba478380bd60c78b995576cad787a140eb970bb770eac42",
+    "docs/repo_fact_check.md": "f6be59761a4d88c5f6c0f2f22d3e7d4caee9fe8833ce761f6aab62b50f69f2ad",
+    "docs/experiment_protocol_v0.1.md": "ede6f90c85d63a8eb16ecc8b26e986b927443ccae4e364dd0a8d476f3e8f9561"
+  },
+  "gpu_query": {
+    "argv": [
+      "nvidia-smi",
+      "--query-gpu=index,name,uuid,memory.total,memory.free,driver_version",
+      "--format=csv"
+    ],
+    "returncode": 0,
+    "stdout": "index, name, uuid, memory.total [MiB], memory.free [MiB], driver_version\n0, NVIDIA GeForce RTX 5070 Laptop GPU, GPU-e21cdd6c-5033-73a1-8547-01f0ba2ceeaa, 8151 MiB, 7545 MiB, 580.173.02\n",
+    "stderr": ""
+  },
+  "torch_cuda": {
+    "torch_version": "2.7.0+cu128",
+    "cuda_version": "12.8",
+    "available": true,
+    "device_count": 1,
+    "device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "free_bytes": 7750090752,
+    "total_bytes": 8080064512,
+    "allocation_test": "PASS"
+  },
+  "collection_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python scripts/diagnostics/e0_runtime.py --run-dir /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf collect",
+  "acceptance": {
+    "status": "PASS",
+    "training_audit": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json",
+    "resume_audit": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/e0_training_audit.json",
+    "reset_results": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json",
+    "training_transitions": 192,
+    "resume_transitions": 96,
+    "runtime": {
+      "task": "Instinct-Locomotion-Flat-G1-v0",
+      "seed": 42,
+      "device": "cuda:0",
+      "policy_shape": [
+        4,
+        96
+      ],
+      "critic_shape": [
+        4,
+        99
+      ],
+      "action_shape": [
+        4,
+        29
+      ],
+      "observation_terms": {
+        "policy": {
+          "base_ang_vel": [
+            3
+          ],
+          "projected_gravity": [
+            3
+          ],
+          "velocity_commands": [
+            3
+          ],
+          "joint_pos": [
+            29
+          ],
+          "joint_vel": [
+            29
+          ],
+          "actions": [
+            29
+          ]
+        },
+        "critic": {
+          "base_lin_vel": [
+            3
+          ],
+          "base_ang_vel": [
+            3
+          ],
+          "projected_gravity": [
+            3
+          ],
+          "velocity_commands": [
+            3
+          ],
+          "joint_pos": [
+            29
+          ],
+          "joint_vel": [
+            29
+          ],
+          "actions": [
+            29
+          ]
+        }
+      },
+      "num_actions": 29,
+      "resolved_joint_names": [
+        "left_shoulder_pitch_joint",
+        "right_shoulder_pitch_joint",
+        "waist_pitch_joint",
+        "left_shoulder_roll_joint",
+        "right_shoulder_roll_joint",
+        "waist_roll_joint",
+        "left_shoulder_yaw_joint",
+        "right_shoulder_yaw_joint",
+        "waist_yaw_joint",
+        "left_elbow_joint",
+        "right_elbow_joint",
+        "left_hip_pitch_joint",
+        "right_hip_pitch_joint",
+        "left_wrist_roll_joint",
+        "right_wrist_roll_joint",
+        "left_hip_roll_joint",
+        "right_hip_roll_joint",
+        "left_wrist_pitch_joint",
+        "right_wrist_pitch_joint",
+        "left_hip_yaw_joint",
+        "right_hip_yaw_joint",
+        "left_wrist_yaw_joint",
+        "right_wrist_yaw_joint",
+        "left_knee_joint",
+        "right_knee_joint",
+        "left_ankle_pitch_joint",
+        "right_ankle_pitch_joint",
+        "left_ankle_roll_joint",
+        "right_ankle_roll_joint"
+      ],
+      "robot_joint_names": [
+        "left_shoulder_pitch_joint",
+        "right_shoulder_pitch_joint",
+        "waist_pitch_joint",
+        "left_shoulder_roll_joint",
+        "right_shoulder_roll_joint",
+        "waist_roll_joint",
+        "left_shoulder_yaw_joint",
+        "right_shoulder_yaw_joint",
+        "waist_yaw_joint",
+        "left_elbow_joint",
+        "right_elbow_joint",
+        "left_hip_pitch_joint",
+        "right_hip_pitch_joint",
+        "left_wrist_roll_joint",
+        "right_wrist_roll_joint",
+        "left_hip_roll_joint",
+        "right_hip_roll_joint",
+        "left_wrist_pitch_joint",
+        "right_wrist_pitch_joint",
+        "left_hip_yaw_joint",
+        "right_hip_yaw_joint",
+        "left_wrist_yaw_joint",
+        "right_wrist_yaw_joint",
+        "left_knee_joint",
+        "right_knee_joint",
+        "left_ankle_pitch_joint",
+        "right_ankle_pitch_joint",
+        "left_ankle_roll_joint",
+        "right_ankle_roll_joint"
+      ],
+      "action_scale": [
+        [
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928
+        ],
+        [
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928
+        ],
+        [
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928
+        ],
+        [
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.5475464463233948,
+          0.5475464463233948,
+          0.07450087368488312,
+          0.07450087368488312,
+          0.3506614565849304,
+          0.3506614565849304,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928,
+          0.4385773241519928
+        ]
+      ],
+      "action_offset": [
+        [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.0,
+          0.20000000298023224,
+          -0.20000000298023224,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579,
+          0.6000000238418579,
+          -0.31200000643730164,
+          -0.31200000643730164,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6690000295639038,
+          0.6690000295639038,
+          -0.3630000054836273,
+          -0.3630000054836273,
+          0.0,
+          0.0
+        ],
+        [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.0,
+          0.20000000298023224,
+          -0.20000000298023224,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579,
+          0.6000000238418579,
+          -0.31200000643730164,
+          -0.31200000643730164,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6690000295639038,
+          0.6690000295639038,
+          -0.3630000054836273,
+          -0.3630000054836273,
+          0.0,
+          0.0
+        ],
+        [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.0,
+          0.20000000298023224,
+          -0.20000000298023224,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579,
+          0.6000000238418579,
+          -0.31200000643730164,
+          -0.31200000643730164,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6690000295639038,
+          0.6690000295639038,
+          -0.3630000054836273,
+          -0.3630000054836273,
+          0.0,
+          0.0
+        ],
+        [
+          0.20000000298023224,
+          0.20000000298023224,
+          0.0,
+          0.20000000298023224,
+          -0.20000000298023224,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579,
+          0.6000000238418579,
+          -0.31200000643730164,
+          -0.31200000643730164,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6690000295639038,
+          0.6690000295639038,
+          -0.3630000054836273,
+          -0.3630000054836273,
+          0.0,
+          0.0
+        ]
+      ],
+      "action_clip": null,
+      "physics_dt": 0.005,
+      "step_dt": 0.02,
+      "decimation": 4,
+      "max_episode_length": 1000,
+      "is_finite_horizon": false
+    },
+    "reset_checks": {
+      "runtime_shapes": "PASS",
+      "control_timing": "PASS",
+      "partial_reset_preserves_others": "PASS",
+      "partial_reset_initialization": "PASS",
+      "other_environments_continue": "PASS",
+      "timeout_branch": "PASS",
+      "timeout_wrapper_extra": "PASS",
+      "terminal_state_vs_new_observation": "PASS",
+      "physical_contact_termination": "PASS",
+      "raw_flags_equal_wrapper_done": "PASS",
+      "simulation_step_finite": "PASS"
+    },
+    "checkpoint_roundtrip": {
+      "checkpoint": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt",
+      "reference": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt.reference.pt",
+      "max_absolute_error": 0.0,
+      "atol": 1e-06,
+      "rtol": 1e-05,
+      "actions_equal": true,
+      "iteration": 2,
+      "iteration_equal": true,
+      "model_equal": true,
+      "optimizer_equal": true,
+      "normalizers_equal": {
+        "policy": true,
+        "critic": true
+      },
+      "algorithm_learning_rate": 2.2500000000000008e-05,
+      "optimizer_learning_rates": [
+        2.2500000000000008e-05
+      ],
+      "adaptive_learning_rate_equal": true,
+      "status": "PASS"
+    },
+    "training_updates": [
+      {
+        "iteration": 0,
+        "losses": {
+          "surrogate_loss": -0.12053310126066208,
+          "value_loss": 7.556055545806885,
+          "entropy": -41.153465270996094,
+          "total_loss": 7.10629415512085
+        },
+        "stats": {
+          "grad_norm": 2.643584966659546
+        }
+      },
+      {
+        "iteration": 1,
+        "losses": {
+          "surrogate_loss": -0.10979323834180832,
+          "value_loss": 5.157132625579834,
+          "entropy": -41.158870697021484,
+          "total_loss": 4.718069076538086
+        },
+        "stats": {
+          "grad_norm": 5.097568511962891
+        }
+      }
+    ],
+    "resume_updates": [
+      {
+        "iteration": 2,
+        "losses": {
+          "surrogate_loss": -0.09811852872371674,
+          "value_loss": 6.487095832824707,
+          "entropy": -41.16010665893555,
+          "total_loss": 6.059695720672607
+        },
+        "stats": {
+          "grad_norm": 5.050967693328857
+        }
+      }
+    ],
+    "artifact_validation": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/artifact_validation.json",
+    "not_run": [
+      "E1-flat formal training",
+      "slope tasks",
+      "MoE",
+      "sensor additions",
+      "GUI/video",
+      "DDP",
+      "bitwise physics/RNG continuation",
+      "256-env capacity test"
+    ]
+  },
+  "checkpoint_artifacts": [
+    {
+      "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt",
+      "sha256": "8071b7fcb85a85f4b177450b563f915f84d388714eb65868dbfb374321db928c",
+      "iter": 2,
+      "keys": [
+        "critic_normalizer_state_dict",
+        "infos",
+        "iter",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "policy_normalizer_state_dict"
+      ],
+      "reference": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt.reference.pt",
+      "size_bytes": 1862335,
+      "optimizer_parameter_states": 17,
+      "optimizer_steps": [
+        40.0
+      ],
+      "optimizer_learning_rates": [
+        2.2500000000000008e-05
+      ],
+      "normalizer_counts": {
+        "policy": 192,
+        "critic": 192
+      }
+    },
+    {
+      "path": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/model_3.pt",
+      "sha256": "22c11f4c48e8d959dd046dd1cc1eb8cfc313d87e507a66c32b192d49bafbf7e9",
+      "iter": 3,
+      "keys": [
+        "critic_normalizer_state_dict",
+        "infos",
+        "iter",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "policy_normalizer_state_dict"
+      ],
+      "reference": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/model_3.pt.reference.pt",
+      "size_bytes": 1862335,
+      "optimizer_parameter_states": 17,
+      "optimizer_steps": [
+        60.0
+      ],
+      "optimizer_learning_rates": [
+        2.2500000000000008e-05
+      ],
+      "normalizer_counts": {
+        "policy": 288,
+        "critic": 288
+      }
+    }
+  ],
+  "user_files_unchanged": {
+    "docs/repo_audit.md": true,
+    "docs/Research Decision Record v0.1.md": true,
+    "docs/repo_fact_check.md": true,
+    "docs/experiment_protocol_v0.1.md": true
+  },
+  "repositories_final": {
+    "/home/xiexuhui/InstinctLab": {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xiexuhui/InstinctLab",
+        "status",
+        "--short",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": " M scripts/instinct_rl/train.py\n?? docs/E0_report.md\n?? \"docs/Research Decision Record v0.1.md\"\n?? docs/experiment_protocol_v0.1.md\n?? docs/repo_audit.md\n?? docs/repo_fact_check.md\n?? scripts/diagnostics/e0_runtime.py\n?? scripts/instinct_rl/e0_reset_probe.py\n?? scripts/instinct_rl/e0_training_audit.py\n",
+      "stderr": ""
+    },
+    "/home/xiexuhui/instinct_rl": {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xiexuhui/instinct_rl",
+        "status",
+        "--short",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "/home/xiexuhui/IsaacLab-Instinct": {
+      "argv": [
+        "git",
+        "-C",
+        "/home/xiexuhui/IsaacLab-Instinct",
+        "status",
+        "--short",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "source_snapshot": [
+    {
+      "source": "scripts/diagnostics/e0_runtime.py",
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/source_snapshot/scripts/diagnostics/e0_runtime.py",
+      "sha256": "88b43a5f32ecc7ed56b69a0a1d6b7baf22ab22706373feb3a92174d49911b4a4"
+    },
+    {
+      "source": "scripts/instinct_rl/e0_training_audit.py",
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/source_snapshot/scripts/instinct_rl/e0_training_audit.py",
+      "sha256": "c4e5464b4ee4b0adb84899cda75e71f72ba7a81b99c1b884783ac9f456601b4e"
+    },
+    {
+      "source": "scripts/instinct_rl/e0_reset_probe.py",
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/source_snapshot/scripts/instinct_rl/e0_reset_probe.py",
+      "sha256": "139f60781f629f7c920586e9fe81fb1d62d7c7121782e4158e150f0f16709c7e"
+    },
+    {
+      "source": "scripts/instinct_rl/train.py",
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/source_snapshot/scripts/instinct_rl/train.py",
+      "sha256": "4fe469f954066149588c18afe8f73a3453b81003c829e5022e36af1b6fd7cfdc"
+    },
+    {
+      "source": "docs/E0_report.md",
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/source_snapshot/docs/E0_report.md",
+      "sha256": "db12469df1c0f5be6e0b102f9e866d19fcb86f51fd0c1d300a7d60bf62e5ff60"
+    }
+  ],
+  "simulator_log_copies": [
+    {
+      "label": "registration",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_153459.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/registration/kit_20260917_153459.log",
+      "sha256": "275a55389a53ce2d4b3b50c298e029bd66c9f173e7877644b1812d222d355057"
+    },
+    {
+      "label": "train_2_updates",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_154049.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/train_2_updates/kit_20260917_154049.log",
+      "sha256": "59408426d7957b9d5ef73c7adf0a704529b1028012a08c88aa2cdf51251a3aaa"
+    },
+    {
+      "label": "train_2_updates",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-40-55.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/train_2_updates/isaaclab_2026-09-17_15-40-55.log",
+      "sha256": "9611229786c13b18e9d3a64006249cf48837b5230ab2750819bb3ad944a17f55"
+    },
+    {
+      "label": "reset_probe",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_154316.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/reset_probe/kit_20260917_154316.log",
+      "sha256": "cb813ff5461b398a491d8c003f296aee6c900477dce13bdef99da062b4fb9ccb"
+    },
+    {
+      "label": "reset_probe",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-43-21.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/reset_probe/isaaclab_2026-09-17_15-43-21.log",
+      "sha256": "8588f09504fb1603d3d9d3a352bd713245d99bfe5d5a3ecefb7f020f0297a602"
+    },
+    {
+      "label": "checkpoint_restore_and_update",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_154534.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update/kit_20260917_154534.log",
+      "sha256": "58d1cc707a7909a27032e1f294dbf99c4b9b2487aff95f6c391443c9680f536d"
+    },
+    {
+      "label": "checkpoint_restore_and_update",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-45-40.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update/isaaclab_2026-09-17_15-45-40.log",
+      "sha256": "c4e7e74a571a6fb0231f1a1c3d6d31a0d83a117a24e719312bad94e2b2d72914"
+    },
+    {
+      "label": "checkpoint_restore_and_update_fixed",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_154724.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update_fixed/kit_20260917_154724.log",
+      "sha256": "a5d9295a6b8296cf9a1925ea996ef6cc6e31e56c4550d73de84db714582e7b8a"
+    },
+    {
+      "label": "checkpoint_restore_and_update_fixed",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-47-30.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update_fixed/isaaclab_2026-09-17_15-47-30.log",
+      "sha256": "bbf557db6ba6bf6eac1b5ca3eedf7e18c1af627deb3686a57efa0d275b5edd86"
+    },
+    {
+      "label": "train_2_updates_final",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_155254.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/train_2_updates_final/kit_20260917_155254.log",
+      "sha256": "26fc08d2f834ffe7723f1b124ee8e61758dfa9fd41df7e86e7deb9bc82381591"
+    },
+    {
+      "label": "train_2_updates_final",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-52-59.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/train_2_updates_final/isaaclab_2026-09-17_15-52-59.log",
+      "sha256": "5428025ea872aa20fd050308c535bb3b606663c08d8c6962e719b1e2e6481114"
+    },
+    {
+      "label": "checkpoint_restore_and_update_final",
+      "source": "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_155740.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update_final/kit_20260917_155740.log",
+      "sha256": "8ae1bfcd28a7fc12ac20f30623bd88d11d5c43b7b4fbf09bfa01e94302120c62"
+    },
+    {
+      "label": "checkpoint_restore_and_update_final",
+      "source": "/tmp/isaaclab/logs/isaaclab_2026-09-17_15-57-46.log",
+      "available": true,
+      "copy": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/simulator_logs/checkpoint_restore_and_update_final/isaaclab_2026-09-17_15-57-46.log",
+      "sha256": "e5266f7d055966d655d0a11afb3e14ff3c2ce53edb372e6a11ef33460ae18b21"
+    }
+  ],
+  "finalized_at": "2026-09-17T16:10:06+0800",
+  "finalize_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/diagnostics/e0_runtime.py --run-dir /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf finalize --training-dir /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed --resume-dir /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259 --reset-result /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json",
+  "initial_worktree_before_diagnostics": {
+    "tracked_changes": [],
+    "untracked_user_files": [
+      "docs/repo_audit.md",
+      "docs/Research Decision Record v0.1.md",
+      "docs/repo_fact_check.md",
+      "docs/experiment_protocol_v0.1.md"
+    ],
+    "note": "Recorded by initial git status before adding E0 scripts; repositories entry records collection-time state."
+  }
+}

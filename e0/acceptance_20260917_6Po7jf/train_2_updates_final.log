@@ -1,0 +1,338 @@
+COMMAND: /home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 2 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train --run_name E0_s42_logs_fixed --e0_audit
+CWD: /home/xiexuhui/InstinctLab
+[INFO][AppLauncher]: Using device: cuda:0
+[INFO][AppLauncher]: Loading experience file: /home/xiexuhui/IsaacLab-Instinct/apps/isaaclab.python.headless.kit
+Loading user config located at: '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: /home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260917_155254.log
+2026-09-17T07:52:54Z [68ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-09-17T07:52:54Z [449ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-17T07:52:54Z [455ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+2026-09-17T07:52:57Z [2,967ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+2026-09-17T07:52:57Z [2,967ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Laptop.. | Yes: 0 |     | 8151    MB | 10de      | 0          |
+|     |                                  |        |     |            | 2d58      | e21cdd6c.. |
+|     |                                  |        |     |            | 2         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (ARL)          |        |     | 23633   MB | 8086      | 0          |
+|     |                                  |        |     |            | 7d67      | 8680677d.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.3 LTS (Noble Numbat) ubuntu, Version: 24.04.3, Kernel: 7.0.0-30-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101011 (1.21.1.11)
+| Processor: Intel(R) Core(TM) Ultra 9 275HX
+| Cores: 24 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31511 | Free Memory: 22348
+| Total Page/Swap (MB): 15624 | Free Page/Swap: 15624
+|---------------------------------------------------------------------------------------------|
+2026-09-17T07:52:57Z [3,227ms] [Warning] [gpu.foundation.plugin] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-17T07:52:57Z [3,236ms] [Warning] [gpu.foundation.plugin] PCIe link width current (8) and maximum (16) for device 0 don't match.
+2026-09-17T07:52:57Z [3,236ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-09-17T07:52:57Z [3,236ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 263.22 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.07 
+
+   CPU     0 
+     0   1.95 
+Failed to import RslRlVecEnvWrapper, ignoring...
+[INFO]: Parsing configuration from: <class 'instinctlab.tasks.locomotion.config.g1.flat_env_cfg.G1FlatEnvCfg'>
+[INFO]: Parsing configuration from: instinctlab.tasks.locomotion.config.g1.agents.instinct_rl_ppo_cfg:G1FlatPPORunnerCfg
+[INFO] Logging experiment in directory: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train
+
+[36m======================================================================================[0m
+[36m[1m[INFO][IsaacLab]: Logging to file: /tmp/isaaclab/logs/isaaclab_2026-09-17_15-52-59.log[0m
+[36m======================================================================================[0m
+
+[33m15:52:59 [simulation_context.py] WARNING: The `enable_external_forces_every_iteration` parameter in the PhysxCfg is set to False. If you are experiencing noisy velocities, consider enabling this flag. You may need to slightly increase the number of velocity iterations (setting it to 1 or 2 rather than 0), together with this flag, to improve the accuracy of velocity updates.[0m
+[INFO]: Base environment:
+	Environment device    : cuda:0
+	Environment seed      : 42
+	Physics step-size     : 0.005
+	Rendering step-size   : 0.02
+	Environment step-size : 0.02
+2026-09-17T07:53:00Z [6,642ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+2026-09-17T07:53:00Z [6,643ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Laptop.. | Yes: 0 |     | 8151    MB | 10de      | 0          |
+|     |                                  |        |     |            | 2d58      | e21cdd6c.. |
+|     |                                  |        |     |            | 2         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (ARL)          |        |     | 23633   MB | 8086      | 0          |
+|     |                                  |        |     |            | 7d67      | 8680677d.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.3 LTS (Noble Numbat) ubuntu, Version: 24.04.3, Kernel: 7.0.0-30-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101011 (1.21.1.11)
+| Processor: Intel(R) Core(TM) Ultra 9 275HX
+| Cores: 24 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31511 | Free Memory: 21908
+| Total Page/Swap (MB): 15624 | Free Page/Swap: 15624
+|---------------------------------------------------------------------------------------------|
+2026-09-17T07:53:01Z [7,004ms] [Warning] [gpu.foundation.plugin] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-17T07:53:01Z [7,005ms] [Warning] [gpu.foundation.plugin] PCIe link width current (8) and maximum (16) for device 0 don't match.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 240.16 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.07 
+
+   CPU     0 
+     0   1.86 
+2026-09-17T07:53:01Z [7,016ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-09-17T07:53:01Z [7,016ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 240.91 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.08 
+
+   CPU     0 
+     0   1.93 
+2026-09-17T07:53:02Z [7,793ms] [Warning] [omni.graph.visualization.nodes._impl.extension] No Viewport Window to add omni.graph.visualization.nodes-2.1.3 scene to
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] link head_link has body properties (mass, inertia, or collisions) and is being merged into torso_link
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] link imu_in_torso has body properties (mass, inertia, or collisions) and is being merged into torso_link
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] link left_rubber_hand has body properties (mass, inertia, or collisions) and is being merged into left_wrist_yaw_link
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] link logo_link has body properties (mass, inertia, or collisions) and is being merged into torso_link
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] link mid360_link has body properties (mass, inertia, or collisions) and is being merged into torso_link
+2026-09-17T07:53:02Z [7,835ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] link right_rubber_hand has body properties (mass, inertia, or collisions) and is being merged into right_wrist_yaw_link
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] link imu_in_pelvis has body properties (mass, inertia, or collisions) and is being merged into pelvis
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] link LL_FOOT has body properties (mass, inertia, or collisions) and is being merged into left_ankle_roll_link
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] link pelvis_contour_link has body properties (mass, inertia, or collisions) and is being merged into pelvis
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] DEPRECATION WARNING: Merging bodies with inertia is deprecated. This will be removed in a future release.
+2026-09-17T07:53:02Z [7,836ms] [Warning] [isaacsim.asset.importer.urdf] link LR_FOOT has body properties (mass, inertia, or collisions) and is being merged into right_ankle_roll_link
+[INFO]: Time taken for scene creation : 3.089504 seconds
+[INFO]: Scene manager:  <class InteractiveScene>
+	Number of environments: 4
+	Environment spacing   : 2.5
+	Source prim name      : /World/envs/env_0
+	Global prim paths     : ['/World/ground']
+	Replicate physics     : True
+[INFO]: Starting the simulation. This may take a few seconds. Please wait...
+[INFO]: Time taken for simulation start : 0.614589 seconds
+[INFO] Command Manager:  <CommandManager> contains 1 active terms.
++------------------------------------------------+
+|              Active Command Terms              |
++-------+---------------+------------------------+
+| Index | Name          |          Type          |
++-------+---------------+------------------------+
+|   0   | base_velocity | UniformVelocityCommand |
++-------+---------------+------------------------+
+
+[INFO] Event Manager:  <EventManager> contains 3 active terms.
++--------------------------------------+
+| Active Event Terms in Mode: 'startup' |
++----------+---------------------------+
+|  Index   | Name                      |
++----------+---------------------------+
+|    0     | physics_material          |
+|    1     | add_base_mass             |
++----------+---------------------------+
++---------------------------------------+
+|  Active Event Terms in Mode: 'reset'  |
++--------+------------------------------+
+| Index  | Name                         |
++--------+------------------------------+
+|   0    | base_external_force_torque   |
+|   1    | reset_base                   |
+|   2    | reset_robot_joints           |
++--------+------------------------------+
++----------------------------------------------+
+|    Active Event Terms in Mode: 'interval'    |
++-------+------------+-------------------------+
+| Index | Name       | Interval time range (s) |
++-------+------------+-------------------------+
+|   0   | push_robot |       (10.0, 15.0)      |
++-------+------------+-------------------------+
+
+[INFO] Recorder Manager:  <RecorderManager> contains 0 active terms.
++---------------------+
+| Active Recorder Terms |
++-----------+---------+
+|   Index   | Name    |
++-----------+---------+
++-----------+---------+
+
+[INFO] Action Manager:  <ActionManager> contains 1 active terms.
++------------------------------------+
+|  Active Action Terms (shape: 29)   |
++--------+-------------+-------------+
+| Index  | Name        |   Dimension |
++--------+-------------+-------------+
+|   0    | joint_pos   |          29 |
++--------+-------------+-------------+
+
+[INFO] Observation Manager: <ObservationManager> contains 2 groups.
++---------------------------------------------+
+| Active Observation Terms in Group: 'policy' |
++---------+-------------------------+---------+
+|  Index  | Name                    |  Shape  |
++---------+-------------------------+---------+
+|    0    | base_ang_vel            |   (3,)  |
+|    1    | projected_gravity       |   (3,)  |
+|    2    | velocity_commands       |   (3,)  |
+|    3    | joint_pos               |  (29,)  |
+|    4    | joint_vel               |  (29,)  |
+|    5    | actions                 |  (29,)  |
++---------+-------------------------+---------+
++---------------------------------------------+
+| Active Observation Terms in Group: 'critic' |
++---------+-------------------------+---------+
+|  Index  | Name                    |  Shape  |
++---------+-------------------------+---------+
+|    0    | base_lin_vel            |   (3,)  |
+|    1    | base_ang_vel            |   (3,)  |
+|    2    | projected_gravity       |   (3,)  |
+|    3    | velocity_commands       |   (3,)  |
+|    4    | joint_pos               |  (29,)  |
+|    5    | joint_vel               |  (29,)  |
+|    6    | actions                 |  (29,)  |
++---------+-------------------------+---------+
+
+[INFO] Termination Manager:  <TerminationManager> contains 2 active terms.
++---------------------------------+
+|     Active Termination Terms    |
++-------+--------------+----------+
+| Index | Name         | Time Out |
++-------+--------------+----------+
+|   0   | time_out     |   True   |
+|   1   | base_contact |  False   |
++-------+--------------+----------+
+
+[INFO] Reward Manager:  <RewardManager> contains 16 active terms.
++----------------------------------------+
+|          Active Reward Terms           |
++-------+-----------------------+--------+
+| Index | Name                  | Weight |
++-------+-----------------------+--------+
+|   0   | termination_penalty   | -200.0 |
+|   1   | track_lin_vel_xy_exp  |    1.0 |
+|   2   | track_ang_vel_z_exp   |    1.0 |
+|   3   | feet_air_time         |    1.0 |
+|   4   | feet_slide            |   -0.1 |
+|   5   | flat_orientation_l2   |   -1.0 |
+|   6   | stand_still           |   -0.8 |
+|   7   | dof_pos_limits        |   -1.0 |
+|   8   | joint_deviation_hip   |   -0.1 |
+|   9   | joint_deviation_arms  |   -0.1 |
+|   10  | joint_deviation_torso |   -0.1 |
+|   11  | joint_deviation_knee  |  -0.05 |
+|   12  | lin_vel_z_l2          |   -0.1 |
+|   13  | action_rate_l2        |  -0.05 |
+|   14  | dof_acc_l2            | -2e-07 |
+|   15  | dof_torques_l2        | -4e-06 |
++-------+-----------------------+--------+
+
+[INFO] Curriculum Manager:  <CurriculumManager> contains 0 active terms.
++----------------------+
+| Active Curriculum Terms |
++-----------+----------+
+|   Index   | Name     |
++-----------+----------+
++-----------+----------+
+
+[INFO] Monitor Manager:  <MonitorManager> contains 0 active groups.
++------------------------+
+|  Active Monitor Terms  |
++--------+-------+-------+
+| Index  |  Name |  Func |
++--------+-------+-------+
++--------+-------+-------+
+
+[INFO]: Completed setting up the environment...
+2026-09-17T07:53:04Z [10,004ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_goal.
+2026-09-17T07:53:04Z [10,004ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_current.
+obs_format to build ActorCritic: {'policy': {'base_ang_vel': (3,), 'projected_gravity': (3,), 'velocity_commands': (3,), 'joint_pos': (29,), 'joint_vel': (29,), 'actions': (29,)}, 'critic': {'base_lin_vel': (3,), 'base_ang_vel': (3,), 'projected_gravity': (3,), 'velocity_commands': (3,), 'joint_pos': (29,), 'joint_vel': (29,), 'actions': (29,)}}
+Actor MLP: Sequential(
+  (0): Linear(in_features=96, out_features=256, bias=True)
+  (1): ELU(alpha=1.0)
+  (2): Linear(in_features=256, out_features=128, bias=True)
+  (3): ELU(alpha=1.0)
+  (4): Linear(in_features=128, out_features=128, bias=True)
+  (5): ELU(alpha=1.0)
+  (6): Linear(in_features=128, out_features=29, bias=True)
+)
+Critic MLP: Sequential(
+  (0): Linear(in_features=99, out_features=256, bias=True)
+  (1): ELU(alpha=1.0)
+  (2): Linear(in_features=256, out_features=128, bias=True)
+  (3): ELU(alpha=1.0)
+  (4): Linear(in_features=128, out_features=128, bias=True)
+  (5): ELU(alpha=1.0)
+  (6): Linear(in_features=128, out_features=1, bias=True)
+)
+[INFO]: Initialization done, start learning.
+NOTE: you may see a bunch of `NaN or Inf found in input tensor` once and appears in the log. Just ignore it if it does not affect the performance.
+Storing git diff for 'instinct_rl' in: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/git/instinct_rl_ba45ed2.diff
+Storing git diff for 'InstinctLab' in: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/git/InstinctLab_ba28d3d.diff
+[E0] PPO update 0 complete; finite checks passed
+################################################################################
+                        [1m Learning iteration 0/2 [0m                        
+
+                       Computation: 62 steps/s (collection: 1.268s, learning 0.260s)
+                     surrogate_loss -0.1205
+                         value_loss 7.5561
+                            entropy -41.1535
+                         total_loss 7.1063
+             Mean action noise std: 1.00
+                       Mean reward: -4.46
+               Mean episode length: 8.75
+Mean episode Episode_Reward/termination_penalty: -0.1750
+Mean episode Episode_Reward/track_lin_vel_xy_exp: 0.0030
+Mean episode Episode_Reward/track_ang_vel_z_exp: 0.0012
+Mean episode Episode_Reward/feet_air_time: 0.0000
+Mean episode Episode_Reward/feet_slide: -0.0004
+Mean episode Episode_Reward/flat_orientation_l2: -0.0001
+Mean episode Episode_Reward/stand_still: 0.0000
+Mean episode Episode_Reward/dof_pos_limits: -0.0000
+Mean episode Episode_Reward/joint_deviation_hip: -0.0003
+Mean episode Episode_Reward/joint_deviation_arms: -0.0008
+Mean episode Episode_Reward/joint_deviation_torso: -0.0003
+Mean episode Episode_Reward/joint_deviation_knee: -0.0001
+Mean episode Episode_Reward/lin_vel_z_l2: -0.0001
+Mean episode Episode_Reward/action_rate_l2: -0.0199
+Mean episode Episode_Reward/dof_acc_l2: -0.0002
+Mean episode Episode_Reward/dof_torques_l2: -0.0001
+Mean episode Metrics/base_velocity/error_vel_xy: 0.0071
+Mean episode Metrics/base_velocity/error_vel_yaw: 0.0282
+Mean episode Episode_Termination/time_out: 0.0000
+Mean episode Episode_Termination/base_contact: 0.7292
+--------------------------------------------------------------------------------
+                   Total timesteps: 96
+                    Iteration time: 1.53s
+                        Total time: 1.53s
+                               ETA: 3.1s
+
+[E0] PPO update 1 complete; finite checks passed
+
+E0_COMMAND_RESULT: {"label": "train_2_updates_final", "argv": ["/home/xiexuhui/miniconda3/envs/instinctlab/bin/python", "-B", "-u", "scripts/instinct_rl/train.py", "--task", "Instinct-Locomotion-Flat-G1-v0", "--num_envs", "4", "--seed", "42", "--max_iterations", "2", "--headless", "--device", "cuda:0", "--logroot", "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train", "--run_name", "E0_s42_logs_fixed", "--e0_audit"], "shell_command": "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 4 --seed 42 --max_iterations 2 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train --run_name E0_s42_logs_fixed --e0_audit", "cwd": "/home/xiexuhui/InstinctLab", "started_at": "2026-09-17T15:52:54+0800", "timeout_seconds": 240, "log": "/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log", "status": "PASS", "returncode": 0, "elapsed_seconds": 13.64802284599864, "finished_at": "2026-09-17T15:53:07+0800"}
