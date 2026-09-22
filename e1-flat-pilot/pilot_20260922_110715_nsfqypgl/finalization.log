@@ -1,0 +1,223 @@
+/home/xiexuhui/.config/matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /tmp/matplotlib-30ko2mil because there was an issue with the default path (/home/xiexuhui/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+{
+  "train_dir": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+  "completed_iterations": 200,
+  "actual_transitions": 307200,
+  "source_files_unchanged": 204,
+  "throughput": 1689.082903169375,
+  "training_seconds": 181.87384374300018,
+  "first_last": {
+    "base_velocity_error": [
+      0.6554147327939669,
+      0.5381011205414931
+    ],
+    "velocity_tracking": [
+      0.30664312094449997,
+      0.39786545808116597
+    ],
+    "forward_velocity": [
+      0.07594881470625599,
+      0.0956027867893378
+    ],
+    "speed_xy": [
+      0.4797184467315674,
+      0.4315359878043334
+    ],
+    "terminated": [
+      0.06315104166666667,
+      0.19010416666666666
+    ],
+    "truncated": [
+      0.0,
+      0.0
+    ],
+    "timeout": [
+      0.0,
+      0.0
+    ],
+    "base_contact": [
+      0.06315104166666667,
+      0.19010416666666666
+    ],
+    "mean_step_reward": [
+      -0.3130004561971873,
+      -0.7910564616322517
+    ],
+    "mean_episode_return_last100": [
+      -4.625755914707773,
+      -4.173833928108215
+    ],
+    "action_standard_deviation": [
+      1.0005221366882324,
+      0.7925195097923279
+    ],
+    "learning_rate": [
+      1e-05,
+      1.0000000000000004e-05
+    ],
+    "transitions_per_second": [
+      673.6740241529858,
+      1705.4819289497684
+    ]
+  },
+  "first20_last20": {
+    "base_velocity_error": [
+      0.7311466682702303,
+      0.5796370492006342
+    ],
+    "velocity_tracking": [
+      0.2820793030473093,
+      0.363132997850577
+    ],
+    "forward_velocity": [
+      0.19440032734225193,
+      0.12822456015564968
+    ],
+    "speed_xy": [
+      0.6049538442865015,
+      0.46391606467465557
+    ],
+    "terminated": [
+      0.06106770833333333,
+      0.17799479166666668
+    ],
+    "truncated": [
+      0.0,
+      0.0
+    ],
+    "timeout": [
+      0.0,
+      0.0
+    ],
+    "base_contact": [
+      0.06106770833333333,
+      0.17799479166666668
+    ],
+    "mean_step_reward": [
+      -0.3118328530845853,
+      -0.744255316319565
+    ],
+    "mean_episode_return_last100": [
+      -5.138427138997107,
+      -4.182996261119842
+    ],
+    "action_standard_deviation": [
+      0.9964269906282425,
+      0.8003476053476334
+    ],
+    "learning_rate": [
+      2.517968750000001e-05,
+      1.0000000000000003e-05
+    ],
+    "transitions_per_second": [
+      1687.2118247454932,
+      1681.0192300614679
+    ]
+  },
+  "evaluator": {
+    "evaluation": {
+      "status": "FAIL",
+      "pid": 567673,
+      "episodes": 0
+    },
+    "evaluation_v2": {
+      "status": "PASS",
+      "pid": 602529,
+      "episodes": 32,
+      "episode_return": -3.9330821335315704,
+      "episode_length": 5.71875,
+      "velocity_tracking_error": 0.5239087322261184,
+      "velocity_tracking": 0.4058801783830859,
+      "base_contact": 1,
+      "timeout": 0,
+      "fall": 1,
+      "actual_forward_distance": 0.005591421511780936,
+      "actual_velocity": 0.11274759754451225,
+      "mean_speed_xy": 0.413597883656621,
+      "episode_return_max_error": 7.152557373046875e-07,
+      "states_unchanged": {
+        "model": true,
+        "policy": true,
+        "critic": true
+      }
+    },
+    "evaluation_initial": {
+      "status": "PASS",
+      "pid": 613357,
+      "episodes": 32,
+      "episode_return": -3.9444015845656395,
+      "episode_length": 14.5,
+      "velocity_tracking_error": 0.6958563863299787,
+      "velocity_tracking": 0.28580121343111387,
+      "base_contact": 1,
+      "timeout": 0,
+      "fall": 1,
+      "actual_forward_distance": 0.05972543570533162,
+      "actual_velocity": 0.016291623607685324,
+      "mean_speed_xy": 0.488494421239011,
+      "episode_return_max_error": 1.1920928955078125e-06,
+      "states_unchanged": {
+        "model": true,
+        "policy": true,
+        "critic": true
+      }
+    }
+  },
+  "checkpoint_validation": {
+    "model_initial.pt": {
+      "path": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+      "sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+      "iter": 0,
+      "keys": [
+        "critic_normalizer_state_dict",
+        "infos",
+        "iter",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "policy_normalizer_state_dict"
+      ],
+      "normalizer_counts": {
+        "policy": 0,
+        "critic": 0
+      },
+      "optimizer_steps": []
+    },
+    "model_200.pt": {
+      "path": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_200.pt",
+      "sha256": "4df39669c75d9c784a414f2c64e5ea98255a561fb2d54677db1ee05786617626",
+      "iter": 200,
+      "keys": [
+        "critic_normalizer_state_dict",
+        "infos",
+        "iter",
+        "model_state_dict",
+        "optimizer_state_dict",
+        "policy_normalizer_state_dict"
+      ],
+      "normalizer_counts": {
+        "policy": 307200,
+        "critic": 307200
+      },
+      "optimizer_steps": [
+        4000.0
+      ]
+    }
+  },
+  "tensorboard": {
+    "tags": 60,
+    "all_finite": true,
+    "E1_points_per_tag": 200,
+    "runner_last_logged_iteration": 190
+  },
+  "gpu": {
+    "samples": 40,
+    "sampling_period_seconds": 5,
+    "sampled_max_device_memory_MiB": 2736.0,
+    "total_device_memory_MiB": 8151.0,
+    "torch_peak_allocated_MiB": 25.9814453125,
+    "torch_peak_reserved_MiB": 32.0
+  },
+  "criterion4": "NOT_CONFIRMED: velocity scores improve but early-contact termination increases and survival regresses",
+  "pilot_status": "NOT_PASSED"
+}

@@ -1,0 +1,894 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/evaluate_flat.py",
+    "--checkpoint",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/evaluation_initial",
+    "--num-envs",
+    "8",
+    "--episodes-per-env",
+    "4",
+    "--max-steps",
+    "5000",
+    "--seed",
+    "12345",
+    "--command-mode",
+    "original",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 613357,
+  "task": "Instinct-Locomotion-Flat-G1-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "seed": 12345,
+  "num_envs": 8,
+  "command_mode": "original",
+  "sampled": false,
+  "vector_steps": 86,
+  "episodes": [
+    {
+      "episode_id": 0,
+      "env_id": 0,
+      "env_episode_id": 0,
+      "episode_return": -4.015913486480713,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.9838058352470398,
+      "velocity_tracking": 0.021515807136893272,
+      "actual_velocity": 0.048876289278268814,
+      "mean_speed_xy": 0.5523223876953125,
+      "actual_forward_distance": 0.008274063467979431,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 1,
+      "env_id": 1,
+      "env_episode_id": 0,
+      "episode_return": -3.8059959411621094,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.7792065739631653,
+      "velocity_tracking": 0.08844359964132309,
+      "actual_velocity": -0.17275214195251465,
+      "mean_speed_xy": 0.4268694818019867,
+      "actual_forward_distance": -0.05472102761268616,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 2,
+      "env_id": 3,
+      "env_episode_id": 0,
+      "episode_return": -3.770561695098877,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.4143730700016022,
+      "velocity_tracking": 0.5033854842185974,
+      "actual_velocity": -0.41661641001701355,
+      "mean_speed_xy": 0.47049272060394287,
+      "actual_forward_distance": -0.06906722486019135,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 3,
+      "env_id": 4,
+      "env_episode_id": 0,
+      "episode_return": -3.849106788635254,
+      "episode_length": 11,
+      "velocity_tracking_error": 1.0954309701919556,
+      "velocity_tracking": 0.00880335085093975,
+      "actual_velocity": -0.1483580768108368,
+      "mean_speed_xy": 0.4556015729904175,
+      "actual_forward_distance": -0.06020671874284744,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 4,
+      "env_id": 5,
+      "env_episode_id": 0,
+      "episode_return": -4.0116496086120605,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.8686199188232422,
+      "velocity_tracking": 0.049150705337524414,
+      "actual_velocity": -0.2995591163635254,
+      "mean_speed_xy": 0.4639308452606201,
+      "actual_forward_distance": -0.0761459618806839,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 5,
+      "env_id": 6,
+      "env_episode_id": 0,
+      "episode_return": -3.835313320159912,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.2103196531534195,
+      "velocity_tracking": 0.8358606100082397,
+      "actual_velocity": 0.0029955327045172453,
+      "mean_speed_xy": 0.03583693876862526,
+      "actual_forward_distance": -0.0026455926708877087,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 6,
+      "env_id": 7,
+      "env_episode_id": 0,
+      "episode_return": -3.875746011734009,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.4328974187374115,
+      "velocity_tracking": 0.47299087047576904,
+      "actual_velocity": -0.13791298866271973,
+      "mean_speed_xy": 0.24791219830513,
+      "actual_forward_distance": -0.046651288866996765,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 7,
+      "env_id": 0,
+      "env_episode_id": 1,
+      "episode_return": -3.6876144409179688,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.21541421115398407,
+      "velocity_tracking": 0.8300654292106628,
+      "actual_velocity": 0.06781335920095444,
+      "mean_speed_xy": 0.09823884814977646,
+      "actual_forward_distance": -0.003567510051652789,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 8,
+      "env_id": 3,
+      "env_episode_id": 1,
+      "episode_return": -3.9833924770355225,
+      "episode_length": 9,
+      "velocity_tracking_error": 1.2154914140701294,
+      "velocity_tracking": 0.0027483731973916292,
+      "actual_velocity": -0.3669807016849518,
+      "mean_speed_xy": 0.6214368939399719,
+      "actual_forward_distance": -0.08612020313739777,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 9,
+      "env_id": 7,
+      "env_episode_id": 1,
+      "episode_return": -3.8879811763763428,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.3648703098297119,
+      "velocity_tracking": 0.587144672870636,
+      "actual_velocity": 0.06393805891275406,
+      "mean_speed_xy": 0.11706650257110596,
+      "actual_forward_distance": 0.015899674966931343,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 10,
+      "env_id": 1,
+      "env_episode_id": 1,
+      "episode_return": -3.9435818195343018,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.5095029473304749,
+      "velocity_tracking": 0.3541075587272644,
+      "actual_velocity": -0.34804990887641907,
+      "mean_speed_xy": 0.3593583405017853,
+      "actual_forward_distance": -0.05898423492908478,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 11,
+      "env_id": 4,
+      "env_episode_id": 1,
+      "episode_return": -3.9323320388793945,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.7457975149154663,
+      "velocity_tracking": 0.10992763936519623,
+      "actual_velocity": -0.19744132459163666,
+      "mean_speed_xy": 0.199965238571167,
+      "actual_forward_distance": -0.06329154223203659,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 12,
+      "env_id": 5,
+      "env_episode_id": 1,
+      "episode_return": -3.963219404220581,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.5185644030570984,
+      "velocity_tracking": 0.3475472033023834,
+      "actual_velocity": 0.448962539434433,
+      "mean_speed_xy": 0.5185645222663879,
+      "actual_forward_distance": 0.08724063634872437,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 13,
+      "env_id": 0,
+      "env_episode_id": 2,
+      "episode_return": -4.01081657409668,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.8770154118537903,
+      "velocity_tracking": 0.04827108234167099,
+      "actual_velocity": 0.1505153477191925,
+      "mean_speed_xy": 0.5101737380027771,
+      "actual_forward_distance": 0.008070189505815506,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 14,
+      "env_id": 3,
+      "env_episode_id": 2,
+      "episode_return": -3.976454496383667,
+      "episode_length": 12,
+      "velocity_tracking_error": 0.842954158782959,
+      "velocity_tracking": 0.05847534164786339,
+      "actual_velocity": -0.1291038990020752,
+      "mean_speed_xy": 0.4458354115486145,
+      "actual_forward_distance": -0.014751564711332321,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 15,
+      "env_id": 1,
+      "env_episode_id": 2,
+      "episode_return": -3.8629608154296875,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.35414114594459534,
+      "velocity_tracking": 0.6055150628089905,
+      "actual_velocity": -0.3822214901447296,
+      "mean_speed_xy": 0.3878619968891144,
+      "actual_forward_distance": -0.07257553935050964,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 16,
+      "env_id": 5,
+      "env_episode_id": 2,
+      "episode_return": -3.939037561416626,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.536835253238678,
+      "velocity_tracking": 0.3165237605571747,
+      "actual_velocity": -0.4149571359157562,
+      "mean_speed_xy": 0.536835253238678,
+      "actual_forward_distance": -0.1186317652463913,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 17,
+      "env_id": 7,
+      "env_episode_id": 2,
+      "episode_return": -3.9237728118896484,
+      "episode_length": 12,
+      "velocity_tracking_error": 0.8672888278961182,
+      "velocity_tracking": 0.05045859143137932,
+      "actual_velocity": -0.06508265435695648,
+      "mean_speed_xy": 0.2091449350118637,
+      "actual_forward_distance": -0.0005679288879036903,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 18,
+      "env_id": 4,
+      "env_episode_id": 2,
+      "episode_return": -3.806086778640747,
+      "episode_length": 12,
+      "velocity_tracking_error": 0.8939949870109558,
+      "velocity_tracking": 0.04582534730434418,
+      "actual_velocity": 0.3107869029045105,
+      "mean_speed_xy": 0.5473084449768066,
+      "actual_forward_distance": 0.0711948499083519,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 19,
+      "env_id": 0,
+      "env_episode_id": 3,
+      "episode_return": -3.9954257011413574,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.8727121353149414,
+      "velocity_tracking": 0.04767914488911629,
+      "actual_velocity": 0.05259718373417854,
+      "mean_speed_xy": 0.618246853351593,
+      "actual_forward_distance": -0.0005614273250102997,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 20,
+      "env_id": 7,
+      "env_episode_id": 3,
+      "episode_return": -3.9792544841766357,
+      "episode_length": 10,
+      "velocity_tracking_error": 1.1231483221054077,
+      "velocity_tracking": 0.006493288557976484,
+      "actual_velocity": -0.5382067561149597,
+      "mean_speed_xy": 0.627740204334259,
+      "actual_forward_distance": -0.13043099641799927,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 21,
+      "env_id": 1,
+      "env_episode_id": 3,
+      "episode_return": -3.797093391418457,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.8133392333984375,
+      "velocity_tracking": 0.0720151886343956,
+      "actual_velocity": -0.09052366018295288,
+      "mean_speed_xy": 0.5611523985862732,
+      "actual_forward_distance": -0.03300655260682106,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 22,
+      "env_id": 5,
+      "env_episode_id": 3,
+      "episode_return": -3.6916160583496094,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.07334335148334503,
+      "velocity_tracking": 0.9754552841186523,
+      "actual_velocity": 0.16008727252483368,
+      "mean_speed_xy": 0.22560174763202667,
+      "actual_forward_distance": 0.034867629408836365,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 23,
+      "env_id": 4,
+      "env_episode_id": 3,
+      "episode_return": -3.7352049350738525,
+      "episode_length": 13,
+      "velocity_tracking_error": 0.26551690697669983,
+      "velocity_tracking": 0.7509474754333496,
+      "actual_velocity": 0.37258535623550415,
+      "mean_speed_xy": 0.40502941608428955,
+      "actual_forward_distance": 0.10276343673467636,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 24,
+      "env_id": 6,
+      "env_episode_id": 1,
+      "episode_return": -4.067883014678955,
+      "episode_length": 41,
+      "velocity_tracking_error": 1.1519992351531982,
+      "velocity_tracking": 0.07883027195930481,
+      "actual_velocity": 1.0864782333374023,
+      "mean_speed_xy": 1.2720093727111816,
+      "actual_forward_distance": 0.8281626105308533,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 25,
+      "env_id": 2,
+      "env_episode_id": 0,
+      "episode_return": -4.775568962097168,
+      "episode_length": 53,
+      "velocity_tracking_error": 1.000375747680664,
+      "velocity_tracking": 0.221776083111763,
+      "actual_velocity": 0.8664448857307434,
+      "mean_speed_xy": 0.9908936619758606,
+      "actual_forward_distance": 0.7963317632675171,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 26,
+      "env_id": 2,
+      "env_episode_id": 1,
+      "episode_return": -3.8644535541534424,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.8895902633666992,
+      "velocity_tracking": 0.04391564801335335,
+      "actual_velocity": -0.6911631226539612,
+      "mean_speed_xy": 0.6917170286178589,
+      "actual_forward_distance": -0.124223493039608,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 27,
+      "env_id": 6,
+      "env_episode_id": 2,
+      "episode_return": -3.8041272163391113,
+      "episode_length": 12,
+      "velocity_tracking_error": 0.2960878014564514,
+      "velocity_tracking": 0.7039961814880371,
+      "actual_velocity": -0.15732255578041077,
+      "mean_speed_xy": 0.48076769709587097,
+      "actual_forward_distance": -0.019690196961164474,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 28,
+      "env_id": 2,
+      "env_episode_id": 2,
+      "episode_return": -3.7818145751953125,
+      "episode_length": 10,
+      "velocity_tracking_error": 0.4021669328212738,
+      "velocity_tracking": 0.5239447951316833,
+      "actual_velocity": -0.37817248702049255,
+      "mean_speed_xy": 0.5104216933250427,
+      "actual_forward_distance": -0.08155450224876404,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 29,
+      "env_id": 6,
+      "env_episode_id": 3,
+      "episode_return": -3.9821856021881104,
+      "episode_length": 11,
+      "velocity_tracking_error": 0.6885660290718079,
+      "velocity_tracking": 0.1555919200181961,
+      "actual_velocity": 0.23789432644844055,
+      "mean_speed_xy": 0.36467185616493225,
+      "actual_forward_distance": 0.04247031360864639,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 30,
+      "env_id": 3,
+      "env_episode_id": 3,
+      "episode_return": -4.79056453704834,
+      "episode_length": 53,
+      "velocity_tracking_error": 1.0641604661941528,
+      "velocity_tracking": 0.17564909160137177,
+      "actual_velocity": 1.025841236114502,
+      "mean_speed_xy": 1.0641604661941528,
+      "actual_forward_distance": 0.9160469174385071,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    },
+    {
+      "episode_id": 31,
+      "env_id": 2,
+      "env_episode_id": 3,
+      "episode_return": -3.8741214275360107,
+      "episode_length": 13,
+      "velocity_tracking_error": 0.8998739123344421,
+      "velocity_tracking": 0.0525839664041996,
+      "actual_velocity": 0.5599398612976074,
+      "mean_speed_xy": 0.6146528124809265,
+      "actual_forward_distance": 0.11728712916374207,
+      "command_mode": "original",
+      "seed": 12345,
+      "base_contact": true,
+      "timeout": false,
+      "terminated": true,
+      "truncated": false,
+      "fall": true
+    }
+  ],
+  "definitions": {
+    "velocity_tracking_error": "episode mean XY command L2 error in yaw-only root frame (m/s)",
+    "velocity_tracking": "episode mean exp(-XY squared error/0.5^2)",
+    "actual_velocity": "episode mean root forward velocity in yaw-only frame (m/s)",
+    "actual_forward_distance": "root XY net displacement projected on initial yaw heading (m)",
+    "base_contact": "original base_contact illegal_contact term (includes non-foot body parts)",
+    "fall": "base_contact, including simultaneous timeout",
+    "timeout": "time_out term; truncated is separately read from termination manager",
+    "episode_return": "sum of original dt-scaled rewards, including terminal transition"
+  },
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_iteration": 0,
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "step_dt": 0.02,
+  "reset_batches": [
+    {
+      "step": 10,
+      "env_ids": [
+        0
+      ]
+    },
+    {
+      "step": 11,
+      "env_ids": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "step": 20,
+      "env_ids": [
+        0,
+        3
+      ]
+    },
+    {
+      "step": 21,
+      "env_ids": [
+        7
+      ]
+    },
+    {
+      "step": 22,
+      "env_ids": [
+        1,
+        4,
+        5
+      ]
+    },
+    {
+      "step": 30,
+      "env_ids": [
+        0
+      ]
+    },
+    {
+      "step": 32,
+      "env_ids": [
+        3
+      ]
+    },
+    {
+      "step": 33,
+      "env_ids": [
+        1,
+        5,
+        7
+      ]
+    },
+    {
+      "step": 34,
+      "env_ids": [
+        4
+      ]
+    },
+    {
+      "step": 40,
+      "env_ids": [
+        0
+      ]
+    },
+    {
+      "step": 43,
+      "env_ids": [
+        7
+      ]
+    },
+    {
+      "step": 44,
+      "env_ids": [
+        1,
+        5
+      ]
+    },
+    {
+      "step": 47,
+      "env_ids": [
+        4
+      ]
+    },
+    {
+      "step": 50,
+      "env_ids": [
+        0
+      ]
+    },
+    {
+      "step": 52,
+      "env_ids": [
+        6
+      ]
+    },
+    {
+      "step": 53,
+      "env_ids": [
+        2
+      ]
+    },
+    {
+      "step": 54,
+      "env_ids": [
+        7
+      ]
+    },
+    {
+      "step": 55,
+      "env_ids": [
+        5
+      ]
+    },
+    {
+      "step": 57,
+      "env_ids": [
+        1
+      ]
+    },
+    {
+      "step": 61,
+      "env_ids": [
+        0
+      ]
+    },
+    {
+      "step": 63,
+      "env_ids": [
+        2
+      ]
+    },
+    {
+      "step": 64,
+      "env_ids": [
+        6
+      ]
+    },
+    {
+      "step": 67,
+      "env_ids": [
+        5
+      ]
+    },
+    {
+      "step": 69,
+      "env_ids": [
+        1
+      ]
+    },
+    {
+      "step": 73,
+      "env_ids": [
+        0,
+        2
+      ]
+    },
+    {
+      "step": 75,
+      "env_ids": [
+        6
+      ]
+    },
+    {
+      "step": 79,
+      "env_ids": [
+        5
+      ]
+    },
+    {
+      "step": 80,
+      "env_ids": [
+        1
+      ]
+    },
+    {
+      "step": 85,
+      "env_ids": [
+        3
+      ]
+    },
+    {
+      "step": 86,
+      "env_ids": [
+        2,
+        6
+      ]
+    }
+  ],
+  "episode_return_max_error": 1.1920928955078125e-06,
+  "mean_action_max_error": 0.0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "completed_per_env": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+  ],
+  "unfinished_episode_lengths": [
+    13,
+    6,
+    0,
+    1,
+    39,
+    7,
+    0,
+    32
+  ],
+  "asynchronous_reset_observed": true
+}

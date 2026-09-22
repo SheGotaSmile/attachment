@@ -1,0 +1,1500 @@
+diff --git a/scripts/instinct_rl/train.py b/scripts/instinct_rl/train.py
+index 5a0e906..0824b03 100644
+--- a/scripts/instinct_rl/train.py
++++ b/scripts/instinct_rl/train.py
+@@ -44,6 +44,9 @@ parser.add_argument(
+ parser.add_argument("--debug", action="store_true", default=False, help="Enable debug mode.")
+ # train.py specific arguments
+ parser.add_argument("--cprofile", action="store_true", default=False, help="Enable cProfile.")
++parser.add_argument("--e0_audit", action="store_true", help="Record E0 runtime checks without changing the task.")
++parser.add_argument("--e0_reference", type=str, default=None, help="E0 pre-save action reference for a resumed run.")
++parser.add_argument("--e1_audit", action="store_true", help="Read-only diagnostics for a fresh Flat pilot.")
+ # append Instinct-RL cli arguments
+ cli_args.add_instinct_rl_args(parser)
+ # append AppLauncher cli args
+@@ -209,6 +212,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
+         # load previously trained model
+         runner.load(resume_path)
++        # The current external PPO checkpoint restores the optimizer but not the
++        # scalar used by its adaptive KL schedule. Keep both states consistent.
++        if getattr(runner.alg, "schedule", None) == "adaptive":
++            learning_rates = {group["lr"] for group in runner.alg.optimizer.param_groups}
++            if len(learning_rates) != 1:
++                raise RuntimeError("Adaptive PPO resume requires one common optimizer learning rate.")
++            restored_lr = learning_rates.pop()
++            print(f"[INFO]: Restoring adaptive learning rate: {runner.alg.learning_rate} -> {restored_lr}")
++            runner.alg.learning_rate = restored_lr
+ 
+     # dump the configuration into log-directory
+     if not ("LOCAL_RANK" in os.environ and dist.get_rank() > 0):
+@@ -226,11 +238,32 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         )
+         cprofile.enable()
+ 
++    audit = None
++    if args_cli.e1_audit:
++        if args_cli.e0_audit or agent_cfg.resume:
++            raise ValueError('E1 pilot audit requires fresh initialization and no E0 audit.')
++        from e1_training_audit import E1TrainingAudit
++
++        audit = E1TrainingAudit(runner, env, log_dir)
++    if args_cli.e0_audit:
++        from e0_training_audit import E0TrainingAudit
++
++        audit = E0TrainingAudit(runner, env, log_dir, args_cli.e0_reference)
++
+     # run training
+-    runner.learn(
+-        num_learning_iterations=agent_cfg.max_iterations,
+-        init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
+-    )
++    success = False
++    try:
++        runner.learn(
++            num_learning_iterations=agent_cfg.max_iterations,
++            init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
++        )
++        success = True
++    finally:
++        if audit is not None:
++            audit.finish(success)
++        if runner.writer is not None:
++            runner.writer.flush()
++            runner.writer.close()
+ 
+     if args_cli.cprofile:
+         cprofile.disable()
+diff --git a/scripts/instinct_rl/e1_training_audit.py b/scripts/instinct_rl/e1_training_audit.py
+new file mode 100644
+index 0000000..54212f3
+--- /dev/null
++++ b/scripts/instinct_rl/e1_training_audit.py
+@@ -0,0 +1,146 @@
++"""Opt-in Flat pilot diagnostics; does not change task or optimizer operations."""
++
++import hashlib
++import json
++import time
++from collections import deque
++from pathlib import Path
++
++import torch
++
++from e0_training_audit import finite, plain
++from flat_metrics import measurements
++
++
++class E1TrainingAudit:
++    def __init__(self, runner, env, log_dir):
++        self.runner, self.env = runner, env
++        self.path = Path(log_dir) / 'e1_training_audit.json'
++        raw = env.unwrapped
++        assert raw.spec.id == 'Instinct-Locomotion-Flat-G1-v0'
++        assert runner.current_learning_iteration == 0 and not runner.alg.optimizer.state
++        assert not runner.cfg.get('resume') and not runner.cfg.get('load_run')
++        self.started = self.last_update = time.perf_counter()
++        self.sums = {}
++        self.returns = torch.zeros(env.num_envs, device=env.device)
++        self.recent_returns = deque(maxlen=100)
++        self.data = dict(status='RUNNING', starting_iteration=0, random_initialization=True,
++                         checkpoint_loaded=False, steps=0, minibatch_loss_checks=0,
++                         gradient_checks=0, updates=[], checkpoints=[], runtime={
++                             'num_envs': env.num_envs, 'rollout_length': runner.num_steps_per_env,
++                             'observation_terms': env.get_obs_format(), 'physics_dt': raw.physics_dt,
++                             'step_dt': raw.step_dt, 'decimation': raw.cfg.decimation})
++        # Preserve this run's random model as evidence; never read an E0 checkpoint.
++        runner.save(str(Path(log_dir) / 'model_initial.pt'))
++        self.data['initial_checkpoint_sha256'] = hashlib.sha256(
++            (Path(log_dir) / 'model_initial.pt').read_bytes()).hexdigest()
++        torch.cuda.reset_peak_memory_stats()
++        self.install()
++        self.flush()
++
++    def flush(self):
++        self.path.write_text(json.dumps(plain(self.data), indent=2, allow_nan=False) + '\n')
++
++    def install(self):
++        raw, runner = self.env.unwrapped, self.runner
++        reward_compute, step = raw.reward_manager.compute, self.env.step
++        update, losses, save = runner.alg.update, runner.alg.compute_losses, runner.save
++
++        def compute(*args, **kwargs):
++            reward = reward_compute(*args, **kwargs)
++            values = measurements(raw)
++            values['mean_step_reward'] = reward.reshape(raw.num_envs, -1).sum(-1)
++            finite(values, 'E1.pre_reset_metrics')
++            for name, value in values.items():
++                self.sums[name] = self.sums.get(name, 0.0) + float(value.float().mean())
++            self.returns += values['mean_step_reward']
++            done = values['terminated'] | values['truncated']
++            self.recent_returns.extend(self.returns[done].cpu().tolist())
++            self.returns[done] = 0
++            return reward
++
++        def checked_step(actions):
++            finite(actions, 'E1.actions')
++            result = step(actions)
++            finite(result[0], 'E1.policy_obs')
++            finite(result[1], 'E1.rewards')
++            finite(result[3]['observations'], 'E1.all_obs')
++            self.data['steps'] += 1
++            shapes = {'policy': list(result[0].shape),
++                      'critic': list(result[3]['observations']['critic'].shape), 'action': list(actions.shape)}
++            assert shapes == {'policy': [raw.num_envs, 96], 'critic': [raw.num_envs, 99],
++                              'action': [raw.num_envs, 29]}, shapes
++            self.data['runtime']['shapes'] = shapes
++            return result
++
++        def checked_losses(*args, **kwargs):
++            result = losses(*args, **kwargs)
++            finite(result, 'E1.minibatch_losses_and_intermediates')
++            self.data['minibatch_loss_checks'] += 1
++            return result
++
++        def before_optimizer(optimizer, args, kwargs):
++            gradients = [p.grad for p in runner.alg.actor_critic.parameters() if p.grad is not None]
++            assert gradients
++            finite(gradients, 'E1.actual_gradients_before_optimizer')
++            finite([g['lr'] for g in optimizer.param_groups], 'E1.optimizer_lr')
++            self.data['gradient_checks'] += 1
++
++        self.gradient_hook = runner.alg.optimizer.register_step_pre_hook(before_optimizer)
++
++        def checked_update(iteration):
++            result = update(iteration)
++            finite(result, 'E1.update')
++            finite(runner.alg.state_dict(), 'E1.model_optimizer')
++            for name, norm in runner.normalizers.items():
++                finite(norm.state_dict(), f'E1.normalizer.{name}')
++            now = time.perf_counter()
++            metrics = {k: v / runner.num_steps_per_env for k, v in self.sums.items()}
++            metrics['mean_episode_return_last100'] = (
++                sum(self.recent_returns) / len(self.recent_returns) if self.recent_returns else None)
++            metrics['action_standard_deviation'] = float(runner.alg.actor_critic.std.mean())
++            metrics['learning_rate'] = float(runner.alg.learning_rate)
++            metrics['transitions_per_second'] = raw.num_envs * runner.num_steps_per_env / (now-self.last_update)
++            entry = dict(iteration=iteration, metrics=metrics, losses=plain(result[0]), stats=plain(result[1]))
++            finite(entry, 'E1.update_entry')
++            self.data['updates'].append(entry)
++            if runner.writer:
++                for key, value in metrics.items():
++                    if value is not None:
++                        runner.writer.add_scalar(f'E1/{key}', value, iteration)
++                for key, value in result[0].items():
++                    runner.writer.add_scalar(f'E1/Loss/{key}', float(value), iteration)
++                for key, value in result[1].items():
++                    runner.writer.add_scalar(f'E1/Stats/{key}', float(value), iteration)
++            self.sums.clear()
++            self.last_update = now
++            self.flush()
++            if (iteration + 1) % 10 == 0:
++                print(f'[E1 AUDIT] {iteration+1}/200 updates finite; {metrics}', flush=True)
++            return result
++
++        def checked_save(path, infos=None):
++            result = save(path, infos)
++            state = torch.load(path, map_location='cpu', weights_only=True)
++            finite(state, 'E1.saved_checkpoint')
++            self.data['checkpoints'].append({'path': str(Path(path).resolve()), 'iter': state['iter'],
++                'sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest()})
++            self.flush()
++            return result
++
++        raw.reward_manager.compute = compute
++        self.env.step = checked_step
++        runner.alg.compute_losses = checked_losses
++        runner.alg.update = checked_update
++        runner.save = checked_save
++
++    def finish(self, success):
++        elapsed = time.perf_counter() - self.started
++        self.data.update(status='PASS' if success else 'FAIL',
++            ending_iteration=self.runner.current_learning_iteration,
++            actual_transitions=self.data['steps'] * self.env.num_envs,
++            elapsed_training_seconds=elapsed,
++            transitions_per_second=self.data['steps'] * self.env.num_envs / elapsed,
++            torch_peak_allocated_bytes=torch.cuda.max_memory_allocated(),
++            torch_peak_reserved_bytes=torch.cuda.max_memory_reserved())
++        self.flush()
+diff --git a/scripts/instinct_rl/evaluate_flat.py b/scripts/instinct_rl/evaluate_flat.py
+new file mode 100644
+index 0000000..2484511
+--- /dev/null
++++ b/scripts/instinct_rl/evaluate_flat.py
+@@ -0,0 +1,251 @@
++"""Independent Gaussian-mean evaluator for the unmodified Flat G1 training task."""
++
++import argparse
++import csv
++import hashlib
++import json
++import os
++from pathlib import Path
++import sys
++import traceback
++from types import MethodType
++
++TASK = 'Instinct-Locomotion-Flat-G1-v0'
++FIELDS = ['episode_id', 'env_id', 'env_episode_id', 'episode_return', 'episode_length',
++          'velocity_tracking_error', 'velocity_tracking', 'base_contact', 'timeout', 'fall',
++          'terminated', 'truncated', 'actual_forward_distance', 'actual_velocity',
++          'mean_speed_xy', 'command_mode', 'seed']
++
++
++def load_exported_yaml(path):
++    """Read Isaac's tuples/slices for comparison, without arbitrary object loading."""
++    import yaml
++
++    class ExportLoader(yaml.FullLoader):
++        pass
++
++    ExportLoader.add_constructor('tag:yaml.org,2002:python/object/apply:builtins.slice',
++        lambda loader, node: {'slice': loader.construct_sequence(node)})
++    return yaml.load(Path(path).read_text(), Loader=ExportLoader)
++
++
++def write_results(output, report):
++    (output/'episodes.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
++    with (output/'episodes.csv').open('w', newline='') as stream:
++        writer = csv.DictWriter(stream, fieldnames=FIELDS)
++        writer.writeheader()
++        writer.writerows(report['episodes'])
++
++
++def evaluate(args, report, output):
++    # Isaac modules must be imported after AppLauncher has started Kit.
++    import gymnasium as gym
++    import torch
++    from isaaclab.utils.io import dump_yaml
++    from isaaclab.utils.math import quat_apply, yaw_quat
++    from isaaclab_tasks.utils import parse_env_cfg
++    from instinct_rl.runners import OnPolicyRunner
++    import instinctlab.tasks  # noqa: F401
++    from instinctlab.utils.wrappers import InstinctRlVecEnvWrapper
++    from e0_training_audit import finite, equal_state
++    from flat_metrics import measurements
++
++    checkpoint = Path(args.checkpoint).resolve()
++    if 'e0' in checkpoint.parts:
++        raise ValueError('E0 checkpoints are excluded from this pilot evaluator.')
++    train_dir = checkpoint.parent
++    train_env = load_exported_yaml(train_dir/'params/env.yaml')
++    train_agent = load_exported_yaml(train_dir/'params/agent.yaml')
++    if train_agent['policy']['class_name'] != 'ActorCritic' or train_agent.get('ckpt_manipulator'):
++        raise ValueError('Only the original Flat ActorCritic checkpoint is supported.')
++    env_cfg = parse_env_cfg(TASK, device=args.device, num_envs=args.num_envs)
++    env_cfg.seed = args.seed
++    # Original registry configuration, including noise/randomization/push/commands.
++    # Check semantic equivalence after manager resolution, rather than using Play.
++    env = InstinctRlVecEnvWrapper(gym.make(TASK, cfg=env_cfg))
++    raw = env.unwrapped
++    original_compute = raw.reward_manager.compute
++    original_reset = raw._reset_idx
++    try:
++        dump_yaml(str(output/'env.yaml'), env_cfg)
++        eval_env = load_exported_yaml(output/'env.yaml')
++        checked_sections = ['actions', 'observations', 'commands', 'rewards', 'terminations',
++                            'events', 'curriculum', 'decimation', 'episode_length_s']
++        mismatches = [key for key in checked_sections if train_env[key] != eval_env[key]]
++        if train_env['scene']['robot']['actuators'] != eval_env['scene']['robot']['actuators']:
++            mismatches.append('actuators')
++        assert not mismatches, f'Task definition drift: {mismatches}'
++        assert raw.cfg.scene.terrain.terrain_type == 'plane'
++        runner = OnPolicyRunner(env, train_agent, log_dir=None, device=args.device)
++        saved = torch.load(checkpoint, map_location='cpu', weights_only=True)
++        finite(saved, 'evaluation.checkpoint')
++        runner.load(str(checkpoint))
++        policy = runner.get_inference_policy(device=args.device)
++        assert set(runner.normalizers) == {'policy', 'critic'}
++        modules = {'model': runner.alg.actor_critic, **runner.normalizers}
++        before = {name: {k: v.detach().cpu().clone() for k, v in module.state_dict().items()}
++                  for name, module in modules.items()}
++        restored = {'model': equal_state(before['model'], saved['model_state_dict'])}
++        restored.update({name: equal_state(before[name], saved[f'{name}_normalizer_state_dict'])
++                         for name in runner.normalizers})
++        assert all(restored.values()), restored
++        assert all(not module.training for module in modules.values())
++        report.update(checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
++                      loaded_iteration=runner.current_learning_iteration, loaded_states_equal=restored,
++                      configuration_sections_equal=checked_sections+['actuators'], step_dt=raw.step_dt)
++        robot = raw.scene['robot']
++        counts = [0] * raw.num_envs
++        returns = torch.zeros(raw.num_envs, device=raw.device)
++        lengths = torch.zeros(raw.num_envs, device=raw.device, dtype=torch.long)
++        sums = {key: torch.zeros_like(returns) for key in
++                ['base_velocity_error', 'velocity_tracking', 'forward_velocity', 'speed_xy']}
++        start_pos = robot.data.root_pos_w[:, :2].clone()
++
++        def heading():
++            basis = torch.zeros_like(robot.data.root_pos_w)
++            basis[:, 0] = 1
++            return quat_apply(yaw_quat(robot.data.root_quat_w), basis)[:, :2]
++
++        start_heading = heading().clone()
++        latest = {}
++        report['reset_batches'] = []
++        report['episode_return_max_error'] = 0.0
++
++        def compute(*pos, **kw):
++            reward = original_compute(*pos, **kw)
++            latest.clear()
++            latest.update(measurements(raw))
++            finite(latest, 'evaluation.pre_reset_metrics')
++            finite(reward, 'evaluation.reward')
++            # Includes the terminal transition; executes before any auto-reset.
++            returns.add_(reward.reshape(raw.num_envs, -1).sum(-1))
++            lengths.add_(1)
++            for key in sums:
++                sums[key].add_(latest[key])
++            return reward
++
++        def reset_hook(self, env_ids):
++            ids = env_ids.tolist()
++            report['reset_batches'].append({'step': report['vector_steps']+1, 'env_ids': ids})
++            for env_id in ids:
++                assert lengths[env_id] == self.episode_length_buf[env_id]
++                if counts[env_id] >= args.episodes_per_env:
++                    continue
++                length = int(lengths[env_id])
++                assert length > 0
++                # Independent cross-check against the environment's per-term
++                # episode sums, also still intact before reset.
++                manager_return = sum(value[env_id] for value in self.reward_manager._episode_sums.values())
++                error = float((manager_return - returns[env_id]).abs())
++                report['episode_return_max_error'] = max(report['episode_return_max_error'], error)
++                assert torch.isclose(manager_return, returns[env_id], atol=1e-4, rtol=1e-5), error
++                row = dict(episode_id=len(report['episodes']), env_id=env_id,
++                    env_episode_id=counts[env_id], episode_return=float(returns[env_id]), episode_length=length,
++                    velocity_tracking_error=float(sums['base_velocity_error'][env_id]/length),
++                    velocity_tracking=float(sums['velocity_tracking'][env_id]/length),
++                    actual_velocity=float(sums['forward_velocity'][env_id]/length),
++                    mean_speed_xy=float(sums['speed_xy'][env_id]/length),
++                    actual_forward_distance=float(torch.dot(
++                        robot.data.root_pos_w[env_id, :2]-start_pos[env_id], start_heading[env_id])),
++                    command_mode='original', seed=args.seed)
++                for key in ['base_contact', 'timeout', 'terminated', 'truncated']:
++                    row[key] = bool(latest[key][env_id])
++                # A physical fall and timeout may both occur in the same step.
++                row['fall'] = row['base_contact']
++                assert row['terminated'] or row['truncated']
++                finite(row, 'evaluation.episode')
++                report['episodes'].append(row)
++                counts[env_id] += 1
++            result = original_reset(env_ids)
++            returns[env_ids] = 0
++            lengths[env_ids] = 0
++            for value in sums.values():
++                value[env_ids] = 0
++            start_pos[env_ids] = robot.data.root_pos_w[env_ids, :2]
++            start_heading[env_ids] = heading()[env_ids]
++            return result
++
++        raw.reward_manager.compute = compute
++        raw._reset_idx = MethodType(reset_hook, raw)
++        obs, extras = env.get_observations()
++        with torch.inference_mode():
++            first_actions = policy(obs)
++            direct_mean = runner.alg.actor_critic.actor(runner.normalizers['policy'](obs))
++            report['mean_action_max_error'] = float((first_actions-direct_mean).abs().max())
++            assert torch.equal(first_actions, direct_mean)
++            for _ in range(args.max_steps):
++                finite(obs, 'evaluation.obs')
++                finite(extras['observations'], 'evaluation.all_obs')
++                actions = policy(obs)
++                finite(actions, 'evaluation.mean_actions')
++                obs, reward, done, extras = env.step(actions)
++                assert torch.equal(done.bool(), latest['terminated'] | latest['truncated'])
++                report['vector_steps'] += 1
++                if all(count >= args.episodes_per_env for count in counts):
++                    break
++        finite(obs, 'evaluation.final_obs')
++        report['states_unchanged'] = {name: equal_state(before[name], module.state_dict())
++                                      for name, module in modules.items()}
++        assert all(report['states_unchanged'].values()), report['states_unchanged']
++        assert all(not module.training for module in modules.values())
++        report['completed_per_env'] = counts
++        report['unfinished_episode_lengths'] = lengths.cpu().tolist()
++        assert all(count == args.episodes_per_env for count in counts), 'Episode quota not met within max_steps'
++        report['asynchronous_reset_observed'] = any(len(b['env_ids']) < raw.num_envs for b in report['reset_batches'])
++        report['status'] = 'PASS'
++    finally:
++        raw.reward_manager.compute = original_compute
++        raw._reset_idx = original_reset
++        env.close()
++
++
++def main():
++    from isaaclab.app import AppLauncher
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--checkpoint', required=True)
++    parser.add_argument('--output-dir', required=True)
++    parser.add_argument('--num-envs', type=int, default=8)
++    parser.add_argument('--episodes-per-env', type=int, default=4)
++    parser.add_argument('--max-steps', type=int, default=5000)
++    parser.add_argument('--seed', type=int, default=12345)
++    parser.add_argument('--task', choices=[TASK], default=TASK)
++    parser.add_argument('--command-mode', choices=['original'], default='original')
++    AppLauncher.add_app_launcher_args(parser)
++    args = parser.parse_args()
++    if min(args.num_envs, args.episodes_per_env, args.max_steps) < 1:
++        parser.error('num-envs, episodes-per-env and max-steps must be positive')
++    if args.enable_cameras:
++        parser.error('Camera input is excluded from this evaluator')
++    output = Path(args.output_dir).resolve()
++    output.mkdir(parents=True, exist_ok=False)
++    report = dict(status='RUNNING', argv=sys.argv, pid=os.getpid(), task=TASK,
++                  checkpoint=str(Path(args.checkpoint).resolve()), seed=args.seed, num_envs=args.num_envs,
++                  command_mode='original', sampled=False, vector_steps=0, episodes=[],
++                  definitions={
++                      'velocity_tracking_error': 'episode mean XY command L2 error in yaw-only root frame (m/s)',
++                      'velocity_tracking': 'episode mean exp(-XY squared error/0.5^2)',
++                      'actual_velocity': 'episode mean root forward velocity in yaw-only frame (m/s)',
++                      'actual_forward_distance': 'root XY net displacement projected on initial yaw heading (m)',
++                      'base_contact': 'original base_contact illegal_contact term (includes non-foot body parts)',
++                      'fall': 'base_contact, including simultaneous timeout',
++                      'timeout': 'time_out term; truncated is separately read from termination manager',
++                      'episode_return': 'sum of original dt-scaled rewards, including terminal transition'})
++    app = None
++    try:
++        app = AppLauncher(args).app
++        evaluate(args, report, output)
++    except Exception:
++        report.update(status='FAIL', traceback=traceback.format_exc())
++        traceback.print_exc()
++    finally:
++        write_results(output, report)
++        # Kit fast shutdown can terminate the interpreter inside close().
++        # Persist and announce the authoritative status before that call.
++        print(f"[FLAT EVALUATOR] {report['status']}: {output}", flush=True)
++        if app is not None:
++            app.close()
++    return 0 if report['status'] == 'PASS' else 1
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/scripts/instinct_rl/flat_metrics.py b/scripts/instinct_rl/flat_metrics.py
+new file mode 100644
+index 0000000..27b8963
+--- /dev/null
++++ b/scripts/instinct_rl/flat_metrics.py
+@@ -0,0 +1,21 @@
++"""Read-only measurements at the reward-computation boundary, before auto-reset."""
++
++import torch
++from isaaclab.utils.math import quat_apply_inverse, yaw_quat
++
++
++def measurements(raw):
++    robot = raw.scene['robot']
++    velocity = quat_apply_inverse(yaw_quat(robot.data.root_quat_w), robot.data.root_lin_vel_w)
++    command = raw.command_manager.get_command('base_velocity')
++    error = (velocity[:, :2] - command[:, :2]).norm(dim=-1)
++    return {
++        'base_velocity_error': error,
++        'velocity_tracking': torch.exp(-error.square() / 0.5**2),
++        'forward_velocity': velocity[:, 0],
++        'speed_xy': robot.data.root_lin_vel_w[:, :2].norm(dim=-1),
++        'terminated': raw.termination_manager.terminated.clone(),
++        'truncated': raw.termination_manager.time_outs.clone(),
++        'timeout': raw.termination_manager.get_term('time_out').clone(),
++        'base_contact': raw.termination_manager.get_term('base_contact').clone(),
++    }
+diff --git a/scripts/instinct_rl/e0_training_audit.py b/scripts/instinct_rl/e0_training_audit.py
+new file mode 100644
+index 0000000..4e3aee3
+--- /dev/null
++++ b/scripts/instinct_rl/e0_training_audit.py
+@@ -0,0 +1,192 @@
++"""Opt-in observation of the existing runner; no policy/configuration changes."""
++
++import hashlib
++import json
++import math
++from pathlib import Path
++
++import gymnasium as gym
++import torch
++
++
++def plain(value):
++    if isinstance(value, torch.Tensor):
++        return plain(value.detach().cpu().tolist())
++    if isinstance(value, dict):
++        return {str(key): plain(item) for key, item in value.items()}
++    if isinstance(value, (tuple, list)):
++        return [plain(item) for item in value]
++    if isinstance(value, float) and not math.isfinite(value):
++        return str(value)
++    return value
++
++
++def finite(value, label):
++    if isinstance(value, torch.Tensor):
++        if not bool(torch.isfinite(value).all()):
++            raise FloatingPointError(f"E0 non-finite tensor: {label}")
++    elif isinstance(value, dict):
++        for key, item in value.items():
++            finite(item, f"{label}.{key}")
++    elif isinstance(value, (list, tuple)):
++        for index, item in enumerate(value):
++            finite(item, f"{label}[{index}]")
++    elif isinstance(value, float) and not math.isfinite(value):
++        raise FloatingPointError(f"E0 non-finite scalar: {label}")
++
++
++def equal_state(left, right):
++    if isinstance(left, torch.Tensor):
++        return isinstance(right, torch.Tensor) and torch.equal(left.detach().cpu(), right.detach().cpu())
++    if isinstance(left, dict):
++        return left.keys() == right.keys() and all(equal_state(left[key], right[key]) for key in left)
++    if isinstance(left, (list, tuple)):
++        return len(left) == len(right) and all(equal_state(a, b) for a, b in zip(left, right))
++    return left == right
++
++
++class E0TrainingAudit:
++    def __init__(self, runner, env, log_dir, reference=None):
++        self.runner, self.env = runner, env
++        self.path = Path(log_dir) / 'e0_training_audit.json'
++        raw = env.unwrapped
++        term = raw.action_manager.get_term('joint_pos')
++        self.fixed_input = None
++        self.data = {'status': 'RUNNING', 'steps': 0, 'updates': [], 'minibatch_loss_checks': 0,
++                     'gradient_parameter_checks': 0, 'checkpoints': [], 'starting_iteration': runner.current_learning_iteration,
++                     'runtime': {'task': raw.spec.id, 'registered_tasks': sorted(key for key in gym.registry if key.startswith('Instinct-')),
++                                 'num_envs': env.num_envs, 'num_actions': env.num_actions,
++                                 'observation_terms': env.get_obs_format(), 'resolved_joint_names': term._joint_names,
++                                 'action_scale': term._scale, 'action_offset': term._offset,
++                                 'physics_dt': raw.physics_dt, 'step_dt': raw.step_dt, 'decimation': raw.cfg.decimation,
++                                 'rollout_length': runner.num_steps_per_env,
++                                 'actuators': {name: type(actuator).__name__ for name, actuator in raw.scene['robot'].actuators.items()}}}
++        self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.flush()
++        if reference:
++            self.verify_loaded(reference)
++        self.install()
++
++    def flush(self):
++        self.path.write_text(json.dumps(plain(self.data), indent=2, ensure_ascii=False, allow_nan=False) + '\n')
++
++    def deterministic(self, observations):
++        actor = self.runner.alg.actor_critic
++        modules = [actor, *self.runner.normalizers.values()]
++        modes = [module.training for module in modules]
++        try:
++            for module in modules:
++                module.eval()
++            with torch.inference_mode():
++                norm = self.runner.normalizers.get('policy')
++                return actor.act_inference(norm(observations) if norm else observations).detach().clone()
++        finally:
++            for module, mode in zip(modules, modes):
++                module.train(mode)
++
++    def verify_loaded(self, reference_path):
++        reference = torch.load(reference_path, weights_only=True, map_location='cpu')
++        checkpoint_path = Path(reference_path).with_suffix('').with_suffix('')
++        checkpoint = torch.load(checkpoint_path, weights_only=True, map_location='cpu')
++        self.fixed_input = reference['observations'].to(self.env.device)
++        actions = self.deterministic(self.fixed_input).cpu()
++        error = float((actions - reference['actions']).abs().max())
++        result = {'checkpoint': str(checkpoint_path), 'reference': str(reference_path), 'max_absolute_error': error,
++                  'atol': 1e-6, 'rtol': 1e-5, 'actions_equal': bool(torch.allclose(actions, reference['actions'], atol=1e-6, rtol=1e-5)),
++                  'iteration': self.runner.current_learning_iteration,
++                  'iteration_equal': self.runner.current_learning_iteration == checkpoint['iter'],
++                  'model_equal': equal_state(self.runner.alg.actor_critic.state_dict(), checkpoint['model_state_dict']),
++                  'optimizer_equal': equal_state(self.runner.alg.optimizer.state_dict(), checkpoint['optimizer_state_dict']),
++                  'normalizers_equal': {name: equal_state(norm.state_dict(), checkpoint[f'{name}_normalizer_state_dict'])
++                                        for name, norm in self.runner.normalizers.items()}}
++        result['algorithm_learning_rate'] = self.runner.alg.learning_rate
++        result['optimizer_learning_rates'] = [group['lr'] for group in self.runner.alg.optimizer.param_groups]
++        result['adaptive_learning_rate_equal'] = self.runner.alg.schedule != 'adaptive' or all(
++            rate == self.runner.alg.learning_rate for rate in result['optimizer_learning_rates'])
++        finite(actions, 'loaded_actions')
++        result['status'] = 'PASS' if all([result['actions_equal'], result['iteration_equal'], result['model_equal'],
++                                         result['optimizer_equal'], result['adaptive_learning_rate_equal'],
++                                         *result['normalizers_equal'].values()]) else 'FAIL'
++        self.data['checkpoint_roundtrip'] = result
++        self.flush()
++        if result['status'] != 'PASS':
++            raise AssertionError(f'E0 checkpoint restore mismatch: {result}')
++        print('[E0] checkpoint roundtrip:', result, flush=True)
++
++    def install(self):
++        original_step = self.env.step
++        original_losses = self.runner.alg.compute_losses
++        original_gradient = self.runner.alg.gradient_step
++        original_update = self.runner.alg.update
++        original_save = self.runner.save
++
++        def step(actions):
++            finite(actions, 'actions')
++            result = original_step(actions)
++            obs, rewards, _, infos = result
++            finite(infos['observations'], 'observations')
++            finite(rewards, 'rewards')
++            shapes = {'policy': list(obs.shape), 'critic': list(infos['observations']['critic'].shape), 'action': list(actions.shape)}
++            if shapes != {'policy': [4, 96], 'critic': [4, 99], 'action': [4, 29]}:
++                raise AssertionError(f'Unexpected runtime shapes: {shapes}')
++            self.data['runtime']['shapes'] = shapes
++            self.data['steps'] += 1
++            if self.fixed_input is None:
++                self.fixed_input = obs.detach().clone()
++            return result
++
++        def losses(*args, **kwargs):
++            result = original_losses(*args, **kwargs)
++            finite(result[0], 'minibatch_losses')
++            self.data['minibatch_loss_checks'] += 1
++            return result
++
++        def gradient(*args, **kwargs):
++            result = original_gradient(*args, **kwargs)
++            finite(self.runner.alg.actor_critic.state_dict(), 'model_after_gradient')
++            self.data['gradient_parameter_checks'] += 1
++            return result
++
++        def update(iteration):
++            result = original_update(iteration)
++            finite(result, 'update_losses_stats')
++            finite(self.runner.alg.state_dict(), 'model_optimizer_state')
++            for name, norm in self.runner.normalizers.items():
++                finite(norm.state_dict(), f'normalizer.{name}')
++            self.data['updates'].append({'iteration': iteration, 'losses': plain(result[0]), 'stats': plain(result[1])})
++            if self.runner.writer is not None:
++                transitions = (iteration + 1) * self.runner.num_steps_per_env * self.env.num_envs
++                for name, value in result[0].items():
++                    self.runner.writer.add_scalar(f'E0/Loss/{name}', float(value), transitions)
++            self.flush()
++            print(f'[E0] PPO update {iteration} complete; finite checks passed', flush=True)
++            return result
++
++        def save(path, infos=None):
++            if self.fixed_input is None:
++                raise AssertionError('No real env.step observed before checkpoint save')
++            reference = {'observations': self.fixed_input.cpu(), 'actions': self.deterministic(self.fixed_input).cpu()}
++            finite(reference, 'pre_save_reference')
++            result = original_save(path, infos)
++            torch.save(reference, str(path) + '.reference.pt')
++            checkpoint = torch.load(path, weights_only=True, map_location='cpu')
++            finite(checkpoint, 'saved_checkpoint')
++            expected = ['model_state_dict', 'optimizer_state_dict', 'iter', 'policy_normalizer_state_dict', 'critic_normalizer_state_dict']
++            if not all(key in checkpoint for key in expected):
++                raise AssertionError(f'Missing checkpoint keys: {set(expected) - checkpoint.keys()}')
++            self.data['checkpoints'].append({'path': str(Path(path).resolve()), 'sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest(),
++                                              'iter': checkpoint['iter'], 'keys': sorted(checkpoint.keys()),
++                                              'reference': str(Path(str(path) + '.reference.pt').resolve())})
++            self.flush()
++            return result
++
++        self.env.step = step
++        self.runner.alg.compute_losses = losses
++        self.runner.alg.gradient_step = gradient
++        self.runner.alg.update = update
++        self.runner.save = save
++
++    def finish(self, success):
++        self.data.update(status='PASS' if success else 'FAIL', ending_iteration=self.runner.current_learning_iteration,
++                         transitions=self.data['steps'] * self.env.num_envs)
++        self.flush()
+diff --git a/scripts/diagnostics/e1_pilot_run.py b/scripts/diagnostics/e1_pilot_run.py
+new file mode 100644
+index 0000000..e848eab
+--- /dev/null
++++ b/scripts/diagnostics/e1_pilot_run.py
+@@ -0,0 +1,82 @@
++"""Run exactly one fresh E1 Flat pilot, preserving command, git state and GPU samples."""
++
++import argparse
++import csv
++import datetime
++import hashlib
++import json
++import os
++from pathlib import Path
++import shlex
++import subprocess
++import sys
++import tempfile
++import time
++
++
++def capture(argv):
++    result = subprocess.run(argv, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
++    return {'argv': argv, 'returncode': result.returncode, 'output': result.stdout}
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--num-envs', type=int, choices=[64, 32], default=64)
++    args = parser.parse_args()
++    root = Path(__file__).resolve().parents[2]
++    logroot = root / 'logs/e1-flat-pilot'
++    logroot.mkdir(parents=True, exist_ok=True)
++    archive = Path(tempfile.mkdtemp(prefix='pilot_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S_'), dir=logroot))
++    command = [sys.executable, '-B', '-u', 'scripts/instinct_rl/train.py',
++               '--task', 'Instinct-Locomotion-Flat-G1-v0', '--num_envs', str(args.num_envs),
++               '--seed', '42', '--max_iterations', '200', '--headless', '--device', 'cuda:0',
++               '--logroot', str(archive / 'train'), '--run_name', 'E1_flat_pilot_s42', '--e1_audit']
++    manifest = {'status': 'RUNNING', 'cwd': str(root), 'argv': command,
++                'started': datetime.datetime.now().isoformat(), 'repositories': {}}
++    for repo in [root, root.parent/'instinct_rl', root.parent/'IsaacLab-Instinct']:
++        manifest['repositories'][str(repo)] = {
++            'commit': capture(['git', '-C', str(repo), 'rev-parse', 'HEAD']),
++            'status': capture(['git', '-C', str(repo), 'status', '--short', '--untracked-files=all'])}
++    manifest['source_hashes'] = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
++        for p in sorted((root/'source').rglob('*.py'))}
++    (archive/'command.sh').write_text(shlex.join(command)+'\n')
++    (archive/'git_before.diff').write_text(capture(['git', '-C', str(root), 'diff', 'HEAD'])['output'])
++    (archive/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
++    print(f'E1_ARCHIVE={archive}', flush=True)
++    manifest['cuda_preflight'] = capture([sys.executable, '-c',
++        'import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0)); print(torch.ones(1,device="cuda:0"))'])
++    if manifest['cuda_preflight']['returncode']:
++        manifest['status'] = 'BLOCKED_CUDA'
++        (archive/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
++        return 1
++    with (archive/'train.log').open('w') as log, (archive/'gpu.csv').open('w', newline='') as gpu:
++        log.write(shlex.join(command)+'\n')
++        log.flush()
++        writer = csv.writer(gpu)
++        writer.writerow(['wall_time', 'gpu_index', 'memory_used_MiB', 'memory_total_MiB', 'utilization_percent'])
++        start = time.monotonic()
++        child = subprocess.Popen(command, cwd=root, stdout=log, stderr=subprocess.STDOUT)
++        manifest['pid'] = child.pid
++        while child.poll() is None:
++            sample = capture(['nvidia-smi', '--query-gpu=index,memory.used,memory.total,utilization.gpu',
++                              '--format=csv,noheader,nounits'])
++            if sample['returncode'] == 0:
++                for line in sample['output'].strip().splitlines():
++                    writer.writerow([datetime.datetime.now().isoformat(), *[s.strip() for s in line.split(',')]])
++                gpu.flush()
++            try:
++                child.wait(timeout=5)
++            except subprocess.TimeoutExpired:
++                pass
++        manifest.update(returncode=child.returncode, elapsed_seconds=time.monotonic()-start,
++                        status='COMPLETED' if child.returncode == 0 else 'FAILED',
++                        ended=datetime.datetime.now().isoformat())
++    manifest['source_unchanged'] = all(hashlib.sha256((root/p).read_bytes()).hexdigest() == digest
++                                      for p, digest in manifest['source_hashes'].items())
++    (archive/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
++    print(json.dumps({k: manifest[k] for k in ['status', 'returncode', 'elapsed_seconds', 'source_unchanged']}), flush=True)
++    return child.returncode
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/scripts/diagnostics/e1_pilot_artifacts.py b/scripts/diagnostics/e1_pilot_artifacts.py
+new file mode 100644
+index 0000000..531c5fa
+--- /dev/null
++++ b/scripts/diagnostics/e1_pilot_artifacts.py
+@@ -0,0 +1,187 @@
++"""Validate and archive a completed pilot; never launches or changes training."""
++
++import argparse
++import csv
++import hashlib
++import json
++import math
++from pathlib import Path
++import re
++import shlex
++import shutil
++import statistics
++import subprocess
++import sys
++
++import torch
++from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
++
++
++def digest(path):
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++def json_write(path, value):
++    path.write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False)+'\n')
++
++
++def assert_finite(value):
++    if isinstance(value, torch.Tensor):
++        assert torch.isfinite(value).all()
++    elif isinstance(value, dict):
++        for item in value.values():
++            assert_finite(item)
++    elif isinstance(value, (list, tuple)):
++        for item in value:
++            assert_finite(item)
++    elif isinstance(value, float):
++        assert math.isfinite(value)
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--archive', required=True)
++    args = parser.parse_args()
++    root = Path(__file__).resolve().parents[2]
++    archive = Path(args.archive).resolve()
++    runs = list((archive/'train').iterdir())
++    assert len(runs) == 1
++    run = runs[0]
++    audit = json.loads((run/'e1_training_audit.json').read_text())
++    manifest = json.loads((archive/'manifest.json').read_text())
++    assert manifest['returncode'] == 0 and audit['status'] == 'PASS'
++    assert [u['iteration'] for u in audit['updates']] == list(range(200))
++    assert audit['actual_transitions'] == 64 * 24 * 200 == 307200
++    assert audit['steps'] == 4800
++    assert audit['gradient_checks'] == audit['minibatch_loss_checks'] == 4000
++    assert_finite(audit)
++    protected = manifest['source_hashes']
++    assert all(digest(root/p) == h for p, h in protected.items())
++    analysis = dict(train_dir=str(run), completed_iterations=200,
++        actual_transitions=audit['actual_transitions'], source_files_unchanged=len(protected),
++        throughput=audit['transitions_per_second'], training_seconds=audit['elapsed_training_seconds'],
++        first_last={}, first20_last20={}, evaluator={}, checkpoint_validation={})
++    updates = audit['updates']
++    for key in updates[0]['metrics']:
++        analysis['first_last'][key] = [updates[0]['metrics'][key], updates[-1]['metrics'][key]]
++        analysis['first20_last20'][key] = [statistics.mean(u['metrics'][key] for u in window
++            if u['metrics'][key] is not None) for window in [updates[:20], updates[-20:]]]
++    for filename in ['model_initial.pt', 'model_200.pt']:
++        path = run/filename
++        state = torch.load(path, map_location='cpu', weights_only=True)
++        assert_finite(state)
++        validation = {'path': str(path), 'sha256': digest(path), 'iter': state['iter'], 'keys': sorted(state)}
++        validation['normalizer_counts'] = {group: int(state[f'{group}_normalizer_state_dict']['count'])
++                                          for group in ['policy','critic']}
++        steps = [float(s['step']) for s in state['optimizer_state_dict']['state'].values()]
++        validation['optimizer_steps'] = sorted(set(steps))
++        analysis['checkpoint_validation'][filename] = validation
++    initial = analysis['checkpoint_validation']['model_initial.pt']
++    final = analysis['checkpoint_validation']['model_200.pt']
++    assert initial['iter'] == 0 and initial['optimizer_steps'] == []
++    assert final['iter'] == 200 and final['optimizer_steps'] == [4000.0]
++    assert final['sha256'] == audit['checkpoints'][-1]['sha256']
++    event = EventAccumulator(str(run), size_guidance={'scalars': 0})
++    event.Reload()
++    scalars = {tag: [{'step': x.step, 'value': x.value} for x in event.Scalars(tag)]
++               for tag in event.Tags()['scalars']}
++    assert_finite(scalars)
++    assert len(scalars['E1/base_velocity_error']) == 200
++    json_write(archive/'tensorboard_scalars.json', scalars)
++    analysis['tensorboard'] = {'tags': len(scalars), 'all_finite': True,
++                              'E1_points_per_tag': 200, 'runner_last_logged_iteration': 190}
++    samples = list(csv.DictReader((archive/'gpu.csv').open()))
++    analysis['gpu'] = dict(samples=len(samples), sampling_period_seconds=5,
++        sampled_max_device_memory_MiB=max(float(s['memory_used_MiB']) for s in samples),
++        total_device_memory_MiB=float(samples[0]['memory_total_MiB']),
++        torch_peak_allocated_MiB=audit['torch_peak_allocated_bytes']/1024**2,
++        torch_peak_reserved_MiB=audit['torch_peak_reserved_bytes']/1024**2)
++    commands = [shlex.join(manifest['argv'])]
++    for label in ['evaluation', 'evaluation_v2', 'evaluation_initial']:
++        data = json.loads((archive/label/'episodes.json').read_text())
++        commands.append(shlex.join([sys.executable, '-B', '-u', *data['argv']]))
++        summary = {'status': data['status'], 'pid': data['pid'], 'episodes': len(data['episodes'])}
++        if data['status'] == 'PASS':
++            rows = list(csv.DictReader((archive/label/'episodes.csv').open()))
++            assert len(rows) == len(data['episodes']) == 32
++            assert data['completed_per_env'] == [4]*8
++            assert all(data['loaded_states_equal'].values()) and all(data['states_unchanged'].values())
++            assert data['mean_action_max_error'] == 0.0
++            assert data['asynchronous_reset_observed']
++            for j, row in enumerate(rows):
++                assert int(row['episode_id']) == j
++                for k, v in data['episodes'][j].items():
++                    assert row[k] == str(v), (j, k)
++            assert len({(r['env_id'], r['env_episode_id']) for r in data['episodes']}) == 32
++            for key in ['episode_return','episode_length','velocity_tracking_error','velocity_tracking',
++                        'base_contact','timeout','fall','actual_forward_distance','actual_velocity','mean_speed_xy']:
++                summary[key] = statistics.mean(r[key] for r in data['episodes'])
++            summary['episode_return_max_error'] = data['episode_return_max_error']
++            summary['states_unchanged'] = data['states_unchanged']
++        analysis['evaluator'][label] = summary
++    assert analysis['evaluator']['evaluation_v2']['status'] == 'PASS'
++    assert analysis['evaluator']['evaluation_initial']['status'] == 'PASS'
++    assert analysis['evaluator']['evaluation_v2']['pid'] != manifest['pid']
++    (archive/'commands.sh').write_text('# Executed command archive; do not replay over existing outputs.\n\n'+'\n\n'.join(commands)+'\n')
++    analysis['criterion4'] = 'NOT_CONFIRMED: velocity scores improve but early-contact termination increases and survival regresses'
++    analysis['pilot_status'] = 'NOT_PASSED'
++    json_write(archive/'analysis.json', analysis)
++
++    # Copy original simulator logs referenced by the actual process logs.
++    for log in [archive/'train.log', *archive.glob('evaluation*.log')]:
++        content = re.sub(r'\x1b\[[0-9;]*m', '', log.read_text())
++        for name in re.findall(r'Logging to file: (\S+)', content):
++            src = Path(name)
++            if src.is_file():
++                target = archive/'simulator_logs'/log.stem/src.name
++                target.parent.mkdir(parents=True, exist_ok=True)
++                shutil.copy2(src, target)
++
++    sources = ['scripts/instinct_rl/train.py', 'scripts/instinct_rl/e1_training_audit.py',
++               'scripts/instinct_rl/evaluate_flat.py', 'scripts/instinct_rl/flat_metrics.py',
++               'scripts/instinct_rl/e0_training_audit.py', 'scripts/diagnostics/e1_pilot_run.py',
++               'scripts/diagnostics/e1_pilot_artifacts.py', 'docs/E0_report.md', 'docs/RESEARCH_STATE.md',
++               'docs/E1_flat_pilot_report.md', 'docs/E1_flat_evaluator.md']
++    for name in sources:
++        source = root/name
++        if source.exists():
++            target = archive/'source_snapshot'/name
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copy2(source, target)
++    diff = subprocess.run(['git','diff','HEAD'], cwd=root, capture_output=True, text=True, check=True).stdout
++    for name in sources:
++        tracked = subprocess.run(['git','ls-files','--error-unmatch',name],cwd=root,capture_output=True)
++        if tracked.returncode and (root/name).exists():
++            result = subprocess.run(['git','diff','--no-index','--','/dev/null',name],cwd=root,capture_output=True,text=True)
++            assert result.returncode in (0,1)
++            diff += result.stdout
++    (archive/'git_diff.patch').write_text(diff)
++    json_write(archive/'repositories_final.json', {str(repo): {
++        'commit': subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip(),
++        'status': subprocess.check_output(['git','-C',str(repo),'status','--short','--untracked-files=all'],text=True)}
++        for repo in [root, root.parent/'instinct_rl', root.parent/'IsaacLab-Instinct']})
++
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    fig, axes = plt.subplots(2,2,figsize=(10,6), constrained_layout=True)
++    for ax, key, label in zip(axes.flat,
++            ['mean_episode_return_last100','base_velocity_error','velocity_tracking','terminated'],
++            ['Episode return (last 100)','XY velocity error (m/s)','Velocity tracking score','Terminations per transition']):
++        values = [u['metrics'][key] for u in updates]
++        ax.plot(range(200),values,alpha=.35,lw=.7)
++        ax.plot(range(19,200),[statistics.mean(values[i-19:i+1]) for i in range(19,200)],lw=1.8)
++        ax.set(xlabel='PPO update index',ylabel=label)
++        ax.grid(alpha=.2)
++    fig.suptitle('E1-flat pilot: 64 envs, seed 42, 307,200 transitions\nVelocity scores improve while early termination worsens')
++    fig.savefig(archive/'learning_trends.png',dpi=160)
++    plt.close(fig)
++    hashes = {str(p.relative_to(archive)): digest(p) for p in sorted(archive.rglob('*'))
++              if p.is_file() and p.name not in ['SHA256SUMS','artifact_hashes.json']}
++    json_write(archive/'artifact_hashes.json',hashes)
++    (archive/'SHA256SUMS').write_text(''.join(f'{h}  {p}\n' for p,h in hashes.items()))
++    print(json.dumps(analysis,indent=2))
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/docs/E0_report.md b/docs/E0_report.md
+new file mode 100644
+index 0000000..4b574ae
+--- /dev/null
++++ b/docs/E0_report.md
+@@ -0,0 +1,261 @@
++# E0 运行时验收报告
++
++2026-09-22 E1-flat pilot 前复核：本报告依据下述实际归档，所需 E0 验收字段已齐全。用户给出的 `e0/acceptance_20260917_6Po7jf/` 在本仓库实际位于 `logs/e0/acceptance_20260917_6Po7jf/`。E1 不加载本报告列出的任何 E0 checkpoint。
++
++日期：2026-09-17（Asia/Shanghai）。最终结论：**PASS**。原始 Flat G1 已在真实 CUDA 仿真中完成 2 次 PPO 更新，独立进程恢复本次精确 checkpoint 后又完成 1 次更新。最终验收链训练量为 **192 + 96 = 288 transitions**；这只证明链路可运行，不证明学会行走。[两次更新][train-audit]、[独立恢复与续训][resume-audit]、[reset 实测][reset-log]。
++
++依据原有 [事实核查](/home/xiexuhui/InstinctLab/docs/repo_fact_check.md:1) 和 [实验协议](/home/xiexuhui/InstinctLab/docs/experiment_protocol_v0.1.md:17)，以及本轮新增的运行授权。原文四份用户文档未改写；旧文档中“E0 未运行”的历史状态由本报告补充。未修改 Flat 的算法配置、奖励、观测或执行器，未实现坡地、MoE、相机或激光雷达。实际改动和原文件 hash 核验见 [运行清单][manifest]、第 7 节。
++
++## 1. 产物与状态总表
++
++持久化根目录：`/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf`。下文 `R` 仅为该目录的简写，不表示自动寻找最近运行。
++
++| 项目 | 最终状态 | 实际结果及证据 |
++| --- | --- | --- |
++| 三仓库、依赖、GPU、命令记录 | PASS | 完整 SHA、dirty 状态、包路径、CUDA 分配成功；[manifest:10][manifest-repos]、[manifest:93][manifest-packages]、[manifest:366][manifest-gpu] |
++| 实际任务注册 | PASS | 启动 AppLauncher 后列出 14 个 Instinct 任务，含 Flat 与 Flat-Play；[registration.log:54][registration] |
++| 真实 Flat 仿真 step | PASS | `cuda:0`，48 个训练向量 step；[train.log:60][train-runtime-log]、[training audit:3][train-audit] |
++| 两次 PPO update | PASS | update 0、1 实际结束，rollout=24、N=4；192 transitions；[train.log:298][train-update0]、[train.log:336][train-update1] |
++| 观测、动作、reward、loss、参数有限性 | PASS | 每次真实 step 检查 obs/action/reward；40 次 minibatch loss 检查、40 次 gradient_step 后参数检查；每次 update 检查模型/optimizer/normalizer；[诊断实现:123](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_training_audit.py:123)、[audit:30][train-finite] |
++| runtime shape、term、joint、动作尺度、时序 | PASS | `(4,96)`、`(4,99)`、`(4,29)`；0.005/0.02 s、decimation=4，与预期一致；[audit:69][obs-terms]、[audit:397][timing] |
++| 部分环境 reset | PASS | 仅 reset `[0,2]`，`[1,3]` 状态保留且下一 step 继续推进；[reset.json:23][partial-reset]、[reset.json:1453][reset-progress] |
++| 动作历史与 episode 初始化 | PASS | 被 reset 环境的 action、prev_action、term raw action、episode length 及 actions 观测归零；[reset.json:1443][reset-init] |
++| terminated / truncated / wrapper done | PASS | 实际 timeout 和真实接触分支均触发，6 个诊断 step 均满足 `done = terminated OR truncated`；[reset.json:1484][timeout]、[reset.json:2406][contact] |
++| reset 前终止状态与新观测 | PASS | reset hook 捕获旧 episode；返回观测属于新 episode；[reset.json:1555][terminal-observation] |
++| 配置、日志与训练状态保存 | PASS | 两份 YAML、TensorBoard 非空且有限、模型/optimizer/两个 normalizer/iter 均保存；[文件复核][validation]、[checkpoint 记录:32][checkpoint2] |
++| 独立 checkpoint 往返 | PASS | 同一固定 batch 确定性动作最大误差 0.0；状态逐项匹配；[resume audit:411][roundtrip] |
++| 从 checkpoint 再更新并保存 | PASS | update 2 完成，新增 96 transitions；`model_3.pt`，参数实际发生变化；[resume.log:302][resume-update]、[文件复核][validation] |
++| 256 环境、长时训练、E1-flat 正式训练 | NOT_RUN | 本轮实际命令均为 4 环境 E0；[完整命令][commands] |
++| GUI/视频、play.py 独立回放、物理/RNG 逐 bit 续跑 | NOT_RUN | 本轮独立加载通过训练入口完成，不声称 play.py 或跨平台逐 bit 验收；[完整命令][commands] |
++| 坡地、MoE、新传感器、真实机器人部署 | NOT_RUN | 不属于本轮范围；[完整命令][commands] |
++
++最终必需项没有遗留 FAIL/BLOCKED。过程中出现的失败和局部修复没有隐藏，见第 7 节。`commands.sh` 为命令档案，不是直接批量重跑脚本；重跑须新建目录，不能覆盖本次产物。
++
++## 2. 实际运行环境
++
++| 仓库绝对路径 | commit | 初始状态 / 结束状态 |
++| --- | --- | --- |
++| `/home/xiexuhui/InstinctLab` | `ba28d3d2655b15a19b729476a630937a19610a3b` | 初始无 tracked 改动，4 份用户文档 untracked；结束有本轮 train.py 修改及诊断脚本/报告。原用户文件 hash 全部不变 |
++| `/home/xiexuhui/instinct_rl` | `ba45ed231ebbf0a4099cd31d607e2886814fd165` | clean / clean |
++| `/home/xiexuhui/IsaacLab-Instinct` | `f73c33173801f5f8afea4142482e47b7710c2b75` | clean / clean |
++
++依据：[manifest repositories:10][manifest-repos]；最终状态和初始用户文件 hash 位于同文件 `repositories_final`、`initial_worktree_before_diagnostics`、[user_files_unchanged:918][user-files]。注意 `repositories` 的状态采集发生在创建最早诊断脚本之后，不能把其中的诊断脚本误说成已有用户修改。[manifest][manifest]
++
++| 组件 | 实际版本 / 路径 |
++| --- | --- |
++| Python | 3.11.15；`/home/xiexuhui/miniconda3/envs/instinctlab/bin/python` |
++| PyTorch | 2.7.0+cu128，CUDA runtime 12.8；`/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/torch/__init__.py` |
++| Isaac Sim | 包元数据 5.1.0.0；`/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/__init__.py` |
++| Isaac Lab | 包元数据 0.54.4；`/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/__init__.py` |
++| instinct_rl | 1.0.2；`/home/xiexuhui/instinct_rl/instinct_rl/__init__.py` |
++| instinctlab | 0.1.0；`/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/__init__.py` |
++| GPU / driver | NVIDIA GeForce RTX 5070 Laptop GPU / 580.173.02，实际 `cuda:0` |
++| 显存 | 采集时总 8151 MiB、空闲 7545 MiB；不是训练峰值显存 |
++
++依据：[Python:5][manifest-python]、[包版本与来源:93][manifest-packages]、[GPU/CUDA:366][manifest-gpu]。使用上述专用 Python，未升级依赖主版本；GPU 仿真在允许访问宿主 GPU 的执行环境运行，没有以 CPU 网络前向替代仿真。训练沿用 TF32=True、cuDNN deterministic=False、benchmark=False，不承诺 physics/RNG 位级可复现：[train.py:107](/home/xiexuhui/InstinctLab/scripts/instinct_rl/train.py:107)。
++
++实际注册项的完整列表见 [registration.log:54][registration] 和 [training audit:51][registered-tasks]。只实例化了 Flat，不把其他任务“注册成功”等同于“可运行”。
++
++## 3. 最小训练与张量
++
++最终训练命令完整保存在 [train_2_updates_final.log:1][train-command]；续训命令保存在 [checkpoint_restore_and_update_final.log:1][resume-command]。两次均为原始 `Instinct-Locomotion-Flat-G1-v0`，`--num_envs 4 --seed 42 --headless --device cuda:0`，仅 update 预算、日志路径和诊断开关变化。实际导出的 [agent.yaml:1][agent-config] 确认标准 ActorCritic + PPO/AdamW、ELU、actor/critic hidden `[256,128,128]`、24 steps、5 epochs、4 minibatches，未换算法。
++
++| 运行 | 实际向量 step | update index | transitions | 最终 iter | total_loss |
++| --- | ---: | --- | ---: | ---: | --- |
++| 最终初训 | 48 | 0、1 | `4*24*2=192` | 2 | 7.1062941551、4.7180690765 |
++| 最终独立续训 | 24 | 2 | `4*24*1=96` | 3 | 6.0596957207 |
++
++依据：[初训 audit:3][train-audit]、[续训 audit:3][resume-audit]。5*4=20 个 minibatch/update，初训/续训分别记录 40/20 次 loss 与更新后参数有限性检查。这里没有声称逐个读取 `.grad` 张量。独立 reset 诊断另有 6 个向量 step，即 24 个环境 transitions，不计入 PPO 训练预算。[reset.json:2433][done-merge]
++
++修复期间另完成了一组 2+1 更新；因此本轮包含重跑的全部 PPO 工作量是 **576 transitions**，最终验收选中的连续模型链仍是 **288 transitions**，不能将重跑相加解释为一个训练模型的进度。[manifest commands:120][manifest-commands]
++
++| 张量 / 时序 | 实际值 | 来源 |
++| --- | --- | --- |
++| policy observation | `(4,96)` | [audit:408][shapes] |
++| critic observation | `(4,99)` | [audit:408][shapes] |
++| action / num_actions | `(4,29)` / 29 | [audit:67][obs-terms]、[audit:408][shapes] |
++| physics_dt | 0.005 s，即 200 Hz | [audit:397][timing] |
++| step_dt / decimation | 0.02 s，即 50 Hz / 4 | [audit:397][timing] |
++| 执行器 | legs、feet、waist、waist_yaw、arms 均为 ImplicitActuator | [audit:401][actuators] |
++
++观测拼接顺序（括号为维数）：policy = `base_ang_vel(3), projected_gravity(3), velocity_commands(3), joint_pos(29), joint_vel(29), actions(29)`；critic 在同序列最前加 `base_lin_vel(3)`。直接读取运行时 wrapper 格式，未 reshape、删项或修改网络掩盖差异。[audit:69][obs-terms]
++
++下表是 action term **实际解析后的顺序**，不是按 URDF 文本推测；四个环境的 scale/offset 相同。表中数值为便于阅读的舍入值，完整浮点数组分别见 [audit:145][scales]、[audit:271][offsets]。
++
++| index | joint | scale | offset (rad) |
++| ---: | --- | ---: | ---: |
++| 0 | left_shoulder_pitch_joint | 0.438577324 | 0.2 |
++| 1 | right_shoulder_pitch_joint | 0.438577324 | 0.2 |
++| 2 | waist_pitch_joint | 0.438577324 | 0 |
++| 3 | left_shoulder_roll_joint | 0.438577324 | 0.2 |
++| 4 | right_shoulder_roll_joint | 0.438577324 | -0.2 |
++| 5 | waist_roll_joint | 0.438577324 | 0 |
++| 6 | left_shoulder_yaw_joint | 0.438577324 | 0 |
++| 7 | right_shoulder_yaw_joint | 0.438577324 | 0 |
++| 8 | waist_yaw_joint | 0.547546446 | 0 |
++| 9 | left_elbow_joint | 0.438577324 | 0.6 |
++| 10 | right_elbow_joint | 0.438577324 | 0.6 |
++| 11 | left_hip_pitch_joint | 0.547546446 | -0.312 |
++| 12 | right_hip_pitch_joint | 0.547546446 | -0.312 |
++| 13 | left_wrist_roll_joint | 0.438577324 | 0 |
++| 14 | right_wrist_roll_joint | 0.438577324 | 0 |
++| 15 | left_hip_roll_joint | 0.350661457 | 0 |
++| 16 | right_hip_roll_joint | 0.350661457 | 0 |
++| 17 | left_wrist_pitch_joint | 0.074500874 | 0 |
++| 18 | right_wrist_pitch_joint | 0.074500874 | 0 |
++| 19 | left_hip_yaw_joint | 0.547546446 | 0 |
++| 20 | right_hip_yaw_joint | 0.547546446 | 0 |
++| 21 | left_wrist_yaw_joint | 0.074500874 | 0 |
++| 22 | right_wrist_yaw_joint | 0.074500874 | 0 |
++| 23 | left_knee_joint | 0.350661457 | 0.669 |
++| 24 | right_knee_joint | 0.350661457 | 0.669 |
++| 25 | left_ankle_pitch_joint | 0.438577324 | -0.363 |
++| 26 | right_ankle_pitch_joint | 0.438577324 | -0.363 |
++| 27 | left_ankle_roll_joint | 0.438577324 | 0 |
++| 28 | right_ankle_roll_joint | 0.438577324 | 0 |
++
++动作含义：`joint_position_target = raw_action * scale + offset`，动作不是直接力矩；当前 action clip 为 null。动作目标送入原有 ImplicitActuator/PhysX 控制链，不代表力矩或物理关节限制不存在。[joint_actions.py:169](/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/mdp/actions/joint_actions.py:169)、[apply_actions:199](/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/mdp/actions/joint_actions.py:199)、[reset runtime][reset-runtime]。
++
++## 4. 部分 reset 与终止语义
++
++诊断独立启动仿真，无人工 debugger，自动结束。命令见 [reset_probe.log:1][reset-command]；实现见 [e0_reset_probe.py:30](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_reset_probe.py:30)。
++
++1. 用 0.02 的固定 action warmup 3 步，再 `reset(env_ids=[0,2])`。其他环境 `[1,3]` 的 root/joint position/joint velocity/action/prev_action/term raw action/episode_length 完全不变；被 reset 环境的动作历史与计数清零。episode 计数为 `[0,3,0,3]`，下一真实 step 为 `[1,4,1,4]`，另两个环境的 root_state 最大分量变化分别为 0.1879713 和 0.2560201，证明继续运行。[partial reset:23][partial-reset]、[初始化:1443][reset-init]、[继续推进:1453][reset-progress]
++2. **人工 timeout 验收**：单独全 reset 后将 env0 的 `episode_length_buf` 设为 `max_episode_length-1=999`，随后执行一次真实 step。没有改变原始 20 s episode 配置。raw terminated=`[F,F,F,F]`、truncated=`[T,F,F,F]`、wrapper done=`[1,0,0,0]`，`extras.time_outs` 同 truncated；episode 变为 `[0,1,1,1]`。这是真实触发 timeout 分支，不是“运行时间足够长”的推断。[timeout:1484][timeout]、[构造代码:147](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_reset_probe.py:147)
++3. **人工接触验收**：env1 root 放在离地 0.10 m、绕世界 Y 轴 +90 度、速度为零的位置，保留原 illegal_contact term。下一真实物理 step 即触发 terminated=`[F,T,F,F]`、truncated 全 F、done=`[0,1,0,0]`；这验证接触终止，不评价策略稳定性。[contact:2406][contact]、[构造代码:173](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_reset_probe.py:173)
++4. reset hook 在 `_reset_idx` 前保存旧 episode 计数、状态、critic 与接触力；timeout 前计数 1000、action 为 0.02，返回观测中的 critic actions 已为零且 episode=0。因此终止 flags/reward 对应刚结束的 transition，而返回 observation 对应新 episode；不能把后者当 terminal observation。诊断临时 hook 已在退出时恢复。[terminal/new obs:1555][terminal-observation]、[hook:68](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_reset_probe.py:68)
++
++6 个诊断 step 的原始 flags 与 wrapper 合并结果全部一致，obs/action/reward 均有限。[reset.json:2433][done-merge]。自然存活完整 1000 步再 timeout 为 NOT_RUN，但不影响上述明确构造的 timeout 分支验收。
++
++## 5. Checkpoint 往返
++
++最终选定的精确目录：
++
++```text
++初训：/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed
++续训：/home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259
++```
++
++| 文件 | SHA-256 |
++| --- | --- |
++| [初训 model_2.pt][model2] | `8071b7fcb85a85f4b177450b563f915f84d388714eb65868dbfb374321db928c` |
++| [续训 model_3.pt][model3] | `22c11f4c48e8d959dd046dd1cc1eb8cfc313d87e507a66c32b192d49bafbf7e9` |
++
++完整路径/hash/keys/iter 也分别写入 [初训 audit:32][checkpoint2]、[续训 audit:20][checkpoint3] 与 [manifest][manifest]。没有重命名产物，没有选择其他实验的 latest。
++
++保存前固定输入来自本次真实环境的一个 policy observation batch `(4,96)`；在模型和 normalizer 的 eval 模式下计算确定性均值动作 `(4,29)`，原训练模式随即恢复，作为 `model_2.pt.reference.pt` 保存。独立新进程先按精确 run 路径和 `--checkpoint '^model_2[.]pt$'` 加载，然后使用完全同一输入比较。[audit 实现:73](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_training_audit.py:73)、[保存:165](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_training_audit.py:165)、[实际加载日志:295][resume-load]
++
++结果：最大绝对误差 **0.0**，容差 `atol=1e-6, rtol=1e-5`；模型 state_dict、optimizer state_dict、policy/critic normalizer 的每个状态和 iteration 均一致。比较发生在同一 `cuda:0` 和相同数值模式下；不保证换 CPU 或 TF32 模式后位级相同。[resume audit:411][roundtrip]
++
++初训 checkpoint：`iter=2`、optimizer 17 个参数状态均为 step=40、两个 normalizer count=192。恢复并更新一次后：`iter=3`、optimizer step=60、normalizer count=288，模型参数实际发生变化。[manifest checkpoint_artifacts:864][checkpoint-artifacts]、[参数变化:374][model-change]。恢复时 adaptive learning_rate 标量与 optimizer LR 均为 `2.2500000000000008e-5`。[roundtrip:411][roundtrip]
++
++**迭代命名语义**：runner 先更新，周期保存发生在 iteration 自增之前，而循环结束的最终保存发生在自增之后。本轮运行的是 update 0/1，结束最终保存 model_2/iter2；从 iter2 追加一次运行 update2，最终保存 model_3/iter3。不能泛化成“任意周期文件 model_N 一定完成 N 次更新”。[runner:151](/home/xiexuhui/instinct_rl/instinct_rl/runners/on_policy_runner.py:151)、[周期/最终保存:199](/home/xiexuhui/instinct_rl/instinct_rl/runners/on_policy_runner.py:199)
++
++## 6. 保存内容与完整命令
++
++`R/runtime_manifest.json` 记录环境、三个 SHA/dirty 状态、精确 argv、工作目录、起止时间、返回码、timeout、日志路径、checkpoint hash、最终核验、未运行项和源码快照。`R/commands.sh` 收录本次执行命令；每份运行日志第 1 行也有实际完整命令。[manifest][manifest]、[命令档案][commands]
++
++每个最终训练目录都有 `params/env.yaml`、`params/agent.yaml`、`git/*.diff`、`events.out.tfevents.*`、`e0_training_audit.json`、checkpoint 和固定输入 reference。初训/续训的 env.yaml SHA-256 相同：`3419d4896f6cbd8dd3e5128ebc11b044891170b7c82b2fdd1cefec3e886fe267`。[配置/事件文件复核][validation]
++
++最终 TensorBoard 实际读取到初训 `E0/Loss/*` 在 transitions 96、192 的四个 loss 标量，续训在 288 的四个标量，全部有限。初训还包含原 runner 的 reward、episode、学习率和性能日志；原 `log_interval=10` 保持不变，因此仅一次的续训不会自然产生原 runner 的常规日志点，E0 的每次 update loss 由 opt-in 诊断记录。[文件复核][validation]、[agent.yaml:35][agent-config]、[audit:157](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_training_audit.py:157)
++
++`R/simulator_logs/<label>/` 复制各实际进程的 Kit/IsaacLab 原始日志，包括原本写到 `/tmp/isaaclab/logs` 的文件；`R/source_snapshot/` 保存本轮脚本和本报告及其 hash。唯一验收产物未留在 `/tmp`。精确原路径、复制路径和 hash 见 manifest 的 `simulator_log_copies`、`source_snapshot`。[manifest][manifest]
++
++## 7. 失败、局部修复与修改文件
++
++| 发现 | 处理与范围 | 最终复验 |
++| --- | --- | --- |
++| 首次独立加载 FAIL：`model_2.pt` 被当作前缀正则，误匹配本轮诊断 sidecar `model_2.pt.reference.pt`，产生 KeyError | 本轮增加 reference 后暴露的匹配问题。改用精确 run 路径及锚定正则 `^model_2[.]pt$`；未改外部加载算法或重命名 checkpoint | [失败 log:295][load-failure]；[最终 log:295][resume-load]，PASS |
++| adaptive PPO 恢复不完整：optimizer LR 恢复了，但算法 `learning_rate` 标量仍从配置初始化为 0.001 | `train.py` 在 resume load 后同步为 optimizer 已恢复的共同 LR。外部 PPO load 只加载 state_dict，后续 KL schedule 会用该标量覆写 LR，因此该修复是状态恢复修复，不是换算法/调参 | [PPO load:320](/home/xiexuhui/instinct_rl/instinct_rl/algorithms/ppo.py:320)、[KL LR:252](/home/xiexuhui/instinct_rl/instinct_rl/algorithms/ppo.py:252)、[本地修复:213](/home/xiexuhui/InstinctLab/scripts/instinct_rl/train.py:213)、[最终恢复:296][lr-restore] |
++| 前一组短训练/续训进程退出成功，但 TensorBoard 实际 scalar tags 为空，日志验收 FAIL | `train.py` 在 finally 中 flush/close writer；E0 诊断单独记录每次 update loss，保留默认 log_interval。随后重跑两次训练及独立一次续训 | [空文件复核:364][empty-scalars]、[最终非空复核][validation]、[修复:254](/home/xiexuhui/InstinctLab/scripts/instinct_rl/train.py:254)，最终 PASS |
++| 原 runner 控制台 Total timesteps 少计 | `tot_timesteps` 只在 `log()` 内累加，本次 log_interval=10 时控制台只显示 96，实际是 192。未改外部 runner；用实际 step 数和 rollout 计算预算 | [train.log:331][counter-log]、[runner:235](/home/xiexuhui/instinct_rl/instinct_rl/runners/on_policy_runner.py:235)、[audit:424][train-transitions] |
++
++外部库未修改，所以直接绕过本地训练入口调用旧 `runner.load()` 的 adaptive LR 问题仍需调用方处理；默认宽松 checkpoint 匹配也未宣称已修复。以上限制已明确记录，不影响本轮精确入口验收。
++
++| 本轮新增/修改文件 | 原因 |
++| --- | --- |
++| [scripts/instinct_rl/train.py:47](/home/xiexuhui/InstinctLab/scripts/instinct_rl/train.py:47) | 增加 opt-in 验收入口；恢复 adaptive LR 标量；退出前刷写/关闭日志 |
++| [scripts/instinct_rl/e0_training_audit.py:48](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_training_audit.py:48) | 实际 step/update 有限性和形状检查、运行时动作语义、checkpoint 固定输入往返、E0 loss 记录 |
++| [scripts/instinct_rl/e0_reset_probe.py:30](/home/xiexuhui/InstinctLab/scripts/instinct_rl/e0_reset_probe.py:30) | 有界、独立、无需 debugger 的真实 reset/timeout/contact 验收 |
++| [scripts/diagnostics/e0_runtime.py:1](/home/xiexuhui/InstinctLab/scripts/diagnostics/e0_runtime.py:1) | 环境清单、有界运行与完整日志、最终产物/hash/事件文件核验与归档 |
++| [docs/E0_report.md:1](/home/xiexuhui/InstinctLab/docs/E0_report.md:1) | 汇总本轮实测、失败、修复、边界和下一阶段建议 |
++
++未删除任何用户文件或失败日志。原有 4 份文档 SHA-256 核验不变；两个依赖仓库保持 clean。[manifest][manifest]
++
++## 8. 未运行项与 E1-flat 建议
++
++E0 必需项均已运行并 PASS，可以进入 **E1-flat 的容量检查和基线学习阶段**；不能据此批准 E1-slope/E2 或认为已经学会走路。未运行：256 环境容量、长时/多 seed 学习、GUI/视频、play.py 回放、真实部署、独立性能 benchmark、物理/RNG 位级续跑，以及坡地/MoE/新传感器。未自然等到 1000 步 timeout；人工触发的真实 timeout 已通过。依据为 [本次完整命令][commands] 和上表逐项结果，而不是未训练策略跌倒次数。
++
++**以下是建议命令，NOT_RUN，本轮未启动。** 下次仍使用专用 Python 和原始 Flat，从头开始，不续训 E0 的 3-update 模型，不加 `--e0_audit`（该诊断特意限定 N=4）。先用 256 环境、seed42、100 updates 做容量/早期稳定性检查，预算 `256*24*100=614,400` transitions；8 GiB GPU 的 256 环境尚未实测，不能保证不会 OOM。[原 rollout 配置][agent-config]、[本轮 GPU][manifest-gpu]
++
++```bash
++cd /home/xiexuhui/InstinctLab
++e1_flat_run=$(mktemp -d /home/xiexuhui/InstinctLab/logs/e1-flat-capacity-s42.XXXXXX)
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py \
++  --task Instinct-Locomotion-Flat-G1-v0 \
++  --num_envs 256 --seed 42 --headless --device cuda:0 \
++  --max_iterations 100 --logroot "$e1_flat_run" --run_name E1_flat_capacity_s42
++```
++
++容量检查通过后，建议第一阶段从头预算 **1000 updates = 6,144,000 transitions，seed42**，观察 loss/normalizer 有限性、终止构成、速度跟踪和奖励趋势后再决定是否扩大预算与 seed43/44。每 seed 的 1000-update 预算独立计算；三 seed 为 18,432,000 transitions，不包含容量试跑。1000 updates 是学习诊断起点，不保证收敛，不能将本次 4 环境的耗时线性外推到 256 环境。
++
++```bash
++e1_flat_run=$(mktemp -d /home/xiexuhui/InstinctLab/logs/e1-flat-s42.XXXXXX)
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py \
++  --task Instinct-Locomotion-Flat-G1-v0 \
++  --num_envs 256 --seed 42 --headless --device cuda:0 \
++  --max_iterations 1000 --logroot "$e1_flat_run" --run_name E1_flat_s42
++```
++
++下一阶段应继续保存精确 manifest/日志/checkpoint；不要以 runner 控制台 Total timesteps 作为预算依据。若容量检查 OOM，停止并明确记录、重新冻结环境数和 transitions 预算，不改算法或执行器来掩盖资源问题。研究协议的 20M 比较预算属于后续阶段，本次没有启动。[协议预算](/home/xiexuhui/InstinctLab/docs/experiment_protocol_v0.1.md:163)
++
++[manifest]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:1
++[manifest-python]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:5
++[manifest-repos]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:10
++[manifest-packages]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:93
++[manifest-commands]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:120
++[manifest-gpu]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:366
++[checkpoint-artifacts]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:864
++[user-files]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/runtime_manifest.json:918
++[commands]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/commands.sh:1
++[validation]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/artifact_validation.json:1
++[empty-scalars]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/artifact_validation.json:364
++[model-change]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/artifact_validation.json:374
++[registration]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/registration.log:54
++[train-command]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log:1
++[train-runtime-log]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log:60
++[train-update0]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log:298
++[train-update1]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log:336
++[counter-log]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train_2_updates_final.log:331
++[resume-command]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_final.log:1
++[resume-load]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_final.log:295
++[lr-restore]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_final.log:296
++[resume-update]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update_final.log:302
++[load-failure]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/checkpoint_restore_and_update.log:295
++[train-audit]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:2
++[train-finite]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:30
++[checkpoint2]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:32
++[registered-tasks]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:51
++[obs-terms]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:69
++[scales]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:145
++[offsets]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:271
++[timing]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:397
++[actuators]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:401
++[shapes]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:408
++[train-transitions]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/e0_training_audit.json:424
++[agent-config]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/params/agent.yaml:1
++[resume-audit]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/e0_training_audit.json:2
++[checkpoint3]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/e0_training_audit.json:20
++[roundtrip]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/e0_training_audit.json:411
++[model2]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/train/20260917_155259_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_s42_logs_fixed/model_2.pt
++[model3]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/resume/20260917_155746_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E0_resume_s42_logs_fixed_from20260917_155259/model_3.pt
++[reset-command]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe.log:1
++[reset-log]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe.log:273
++[partial-reset]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:23
++[reset-init]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:1443
++[reset-progress]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:1453
++[timeout]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:1484
++[terminal-observation]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:1555
++[contact]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:2406
++[done-merge]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:2433
++[reset-runtime]: /home/xiexuhui/InstinctLab/logs/e0/acceptance_20260917_6Po7jf/reset_probe/reset_results.json:11904
+diff --git a/docs/RESEARCH_STATE.md b/docs/RESEARCH_STATE.md
+new file mode 100644
+index 0000000..04731d5
+--- /dev/null
++++ b/docs/RESEARCH_STATE.md
+@@ -0,0 +1,32 @@
++# 研究状态
++
++更新：2026-09-22（Asia/Shanghai）。当前阶段：**E1-flat pilot 已完成运行、未通过学习验收，暂停；evaluator 已通过。** E0 运行时验收保持 PASS。
++
++已完成：
++
++- E0 真实 Isaac Sim/CUDA 仿真、任务注册、真实张量、两次 PPO、partial reset、checkpoint 保存和独立恢复后一次 update。详见 [E0_report.md](E0_report.md)。
++- E1 原始 Flat S-small 从随机初始化完成 seed 42、64 env、200 iterations，即 307200 transitions；未使用 E0 checkpoint，无 resume。
++- loss/真实梯度/学习率、观测动作奖励、模型和 normalizer 有限性检查通过；checkpoint 独立加载成功。
++- Flat evaluator 使用 Gaussian mean action，加载并冻结 policy/critic normalizer；完成异步逐 episode JSON/CSV、原始任务配置一致性及统计交叉核验。
++- 本次随机模型与最终模型各 32 episode 的同 seed 原始 command 分布评估；报告、命令、hash、diff、GPU/吞吐及日志归档。
++
++当前结论：速度 tracking/error 数值改善，但每步接触终止率从前 20 updates 的 6.11% 上升到后 20 的 17.80%；独立评估平均生存从 14.5 步降至 5.72 步，最终 32/32 episode 接触终止。无法确认“合理学习改善”，不建议进入正式 E1-flat。详见 [E1_flat_pilot_report.md](E1_flat_pilot_report.md)。
++
++当前唯一下一步：诊断原始 Flat 的早期 `base_contact` 终止退化，查清原因后再决定同规模 pilot 复验。当前没有自动开始诊断改配置、追加训练或正式三 seed 实验。
++
++禁止事项：本阶段不实现坡地、MoE、深度相机、LiDAR、观测历史；不修改姿态奖励；不使用 E0 model_2/model_3 或 E0 resume；不把 200 iterations 写成最终性能；不以 reward 一项认定成功；未经下一阶段指令不启动正式训练。
++
++关键运行目录：
++
++- E0：`logs/e0/acceptance_20260917_6Po7jf/`；最终验收链为 `train/20260917_155259_..._logs_fixed` 与 `resume/20260917_155746_..._logs_fixed_from20260917_155259`，精确路径见 E0 报告。
++- E1：`logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/`。
++- E1 训练：`logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/`。
++- 有效最终评估：E1 归档下 `evaluation_v2/`；随机模型对照 `evaluation_initial/`；最初 `evaluation/` 是 YAML 解析失败记录。
++
++关键 checkpoint：
++
++- E1 训练目录 `model_200.pt`：SHA-256 `4df39669c75d9c784a414f2c64e5ea98255a561fb2d54677db1ee05786617626`。
++- E1 同目录 `model_initial.pt`：SHA-256 `1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea`；这是本次随机初始模型。
++- E0 `model_2.pt`：`8071b7fcb85a85f4b177450b563f915f84d388714eb65868dbfb374321db928c`；E0 `model_3.pt`：`22c11f4c48e8d959dd046dd1cc1eb8cfc313d87e507a66c32b192d49bafbf7e9`。仅保留为 E0 证据，本轮均未加载。
++
++当前不能声称：已学会或稳定行走、E1 pilot 通过、最终收敛、跨训练 seed 可复现、坡地能力、MoE 有效、视觉/LiDAR 控制能力、真实机器人可部署。也不能由这次失败推断原始 Flat 在更长预算下必然不可学习。E0 只证明链路可运行。
+diff --git a/docs/E1_flat_pilot_report.md b/docs/E1_flat_pilot_report.md
+new file mode 100644
+index 0000000..7dcfdea
+--- /dev/null
++++ b/docs/E1_flat_pilot_report.md
+@@ -0,0 +1,163 @@
++# E1-flat pilot 报告
++
++日期：2026-09-22（Asia/Shanghai）。结论：**pilot 未通过；Flat evaluator 通过；暂不建议进入正式 E1-flat。**
++
++200 iterations 正常结束，数值有限，checkpoint 独立加载成功。但是速度指标改善与更早的接触终止同时出现，尚不能确认普通 S-small 从随机初始化获得了合理的行走学习进展。200 iterations 仅为 pilot，不是最终性能、收敛或能力上限结论。
++
++## 1. 运行与任务定义
++
++归档根目录 `R`：
++
++```text
++/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl
++```
++
++实际训练目录 `T`：
++
++```text
++/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42
++```
++
++唯一一次训练使用原始 `Instinct-Locomotion-Flat-G1-v0`，S-small ActorCritic（actor `96→256→128→128→29`，critic `99→256→128→128→1`，ELU），原始 Flat reward、observation、implicit actuators、PPO/AdamW 和两个 EmpiricalNormalization。seed=42，64 envs，200 iterations，headless，cuda:0。没有 OOM，也没有降到 32。
++
++运行时 policy `(64,96)`、critic `(64,99)`、action `(64,29)`；physics_dt=0.005 s、step_dt=0.02 s、decimation=4。rollout_length 实测 24，执行 4,800 个向量 step，update index 0–199，最终 checkpoint iter=200。
++
++```text
++actual_transitions = 64 × 24 × 200 = 307,200
++```
++
++只增加 opt-in `--e1_audit` 观测/记录、归档入口和 evaluator；没有修改原始 Flat 配置。用户指定的 seed、env 数、预算与日志位置通过现有 CLI 设置。审计读取实际张量并在原函数调用后记录统计，不改变动作、reward、梯度或 optimizer 运算。`source/` 下 204 个 Python 文件的运行前后 SHA-256 全部一致，两个外部仓库保持 clean。
++
++| 仓库 | commit | 状态 |
++| --- | --- | --- |
++| InstinctLab | `ba28d3d2655b15a19b729476a630937a19610a3b` | dirty；保留已有 E0 train.py 改动、文档及诊断脚本，本轮新增 E1 审计/evaluator/报告 |
++| instinct_rl | `ba45ed231ebbf0a4099cd31d607e2886814fd165` | clean |
++| IsaacLab-Instinct | `f73c33173801f5f8afea4142482e47b7710c2b75` | clean |
++
++完整初始 git 状态见 `R/manifest.json`，结束状态见 `R/repositories_final.json`，代码/文档与 tracked diff 见 `R/source_snapshot/`、`R/git_diff.patch`。diff 相对 HEAD，包含原本未提交的 E0 训练入口改动；不能把全部 diff 都归因于本轮 E1。未修改三份研究协议文档或根目录旧 `Research State.md`。
++
++## 2. 完整命令与随机初始化证据
++
++实际训练命令：
++
++```bash
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py \
++  --task Instinct-Locomotion-Flat-G1-v0 \
++  --num_envs 64 --seed 42 --max_iterations 200 \
++  --headless --device cuda:0 \
++  --logroot /home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train \
++  --run_name E1_flat_pilot_s42 --e1_audit
++```
++
++外层归档启动命令为：
++
++```bash
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/diagnostics/e1_pilot_run.py
++```
++
++最终策略独立评估命令：
++
++```bash
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/evaluate_flat.py \
++  --checkpoint /home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_200.pt \
++  --output-dir /home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/evaluation_v2 \
++  --num-envs 8 --episodes-per-env 4 --max-steps 5000 \
++  --seed 12345 --command-mode original --headless --device cuda:0
++```
++
++本次还在新进程以相同 evaluator 参数加载本次 `model_initial.pt`，输出到 `R/evaluation_initial/`，用于诊断趋势；没有追加训练。该命令和首次失败的 evaluator 命令均完整保存于 `R/commands.sh`，并非可覆盖已有产物的批量重跑脚本。
++
++随机初始化证据：`T/params/agent.yaml` 的 `resume: false`、`load_run: null`、`ckpt_manipulator: null`；audit 起始 iteration=0、optimizer state 为空。训练前保存本次随机网络 `model_initial.pt`：iter=0，两个 normalizer count=0；训练后 iter=200，optimizer step=4000，两个 normalizer count=307200。没有任何 E0 checkpoint 加载或 resume 命令。
++
++| Checkpoint（均位于 T） | SHA-256 |
++| --- | --- |
++| `model_initial.pt`（本次随机初始模型） | `1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea` |
++| `model_200.pt`（200 次更新后的模型） | `4df39669c75d9c784a414f2c64e5ea98255a561fb2d54677db1ee05786617626` |
++
++## 3. 训练趋势与数值检查
++
++以下原始物理指标在每步 reward 计算后、auto-reset 和 command 更新前采集。首/末列是 update 0/199；窗口列是 update 0–19/180–199 的均值。episode return 为截至该 update 的最近 100 个完整 episode 均值，首期不足 100 时使用实际已完成数。
++
++| 指标 | 首次 update | 最后 update | 前 20 均值 | 后 20 均值 |
++| --- | ---: | ---: | ---: | ---: |
++| Mean episode reward / return | -4.625756 | -4.173834 | -5.138427 | -4.182996 |
++| Mean reward / transition（含终止步） | -0.313000 | -0.791056 | -0.311833 | -0.744255 |
++| Velocity tracking exp score | 0.306643 | 0.397865 | 0.282079 | 0.363133 |
++| Base XY velocity L2 error（m/s） | 0.655415 | 0.538101 | 0.731147 | 0.579637 |
++| Terminated / transition | 0.063151 | 0.190104 | 0.061068 | 0.177995 |
++| Truncated / transition | 0 | 0 | 0 | 0 |
++| Gaussian action std 均值 | 1.000522 | 0.792520 | 0.996427 | 0.800348 |
++
++原 runner 的 TensorBoard 日志每 10 次更新记录一次，最后常规点是 190；`E1/*` 审计记录到 199，共 200 点。常规 `Train/mean_reward_0` 从 -4.625756 到 -4.172053（index 190）；`Train/mean_episode_length` 从 10.0 到 5.57 步。原 `Episode_Reward/track_lin_vel_xy_exp` 从 0.002600 到 0.002056；`Episode/Metrics/base_velocity/error_vel_xy` 从 0.011149 到 0.007278。后两者来自环境 episode 日志的归一化统计，随 episode 长度改变，不能直接当作上表的逐步原始 tracking/error。
++
++数值改善不能忽略伴随退化：tracking 与原始 error 来自同一速度误差，episode reward 上升也伴随 episode 明显缩短。后 20 次更新中每步接触终止率约是前 20 次的 2.91 倍；含终止惩罚的每步 reward 变差。std 下降本身不是学习成功证据。因此这里不把两个变好的数值自动计为“至少两个合理学习改善”。这是对验收第 4 条的保守判定，不是宣称原始 Flat 任务无法在更长预算中学习。
++
++![训练趋势](../logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/learning_trends.png)
++
++4,800 次实际 step 的观测、动作、reward、测量值有限；4,000 次 minibatch loss/中间量检查通过；4,000 次 optimizer 执行前真实 `.grad` 张量及 optimizer LR 检查通过；每次 update 的 gradient norm、loss、模型/optimizer、两个 normalizer 状态有限。checkpoint 全部张量及 60 个 TensorBoard scalar tags 均有限。adaptive learning rate 在首/末 update 后均约 1e-5；保持原算法，不修改 LR。
++
++没有检测到训练数值 NaN/Inf。控制台中存在 runner 固定打印的 `NOTE: you may see ... NaN or Inf ...` 提示文本，它不是本次发现 NaN/Inf 的事件；没有以该提示为理由忽略实际数值异常。
++
++## 4. 独立 evaluator 验收
++
++源码：[evaluate_flat.py](../scripts/instinct_rl/evaluate_flat.py)，共享测量函数：[flat_metrics.py](../scripts/instinct_rl/flat_metrics.py)，说明：[E1_flat_evaluator.md](E1_flat_evaluator.md)。
++
++最终 checkpoint 在独立进程 PID 602529 加载；随机初始化 checkpoint 在独立进程 PID 613357 加载。二者各 8 env × 每 env 4 episode=32 条；固定 evaluator seed=12345，使用原始 Flat command 分布。训练进程与评估进程不同。
++
++模型、policy normalizer、critic normalizer 均与加载的 checkpoint 状态逐项一致，评估结束后三者状态完全未变。Gaussian mean action 与 actor MLP 直接输出最大差=0；全程不采样、不执行网络更新。异步 reset 实际出现；episode length 与 reset 前 buffer 一致；最终模型的 episode return 与 reward manager 各项累计和最大差 `7.15e-7`。JSON 与 CSV 的 32 行所有字段一致。
++
++| 独立 mean-action 评估（各 32 episodes） | 随机初始模型 | 200-update 模型 |
++| --- | ---: | ---: |
++| Episode return | -3.944402 | -3.933082 |
++| Episode length（步） | 14.5000 | 5.71875 |
++| Episode length（秒） | 0.2900 | 0.114375 |
++| XY velocity error（m/s） | 0.695856 | 0.523909 |
++| Tracking exp score | 0.285801 | 0.405880 |
++| Base contact / fall | 32/32 | 32/32 |
++| Timeout | 0/32 | 0/32 |
++| 初始 yaw 前向净位移（m） | 0.059725 | 0.005591 |
++| 平均实际 yaw-frame 前向速度（m/s） | 0.016292 | 0.112748 |
++| 平均水平速率（m/s） | 0.488494 | 0.413598 |
++
++这些是短期、随机 command 的诊断结果，不是正式性能测试。即使同 evaluator seed，相互不同的终止时间也会改变后续 command/reset RNG 消耗，不能把后续 episode 视为严格相同轨迹配对。净位移为初始朝向投影，不能与变化中的 yaw-frame 平均速度简单互换。原 `base_contact` 包括非足部肢体的 illegal contact，并非只检查躯干。
++
++`terminated`、`truncated`、`timeout` 从 reset 前的原 manager/term 分别读取；若接触与 timeout 同步发生，仍记录 fall=true。本轮 E1 的所有完成 episode 都是接触终止，没有实测自然 timeout 或同一步双 flags。E0 已独立验证底层 timeout/接触分支；不把它冒充 E1 evaluator 自然 timeout 的运行结果。按 quota 结束时残留的未完成 episode 长度保存在 JSON，未作为完整 episode 计入。
++
++首次 evaluator 在仿真启动后读 `env.yaml` 时遇到 `builtins.slice` YAML tag，记录 `R/evaluation/episodes.json` 的 FAIL，未产生 episode。仅修复 evaluator 的 YAML 数据解析后重跑为 `evaluation_v2`；没有更改 checkpoint 或任务配置。Isaac Sim fast shutdown 可能返回 0，即使 evaluator 捕获异常，因此使用 JSON 状态和数据核验作为验收依据。最终只调整了退出前的状态打印顺序，不改变已验收的统计逻辑。
++
++## 5. 显存、吞吐、产物
++
++GPU：NVIDIA GeForce RTX 5070 Laptop GPU，总显存 8151 MiB。`gpu.csv` 每 5 s 采样，共 40 条，整卡已用显存最大采样值 2736 MiB；它包括桌面等其他 GPU 用户，且不是连续监测的绝对峰值。PyTorch allocator 峰值 allocated 25.98 MiB、reserved 32 MiB，不包含 PhysX/Kit 的全部分配。
++
++训练（含审计）181.874 s，307200/181.874 = **1689.08 transitions/s**；完整子进程含启动关闭约 197.146 s。原 runner 控制台 Total timesteps 仅 30720，是 `log_interval=10` 下只在 log() 累加的已知计数问题；实际 307200 由每次真实 step、完整 update 序列和 normalizer count 三方核对。
++
++| 路径（相对 R） | 内容 |
++| --- | --- |
++| `train/.../params/env.yaml`、`agent.yaml` | 真实训练配置 |
++| `train/.../events.out.tfevents.*` | 原 runner + 每 update 审计标量 |
++| `train/.../e1_training_audit.json` | 4800 steps、200 updates、4000 loss/gradient 检查 |
++| `train/.../model_initial.pt`、`model_200.pt` | 本次初始和最终 checkpoint |
++| `evaluation_v2/episodes.json`、`episodes.csv` | 最终 checkpoint 的有效评估结果 |
++| `evaluation_initial/episodes.json`、`episodes.csv` | 本次随机模型的独立对照 |
++| `evaluation/`、`evaluation.log` | 首次 YAML 解析失败记录，不纳入有效评估 |
++| `train.log`、`evaluation_v2.log`、`evaluation_initial.log` | 进程 stdout/stderr |
++| `gpu.csv`、`analysis.json`、`tensorboard_scalars.json` | 显存、核验与汇总、完整 scalar 导出 |
++| `manifest.json`、`repositories_final.json` | 完整命令、起止/退出码、git 状态、source hashes |
++| `commands.sh`、`git_diff.patch`、`source_snapshot/` | 命令档案、代码 diff 和实际源码/文档 |
++| `simulator_logs/`、`SHA256SUMS`、`artifact_hashes.json` | 原始 Kit/IsaacLab 日志副本和产物 SHA-256 |
++
++## 6. 验收与停止点
++
++| 用户验收条件 | 结论 |
++| --- | --- |
++| 200 iterations 正常完成 | PASS |
++| 无 NaN/Inf | PASS，按上述实测张量/梯度/日志覆盖范围 |
++| Checkpoint 可以独立加载 | PASS，两个 normalizer 同时核验 |
++| 至少两个训练指标合理改善 | **未确认**：存在数值改善，但接触终止增多、生存缩短，不能认定有效行走学习 |
++| Evaluator 生成逐 episode 结果 | PASS，32 行 JSON/CSV，异步统计 |
++| 没有使用 E0 checkpoint | PASS；本次从 random init 开始 |
++| 没有扩展坡地/MoE/相机/LiDAR 或研究主线 | PASS；无 history/姿态 reward 变更 |
++
++最终回答：E1-flat pilot **未通过**；evaluator **通过**；**暂不建议**进入正式 E1-flat。本轮完全没有加入坡地、MoE、深度相机或 LiDAR，没有启动正式三 seed 训练。
++
++唯一最小阻塞项是：**尚未证实合理的学习改善，早期 base_contact 终止退化尚未解释。** 下一步仅应诊断原始 Flat 的早期接触终止及其与 reward/动作的关系，查清后再决定同规模 pilot 复验。当前已暂停，没有自动修改配置、扩预算或重训。
+diff --git a/docs/E1_flat_evaluator.md b/docs/E1_flat_evaluator.md
+new file mode 100644
+index 0000000..84a0a23
+--- /dev/null
++++ b/docs/E1_flat_evaluator.md
+@@ -0,0 +1,38 @@
++# 原始 Flat G1 最小 evaluator
++
++入口：`scripts/instinct_rl/evaluate_flat.py`。必须使用专用 instinctlab Python，在新进程启动真实 Isaac Sim，传入精确 checkpoint 路径。只接受 `Instinct-Locomotion-Flat-G1-v0`，拒绝 `logs/e0` 下的 checkpoint，不自动选择 latest。
++
++```bash
++/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/evaluate_flat.py \
++  --checkpoint /absolute/path/to/E1/run/model_200.pt \
++  --output-dir /absolute/path/to/new/evaluation-directory \
++  --num-envs 8 --episodes-per-env 4 --max-steps 5000 \
++  --seed 12345 --command-mode original --headless --device cuda:0
++```
++
++输出目录必须不存在。`episodes.json` 包含元数据、验收结果、逐环境 episode、reset 批次；`episodes.csv` 为同一组 episode 行；`env.yaml` 为实际评估配置。达到每个 env 的 episode 配额就结束，不要求全部 env 同时 done；配额后额外完成的 episode 不纳入统计。若步数上限内配额不足，保存已完成数据并记录 FAIL。避免只取最先结束的短 episode。
++
++验收必须检查 JSON 的 `status == "PASS"`、完整 episode 配额和各核验字段，不能只检查退出码。当前 Isaac Sim 的 fast shutdown 可能在 `app.close()` 内以 0 结束进程，即使此前 evaluator 已捕获异常。JSON 在关闭前落盘；第一次 YAML 解析失败的记录也予以保留。导出的 YAML 使用仅增加 `builtins.slice` 数据解析的 FullLoader，不启用任意 Python 对象执行。
++
++原始 command 分布：10 s 重采样；x∈[-0.5,1.0] m/s，y∈[-0.5,0.5] m/s，yaw∈[-1.5,1.5] rad/s，standing 比例 0.2，heading 比例 0.5。保留原任务的观测噪声、动力学随机化和 push。未使用 Flat-Play，不提供 fixed-command 模式。
++
++模型与 policy/critic normalizer 均通过 runner 加载，逐项对比 checkpoint；全部置 eval 模式。动作使用 `act_inference` 的 Gaussian mean，与原 actor MLP 直接输出核对。整个 rollout 使用 `torch.inference_mode()`，不调用学习或 optimizer update；结束后逐张量验证 model 和两个 normalizer 完全未变。
++
++每个物理 step 后，reward compute hook 在 command 更新和 auto-reset 前累计原始 reward、yaw-frame XY 速度误差和实际速度；reset hook 在 reset 前记录终止 flags、位置及 episode 统计。终止步计入 return/length；return 额外与环境每个 reward term 的 episode sum 之和交叉核对，length 与 raw episode buffer 核对。
++
++| 字段 | 定义 |
++| --- | --- |
++| episode_id / env_id / env_episode_id | 本评估全局 ID、向量环境 ID、该 env 内 episode 序号（均从 0 开始） |
++| episode_return / episode_length | 包含终止步的原始 dt-scaled reward 总和 / 控制步数；秒数=步数×0.02 |
++| velocity_tracking_error | episode 平均 XY command 与实际速度的 L2 误差（m/s），使用 yaw-only 重力对齐坐标系 |
++| velocity_tracking | episode 平均 exp(-XY 平方误差/0.5²)，与原 tracking reward 核一致 |
++| base_contact | 原 `base_contact` illegal_contact term；包含躯干和非足部肢体，不能解释为仅躯干接地 |
++| timeout | 原 `time_out` term；单独记录 |
++| terminated / truncated | termination manager 的两个独立 flags，保留同一步同时为 true 的情况 |
++| fall | 原 Flat 的 base_contact 失败；即使同一步 timeout 也保留 fall=true |
++| actual_forward_distance | terminal root XY 净位移在 episode 初始 yaw 前向上的投影（m）；允许负值，不等于路径长度 |
++| actual_velocity | episode 平均 yaw-frame root 前向速度（m/s），不使用 command 代替实际速度 |
++| mean_speed_xy | episode 平均世界系水平速率（m/s） |
++| command_mode / seed | 固定为 original / evaluator seed，默认 12345 |
++
++随机侧向/转向/倒退 command 下，初始朝向投影距离不能作为单独成功判据。固定 seed 不保证跨 GPU/软件版本的物理逐 bit 一致。evaluator 通过表示统计和独立加载流程通过，不表示被评估策略已经学会行走。

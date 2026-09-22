@@ -1,0 +1,83 @@
+[INFO][AppLauncher]: Using device: cuda:0
+[INFO][AppLauncher]: Loading experience file: /home/xiexuhui/IsaacLab-Instinct/apps/isaaclab.python.headless.kit
+Loading user config located at: '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: /home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260922_111840.log
+2026-09-22T03:18:40Z [76ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-09-22T03:18:40Z [491ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-22T03:18:40Z [499ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+2026-09-22T03:18:43Z [3,103ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+2026-09-22T03:18:43Z [3,103ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (ARL)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Laptop.. | Yes: 0 |     | 8151    MB | 10de      | 0          |
+|     |                                  |        |     |            | 2d58      | e21cdd6c.. |
+|     |                                  |        |     |            | 2         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (ARL)          |        |     | 23633   MB | 8086      | 0          |
+|     |                                  |        |     |            | 7d67      | 8680677d.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.3 LTS (Noble Numbat) ubuntu, Version: 24.04.3, Kernel: 7.0.0-30-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101011 (1.21.1.11)
+| Processor: Intel(R) Core(TM) Ultra 9 275HX
+| Cores: 24 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31511 | Free Memory: 21623
+| Total Page/Swap (MB): 15624 | Free Page/Swap: 15624
+|---------------------------------------------------------------------------------------------|
+2026-09-22T03:18:43Z [3,396ms] [Warning] [gpu.foundation.plugin] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-22T03:18:43Z [3,405ms] [Warning] [gpu.foundation.plugin] PCIe link width current (8) and maximum (16) for device 0 don't match.
+2026-09-22T03:18:43Z [3,405ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-09-22T03:18:43Z [3,405ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 263.31 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.09 
+
+   CPU     0 
+     0   2.37 
+Failed to import RslRlVecEnvWrapper, ignoring...
+Traceback (most recent call last):
+  File "/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_flat.py", line 224, in main
+    evaluate(args, report, output)
+  File "/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_flat.py", line 45, in evaluate
+    train_env = load_yaml(str(train_dir/'params/env.yaml'))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/utils/io/yaml.py", line 30, in load_yaml
+    data = yaml.full_load(f)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/__init__.py", line 105, in full_load
+    return load(stream, FullLoader)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/__init__.py", line 81, in load
+    return loader.get_single_data()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 51, in get_single_data
+    return self.construct_document(node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 60, in construct_document
+    for dummy in generator:
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 413, in construct_yaml_map
+    value = self.construct_mapping(node)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 218, in construct_mapping
+    return super().construct_mapping(node, deep=deep)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 143, in construct_mapping
+    value = self.construct_object(value_node, deep=deep)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 100, in construct_object
+    data = constructor(self, node)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/yaml/constructor.py", line 427, in construct_undefined
+    raise ConstructorError(None, None,
+yaml.constructor.ConstructorError: could not determine a constructor for the tag 'tag:yaml.org,2002:python/object/apply:builtins.slice'
+  in "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/params/env.yaml", line 653, column 20

@@ -1,0 +1,1 @@
+/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-v0 --num_envs 64 --seed 42 --max_iterations 200 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train --run_name E1_flat_pilot_s42 --e1_audit

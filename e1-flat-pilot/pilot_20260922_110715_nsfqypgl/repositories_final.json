@@ -1,0 +1,14 @@
+{
+  "/home/xiexuhui/InstinctLab": {
+    "commit": "ba28d3d2655b15a19b729476a630937a19610a3b",
+    "status": " M scripts/instinct_rl/train.py\n?? \"Research State.md\"\n?? docs/E0_report.md\n?? docs/E1_flat_evaluator.md\n?? docs/E1_flat_pilot_report.md\n?? docs/RESEARCH_STATE.md\n?? \"docs/Research Decision Record v0.1.md\"\n?? docs/experiment_protocol_v0.1.md\n?? docs/repo_audit.md\n?? docs/repo_fact_check.md\n?? scripts/diagnostics/e0_runtime.py\n?? scripts/diagnostics/e1_pilot_artifacts.py\n?? scripts/diagnostics/e1_pilot_run.py\n?? scripts/instinct_rl/e0_reset_probe.py\n?? scripts/instinct_rl/e0_training_audit.py\n?? scripts/instinct_rl/e1_training_audit.py\n?? scripts/instinct_rl/evaluate_flat.py\n?? scripts/instinct_rl/flat_metrics.py\n"
+  },
+  "/home/xiexuhui/instinct_rl": {
+    "commit": "ba45ed231ebbf0a4099cd31d607e2886814fd165",
+    "status": ""
+  },
+  "/home/xiexuhui/IsaacLab-Instinct": {
+    "commit": "f73c33173801f5f8afea4142482e47b7710c2b75",
+    "status": ""
+  }
+}
