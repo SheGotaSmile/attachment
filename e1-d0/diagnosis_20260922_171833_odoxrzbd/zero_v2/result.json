@@ -1,0 +1,398 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/zero_v2",
+    "--mode",
+    "original",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "8",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 1221482,
+  "mode": "original",
+  "controller": "zero",
+  "seed": 12345,
+  "num_envs": 8,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "task_section_mismatches": [],
+  "runtime": "runtime.json",
+  "episodes": [
+    {
+      "case_id": 0,
+      "length": 10,
+      "seconds": 0.2,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        3.9191410541534424,
+        -1.666174054145813,
+        0.7791374921798706,
+        0.9109984040260315,
+        -0.006562207359820604,
+        -0.027913792058825493,
+        0.4114116132259369,
+        0.461668461561203,
+        -0.3783089518547058,
+        -0.05433155223727226,
+        0.6511408686637878,
+        -0.3090592920780182,
+        0.1617463231086731
+      ],
+      "first_crossing": {
+        "physics_step": 40,
+        "control_step": 10,
+        "time": 0.2,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          50.87089920043945,
+          50.87089920043945
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 5,
+      "length": 10,
+      "seconds": 0.2,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -0.7726655602455139,
+        1.287102222442627,
+        0.7720522880554199,
+        0.34599074721336365,
+        0.028591854497790337,
+        -0.04860192909836769,
+        -0.9365418553352356,
+        0.4601503312587738,
+        -0.057924650609493256,
+        -0.07564473152160645,
+        -0.7146042585372925,
+        0.12076275795698166,
+        -0.5014027953147888
+      ],
+      "first_crossing": {
+        "physics_step": 38,
+        "control_step": 10,
+        "time": 0.19,
+        "links": [
+          "right_wrist_yaw_link",
+          "right_hip_roll_link"
+        ],
+        "forces": [
+          98.01532745361328,
+          98.01532745361328
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 1,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        3.3594727516174316,
+        1.2305655479431152,
+        0.7771545648574829,
+        0.9404030442237854,
+        -0.016482120379805565,
+        0.01716635748744011,
+        -0.3392281234264374,
+        0.07184838503599167,
+        0.4277229309082031,
+        -0.041316017508506775,
+        -0.7871201038360596,
+        -0.388349324464798,
+        0.03140826150774956
+      ],
+      "first_crossing": {
+        "physics_step": 43,
+        "control_step": 11,
+        "time": 0.215,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          12.042767524719238,
+          12.042767524719238
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 3,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        1.706648826599121,
+        1.0592793226242065,
+        0.7682369351387024,
+        0.15862415730953217,
+        0.09068690985441208,
+        -0.028712855651974678,
+        0.9827459454536438,
+        0.3914223909378052,
+        -0.34637147188186646,
+        -0.07612179219722748,
+        0.7208421230316162,
+        1.4816527366638184,
+        0.027775749564170837
+      ],
+      "first_crossing": {
+        "physics_step": 41,
+        "control_step": 11,
+        "time": 0.20500000000000002,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          26.893970489501953,
+          26.893970489501953
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 4,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -1.4772289991378784,
+        -1.5806324481964111,
+        0.7785063982009888,
+        0.9938629865646362,
+        -0.012072628363966942,
+        0.04273272305727005,
+        -0.10131293535232544,
+        -0.04686562344431877,
+        0.44830912351608276,
+        -0.02705816924571991,
+        -0.40418189764022827,
+        -0.2909232974052429,
+        -0.25696542859077454
+      ],
+      "first_crossing": {
+        "physics_step": 41,
+        "control_step": 11,
+        "time": 0.20500000000000002,
+        "links": [
+          "right_wrist_yaw_link",
+          "right_hip_roll_link"
+        ],
+        "forces": [
+          41.75111389160156,
+          41.75111389160156
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 6,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -3.314544677734375,
+        -1.513771414756775,
+        0.775601863861084,
+        0.38256531953811646,
+        0.005028216168284416,
+        -0.061942070722579956,
+        0.9218359589576721,
+        -0.01601834036409855,
+        -0.00859506893903017,
+        -0.03388335928320885,
+        0.9639379978179932,
+        0.25013989210128784,
+        0.3018830418586731
+      ],
+      "first_crossing": {
+        "physics_step": 44,
+        "control_step": 11,
+        "time": 0.22,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          46.876434326171875,
+          46.876434326171875
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 7,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -3.2617931365966797,
+        1.3649929761886597,
+        0.7761476039886475,
+        0.484927237033844,
+        -0.0007469870615750551,
+        0.01910296268761158,
+        0.8743454217910767,
+        0.2622216045856476,
+        0.006205091718584299,
+        -0.01563531532883644,
+        0.34749799966812134,
+        0.5323001742362976,
+        -0.05226114019751549
+      ],
+      "first_crossing": {
+        "physics_step": 42,
+        "control_step": 11,
+        "time": 0.21,
+        "links": [
+          "right_wrist_yaw_link",
+          "right_hip_roll_link"
+        ],
+        "forces": [
+          44.381927490234375,
+          44.381927490234375
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 2,
+      "length": 12,
+      "seconds": 0.24,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        1.3036960363388062,
+        -0.8183209896087646,
+        0.7767767310142517,
+        0.8127396106719971,
+        0.04293705150485039,
+        -0.005944703705608845,
+        0.5810124278068542,
+        0.31725209951400757,
+        0.1839550882577896,
+        -0.017536450177431107,
+        0.5547016859054565,
+        0.18112821877002716,
+        0.06877950578927994
+      ],
+      "first_crossing": {
+        "physics_step": 48,
+        "control_step": 12,
+        "time": 0.24,
+        "links": [
+          "right_wrist_yaw_link",
+          "right_hip_roll_link"
+        ],
+        "forces": [
+          12.848006248474121,
+          12.848006248474121
+        ]
+      },
+      "result": "base_contact"
+    }
+  ],
+  "reset_checks": [
+    {
+      "ids": [
+        0,
+        5
+      ],
+      "before_history_abs_max": 217.8837127685547,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ],
+      "before_history_abs_max": 207.93014526367188,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        2
+      ],
+      "before_history_abs_max": 177.59768676757812,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    }
+  ],
+  "contact_callback_count": 0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  }
+}

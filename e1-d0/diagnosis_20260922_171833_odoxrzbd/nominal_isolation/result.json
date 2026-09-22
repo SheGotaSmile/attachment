@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/nominal_isolation",
+    "--mode",
+    "nominal",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "1",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0",
+    "--pair-forces",
+    "--continue-after-termination",
+    "--restore",
+    "none"
+  ],
+  "pid": 1479148,
+  "mode": "nominal",
+  "controller": "zero",
+  "seed": 12345,
+  "num_envs": 1,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "runtime": "runtime.json",
+  "episodes": [
+    {
+      "case_id": 0,
+      "length": 19,
+      "seconds": 0.38,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        0.04648742452263832,
+        0.002028841059654951,
+        0.7756665349006653,
+        0.9999814033508301,
+        -0.0031355349346995354,
+        0.005152670666575432,
+        -0.0008150881039910018,
+        0.17398278415203094,
+        0.010787899605929852,
+        0.020925765857100487,
+        -0.031772248446941376,
+        -0.3586180508136749,
+        -0.023708589375019073
+      ],
+      "first_crossing": {
+        "physics_step": 76,
+        "control_step": 19,
+        "time": 0.38,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          20.02556800842285,
+          20.02556800842285
+        ]
+      },
+      "result": "base_contact"
+    }
+  ],
+  "reset_checks": [],
+  "contact_callback_count": 0,
+  "continue_after_termination": true,
+  "restored_factor": "none",
+  "pair_view_net_max_error": 0.0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "final_root_state": [
+    [
+      0.9574910402297974,
+      0.021220913156867027,
+      0.07812855392694473,
+      0.7069229483604431,
+      -0.009923141449689865,
+      0.7071654796600342,
+      0.008850021287798882,
+      -0.0003873019013553858,
+      0.0008053458295762539,
+      0.0014449971495196223,
+      -0.0524669885635376,
+      -0.004770452156662941,
+      0.007045466918498278
+    ]
+  ]
+}

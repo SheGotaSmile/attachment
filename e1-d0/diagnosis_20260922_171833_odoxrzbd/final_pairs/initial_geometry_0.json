@@ -1,0 +1,553 @@
+[
+  {
+    "body": "torso_link",
+    "path": "/World/envs/env_0/Robot/torso_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.808389663696289,
+        -1.5678375959396362,
+        1.0400002002716064
+      ],
+      [
+        3.8531179428100586,
+        -1.6136130094528198,
+        1.0399999618530273
+      ]
+    ],
+    "radius": 0.0729999989271164,
+    "min_z": 0.966999962925911,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "torso_link",
+    "path": "/World/envs/env_0/Robot/torso_link/collisions/mesh_1/capsule",
+    "points": [
+      [
+        3.811185121536255,
+        -1.5706984996795654,
+        0.9500001668930054
+      ],
+      [
+        3.8503222465515137,
+        -1.610751986503601,
+        0.9499999284744263
+      ]
+    ],
+    "radius": 0.07000000029802322,
+    "min_z": 0.879999928176403,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "torso_link",
+    "path": "/World/envs/env_0/Robot/torso_link/collisions/mesh_2/capsule",
+    "points": [
+      [
+        3.8167762756347656,
+        -1.5764204263687134,
+        0.880000114440918
+      ],
+      [
+        3.844731330871582,
+        -1.6050300598144531,
+        0.8799999952316284
+      ]
+    ],
+    "radius": 0.06499999761581421,
+    "min_z": 0.8149999976158142,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "torso_link",
+    "path": "/World/envs/env_0/Robot/torso_link/collisions/mesh_3/capsule",
+    "points": [
+      [
+        3.8343300819396973,
+        -1.587230920791626,
+        1.2400000095367432
+      ],
+      [
+        3.834329843521118,
+        -1.587230920791626,
+        1.2300000190734863
+      ]
+    ],
+    "radius": 0.06800000369548798,
+    "min_z": 1.1620000153779984,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_shoulder_yaw_link",
+    "path": "/World/envs/env_0/Robot/left_shoulder_yaw_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.709235191345215,
+        -1.4899049997329712,
+        1.015874981880188
+      ],
+      [
+        3.6701197624206543,
+        -1.4923450946807861,
+        0.8919233083724976
+      ]
+    ],
+    "radius": 0.03500000014901161,
+    "min_z": 0.856923308223486,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_elbow_link",
+    "path": "/World/envs/env_0/Robot/left_elbow_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.7105464935302734,
+        -1.420459270477295,
+        0.7883122563362122
+      ],
+      [
+        3.6706972122192383,
+        -1.491148829460144,
+        0.8898751735687256
+      ]
+    ],
+    "radius": 0.03500000014901161,
+    "min_z": 0.7533122561872005,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_wrist_yaw_link",
+    "path": "/World/envs/env_0/Robot/left_wrist_yaw_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.7595038414001465,
+        -1.329982876777649,
+        0.660575270652771
+      ],
+      [
+        3.7441773414611816,
+        -1.3571711778640747,
+        0.6996379494667053
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.6105752699077129,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_shoulder_yaw_link",
+    "path": "/World/envs/env_0/Robot/right_shoulder_yaw_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.932337760925293,
+        -1.7123457193374634,
+        1.0153230428695679
+      ],
+      [
+        3.936209201812744,
+        -1.7474992275238037,
+        0.8902261257171631
+      ]
+    ],
+    "radius": 0.03500000014901161,
+    "min_z": 0.8552261255681515,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_elbow_link",
+    "path": "/World/envs/env_0/Robot/right_elbow_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        4.022162914276123,
+        -1.6919822692871094,
+        0.8039507269859314
+      ],
+      [
+        3.9378561973571777,
+        -1.7472177743911743,
+        0.886056661605835
+      ]
+    ],
+    "radius": 0.03500000014901161,
+    "min_z": 0.7689507268369198,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_wrist_yaw_link",
+    "path": "/World/envs/env_0/Robot/right_wrist_yaw_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        4.129793167114258,
+        -1.623631477355957,
+        0.7007836699485779
+      ],
+      [
+        4.097367763519287,
+        -1.6448758840560913,
+        0.7323628664016724
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.6507836692035198,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "pelvis",
+    "path": "/World/envs/env_0/Robot/pelvis/collisions/mesh_0/sphere",
+    "points": [
+      [
+        3.830012321472168,
+        -1.5914497375488281,
+        0.6960001587867737
+      ],
+      [
+        3.830012321472168,
+        -1.5914497375488281,
+        0.6960001587867737
+      ]
+    ],
+    "radius": 0.07000000029802322,
+    "min_z": 0.6260001584887505,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_hip_roll_link",
+    "path": "/World/envs/env_0/Robot/left_hip_roll_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.841538906097412,
+        -1.4173717498779297,
+        0.4829287528991699
+      ],
+      [
+        3.7686102390289307,
+        -1.4886319637298584,
+        0.6549851894378662
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.43292875215411186,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_knee_link",
+    "path": "/World/envs/env_0/Robot/left_knee_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.794585943222046,
+        -1.4602463245391846,
+        0.16419857740402222
+      ],
+      [
+        3.8453238010406494,
+        -1.4106693267822266,
+        0.3511953353881836
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.11419857665896416,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.8083221912384033,
+        -1.4833078384399414,
+        0.032854609191417694
+      ],
+      [
+        3.8440423011779785,
+        -1.4484049081802368,
+        0.03043241798877716
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.02043241821229458,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_1/capsule",
+    "points": [
+      [
+        3.8548824787139893,
+        -1.4266276359558105,
+        0.029318684712052345
+      ],
+      [
+        3.735577344894409,
+        -1.543203353881836,
+        0.03740760684013367
+      ]
+    ],
+    "radius": 0.00800000037997961,
+    "min_z": 0.021318684332072735,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_2/capsule",
+    "points": [
+      [
+        3.854292154312134,
+        -1.416019320487976,
+        0.028979633003473282
+      ],
+      [
+        3.724271297454834,
+        -1.5430659055709839,
+        0.03779510408639908
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.0189796332269907,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_3/capsule",
+    "points": [
+      [
+        3.8487322330474854,
+        -1.4074708223342896,
+        0.028882760554552078
+      ],
+      [
+        3.715853691101074,
+        -1.5373095273971558,
+        0.03789197653532028
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.018882760778069496,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_4/capsule",
+    "points": [
+      [
+        3.8403146266937256,
+        -1.401714563369751,
+        0.02897964045405388
+      ],
+      [
+        3.7102935314178467,
+        -1.5287610292434692,
+        0.03779510408639908
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.018979640677571297,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_5/capsule",
+    "points": [
+      [
+        3.8297228813171387,
+        -1.4008790254592896,
+        0.02931869402527809
+      ],
+      [
+        3.7104177474975586,
+        -1.5174546241760254,
+        0.037407614290714264
+      ]
+    ],
+    "radius": 0.00800000037997961,
+    "min_z": 0.02131869364529848,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "left_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/left_ankle_roll_link/collisions/mesh_6/capsule",
+    "points": [
+      [
+        3.7719805240631104,
+        -1.446115255355835,
+        0.03285462409257889
+      ],
+      [
+        3.8077006340026855,
+        -1.41121244430542,
+        0.030432434752583504
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.02043243497610092,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_hip_roll_link",
+    "path": "/World/envs/env_0/Robot/right_hip_roll_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        4.001072883605957,
+        -1.5871174335479736,
+        0.4799179434776306
+      ],
+      [
+        3.9310672283172607,
+        -1.6555217504501343,
+        0.6543313264846802
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.42991794273257256,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_knee_link",
+    "path": "/World/envs/env_0/Robot/right_knee_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        3.97503662109375,
+        -1.6155626773834229,
+        0.15605130791664124
+      ],
+      [
+        4.006344318389893,
+        -1.5849711894989014,
+        0.35120251774787903
+      ]
+    ],
+    "radius": 0.05000000074505806,
+    "min_z": 0.10605130717158318,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_0/capsule",
+    "points": [
+      [
+        4.002941131591797,
+        -1.6245160102844238,
+        0.027141103520989418
+      ],
+      [
+        4.038400173187256,
+        -1.589868187904358,
+        0.033636100590229034
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.017141103744506836,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_1/capsule",
+    "points": [
+      [
+        4.0491204261779785,
+        -1.5682082176208496,
+        0.03662426024675369
+      ],
+      [
+        3.930687189102173,
+        -1.683931827545166,
+        0.014929795637726784
+      ]
+    ],
+    "radius": 0.00800000037997961,
+    "min_z": 0.006929795257747173,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_2/capsule",
+    "points": [
+      [
+        4.048493385314941,
+        -1.5576356649398804,
+        0.03753361478447914
+      ],
+      [
+        3.9194228649139404,
+        -1.6837536096572876,
+        0.013890542089939117
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.0038905423134565353,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_3/capsule",
+    "points": [
+      [
+        4.0429229736328125,
+        -1.5490972995758057,
+        0.03779342770576477
+      ],
+      [
+        3.911015748977661,
+        -1.6779870986938477,
+        0.013630729168653488
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.003630729392170906,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_4/capsule",
+    "points": [
+      [
+        4.034515857696533,
+        -1.5433307886123657,
+        0.03753361478447914
+      ],
+      [
+        3.9054453372955322,
+        -1.669448733329773,
+        0.013890542089939117
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.0038905423134565353,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_5/capsule",
+    "points": [
+      [
+        4.023960590362549,
+        -1.5424596071243286,
+        0.03662426397204399
+      ],
+      [
+        3.9055275917053223,
+        -1.658183217048645,
+        0.014929795637726784
+      ]
+    ],
+    "radius": 0.00800000037997961,
+    "min_z": 0.006929795257747173,
+    "method": "analytic_endpoints_radius"
+  },
+  {
+    "body": "right_ankle_roll_link",
+    "path": "/World/envs/env_0/Robot/right_ankle_roll_link/collisions/mesh_6/capsule",
+    "points": [
+      [
+        3.966599464416504,
+        -1.5873234272003174,
+        0.027141105383634567
+      ],
+      [
+        4.002058506011963,
+        -1.5526756048202515,
+        0.033636100590229034
+      ]
+    ],
+    "radius": 0.009999999776482582,
+    "min_z": 0.017141105607151985,
+    "method": "analytic_endpoints_radius"
+  }
+]

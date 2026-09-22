@@ -1,0 +1,621 @@
+{
+  "status": "RUNNING",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/ppo_v2",
+    "--mode",
+    "ppo",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "64",
+    "--seed",
+    "42",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 1228553,
+  "mode": "ppo",
+  "controller": "zero",
+  "seed": 42,
+  "num_envs": 64,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "task_section_mismatches": [],
+  "updates": 2,
+  "transitions": 3072,
+  "ppo_minibatches": [
+    {
+      "update": 0,
+      "minibatch": 0,
+      "learning_rate_before": 0.001,
+      "learning_rate_after": 0.0015,
+      "optimizer_lr": [
+        0.0015
+      ],
+      "kl": 0.0002903938293457031,
+      "exact_kl": 0.0,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9999962449073792,
+      "ratio_max": 1.0000038146972656
+    },
+    {
+      "update": 0,
+      "minibatch": 1,
+      "learning_rate_before": 0.0015,
+      "learning_rate_after": 0.0015,
+      "optimizer_lr": [
+        0.0015
+      ],
+      "kl": 0.01835133507847786,
+      "exact_kl": 0.018061470240354538,
+      "clip_fraction": 0.2708333432674408,
+      "ratio_min": 0.46590614318847656,
+      "ratio_max": 2.6316356658935547
+    },
+    {
+      "update": 0,
+      "minibatch": 2,
+      "learning_rate_before": 0.0015,
+      "learning_rate_after": 0.001,
+      "optimizer_lr": [
+        0.001
+      ],
+      "kl": 0.041561637073755264,
+      "exact_kl": 0.04127122089266777,
+      "clip_fraction": 0.4427083432674408,
+      "ratio_min": 0.387044757604599,
+      "ratio_max": 2.3372435569763184
+    },
+    {
+      "update": 0,
+      "minibatch": 3,
+      "learning_rate_before": 0.001,
+      "learning_rate_after": 0.0006666666666666666,
+      "optimizer_lr": [
+        0.0006666666666666666
+      ],
+      "kl": 0.04826558753848076,
+      "exact_kl": 0.04797524958848953,
+      "clip_fraction": 0.4557291865348816,
+      "ratio_min": 0.40871188044548035,
+      "ratio_max": 2.71789813041687
+    },
+    {
+      "update": 0,
+      "minibatch": 4,
+      "learning_rate_before": 0.0006666666666666666,
+      "learning_rate_after": 0.0004444444444444444,
+      "optimizer_lr": [
+        0.0004444444444444444
+      ],
+      "kl": 0.05495740473270416,
+      "exact_kl": 0.05466722697019577,
+      "clip_fraction": 0.6927083730697632,
+      "ratio_min": 0.12911368906497955,
+      "ratio_max": 6.192964553833008
+    },
+    {
+      "update": 0,
+      "minibatch": 5,
+      "learning_rate_before": 0.0004444444444444444,
+      "learning_rate_after": 0.0002962962962962963,
+      "optimizer_lr": [
+        0.0002962962962962963
+      ],
+      "kl": 0.05204896256327629,
+      "exact_kl": 0.05175873637199402,
+      "clip_fraction": 0.5807291865348816,
+      "ratio_min": 0.2581738233566284,
+      "ratio_max": 3.2106499671936035
+    },
+    {
+      "update": 0,
+      "minibatch": 6,
+      "learning_rate_before": 0.0002962962962962963,
+      "learning_rate_after": 0.00019753086419753085,
+      "optimizer_lr": [
+        0.00019753086419753085
+      ],
+      "kl": 0.0516776442527771,
+      "exact_kl": 0.05138744041323662,
+      "clip_fraction": 0.5364583730697632,
+      "ratio_min": 0.3255217969417572,
+      "ratio_max": 2.744088649749756
+    },
+    {
+      "update": 0,
+      "minibatch": 7,
+      "learning_rate_before": 0.00019753086419753085,
+      "learning_rate_after": 0.0001316872427983539,
+      "optimizer_lr": [
+        0.0001316872427983539
+      ],
+      "kl": 0.05113465338945389,
+      "exact_kl": 0.05084431171417236,
+      "clip_fraction": 0.4921875,
+      "ratio_min": 0.41371268033981323,
+      "ratio_max": 2.473457098007202
+    },
+    {
+      "update": 0,
+      "minibatch": 8,
+      "learning_rate_before": 0.0001316872427983539,
+      "learning_rate_after": 8.77914951989026e-05,
+      "optimizer_lr": [
+        8.77914951989026e-05
+      ],
+      "kl": 0.055652253329753876,
+      "exact_kl": 0.05536189675331116,
+      "clip_fraction": 0.703125,
+      "ratio_min": 0.14762018620967865,
+      "ratio_max": 4.878747463226318
+    },
+    {
+      "update": 0,
+      "minibatch": 9,
+      "learning_rate_before": 8.77914951989026e-05,
+      "learning_rate_after": 5.852766346593506e-05,
+      "optimizer_lr": [
+        5.852766346593506e-05
+      ],
+      "kl": 0.05264813452959061,
+      "exact_kl": 0.0523579940199852,
+      "clip_fraction": 0.6015625,
+      "ratio_min": 0.24262534081935883,
+      "ratio_max": 3.134756088256836
+    },
+    {
+      "update": 0,
+      "minibatch": 10,
+      "learning_rate_before": 5.852766346593506e-05,
+      "learning_rate_after": 3.9018442310623374e-05,
+      "optimizer_lr": [
+        3.9018442310623374e-05
+      ],
+      "kl": 0.05147179588675499,
+      "exact_kl": 0.05118153616786003,
+      "clip_fraction": 0.5598958730697632,
+      "ratio_min": 0.3125607967376709,
+      "ratio_max": 2.7843687534332275
+    },
+    {
+      "update": 0,
+      "minibatch": 11,
+      "learning_rate_before": 3.9018442310623374e-05,
+      "learning_rate_after": 2.6012294873748917e-05,
+      "optimizer_lr": [
+        2.6012294873748917e-05
+      ],
+      "kl": 0.05093957483768463,
+      "exact_kl": 0.05064942687749863,
+      "clip_fraction": 0.5,
+      "ratio_min": 0.4191390573978424,
+      "ratio_max": 2.3780200481414795
+    },
+    {
+      "update": 0,
+      "minibatch": 12,
+      "learning_rate_before": 2.6012294873748917e-05,
+      "learning_rate_after": 1.734152991583261e-05,
+      "optimizer_lr": [
+        1.734152991583261e-05
+      ],
+      "kl": 0.05531046912074089,
+      "exact_kl": 0.05502048879861832,
+      "clip_fraction": 0.7135416865348816,
+      "ratio_min": 0.14946401119232178,
+      "ratio_max": 4.630130767822266
+    },
+    {
+      "update": 0,
+      "minibatch": 13,
+      "learning_rate_before": 1.734152991583261e-05,
+      "learning_rate_after": 1.1561019943888407e-05,
+      "optimizer_lr": [
+        1.1561019943888407e-05
+      ],
+      "kl": 0.052487563341856,
+      "exact_kl": 0.05219736695289612,
+      "clip_fraction": 0.609375,
+      "ratio_min": 0.24306073784828186,
+      "ratio_max": 3.108736276626587
+    },
+    {
+      "update": 0,
+      "minibatch": 14,
+      "learning_rate_before": 1.1561019943888407e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.051281630992889404,
+      "exact_kl": 0.050991471856832504,
+      "clip_fraction": 0.5598958730697632,
+      "ratio_min": 0.3124368488788605,
+      "ratio_max": 2.797485113143921
+    },
+    {
+      "update": 0,
+      "minibatch": 15,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.05080913007259369,
+      "exact_kl": 0.05051900073885918,
+      "clip_fraction": 0.5078125,
+      "ratio_min": 0.4211488366127014,
+      "ratio_max": 2.363865375518799
+    },
+    {
+      "update": 0,
+      "minibatch": 16,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.05517452955245972,
+      "exact_kl": 0.05488438531756401,
+      "clip_fraction": 0.7135416865348816,
+      "ratio_min": 0.14999406039714813,
+      "ratio_max": 4.573465824127197
+    },
+    {
+      "update": 0,
+      "minibatch": 17,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.052385568618774414,
+      "exact_kl": 0.052095260471105576,
+      "clip_fraction": 0.6119791865348816,
+      "ratio_min": 0.2436799705028534,
+      "ratio_max": 3.0998313426971436
+    },
+    {
+      "update": 0,
+      "minibatch": 18,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.05115865170955658,
+      "exact_kl": 0.05086834728717804,
+      "clip_fraction": 0.5703125,
+      "ratio_min": 0.3127313554286957,
+      "ratio_max": 2.8040237426757812
+    },
+    {
+      "update": 0,
+      "minibatch": 19,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1e-05,
+      "optimizer_lr": [
+        1e-05
+      ],
+      "kl": 0.050692878663539886,
+      "exact_kl": 0.05040283128619194,
+      "clip_fraction": 0.5026041865348816,
+      "ratio_min": 0.4227278232574463,
+      "ratio_max": 2.357264995574951
+    },
+    {
+      "update": 1,
+      "minibatch": 0,
+      "learning_rate_before": 1e-05,
+      "learning_rate_after": 1.5000000000000002e-05,
+      "optimizer_lr": [
+        1.5000000000000002e-05
+      ],
+      "kl": 0.0002903938293457031,
+      "exact_kl": 0.0,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9999962449073792,
+      "ratio_max": 1.0000038146972656
+    },
+    {
+      "update": 1,
+      "minibatch": 1,
+      "learning_rate_before": 1.5000000000000002e-05,
+      "learning_rate_after": 2.2500000000000005e-05,
+      "optimizer_lr": [
+        2.2500000000000005e-05
+      ],
+      "kl": 0.0002907986636273563,
+      "exact_kl": 4.87469776544458e-07,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9965042471885681,
+      "ratio_max": 1.0022302865982056
+    },
+    {
+      "update": 1,
+      "minibatch": 2,
+      "learning_rate_before": 2.2500000000000005e-05,
+      "learning_rate_after": 3.375000000000001e-05,
+      "optimizer_lr": [
+        3.375000000000001e-05
+      ],
+      "kl": 0.0002921256236732006,
+      "exact_kl": 1.8443291764924652e-06,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9933882355690002,
+      "ratio_max": 1.0066328048706055
+    },
+    {
+      "update": 1,
+      "minibatch": 3,
+      "learning_rate_before": 3.375000000000001e-05,
+      "learning_rate_after": 5.062500000000001e-05,
+      "optimizer_lr": [
+        5.062500000000001e-05
+      ],
+      "kl": 0.0002961317077279091,
+      "exact_kl": 5.765973583038431e-06,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9859095215797424,
+      "ratio_max": 1.0133674144744873
+    },
+    {
+      "update": 1,
+      "minibatch": 4,
+      "learning_rate_before": 5.062500000000001e-05,
+      "learning_rate_after": 7.593750000000002e-05,
+      "optimizer_lr": [
+        7.593750000000002e-05
+      ],
+      "kl": 0.0003062033501919359,
+      "exact_kl": 1.591273394296877e-05,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9739105105400085,
+      "ratio_max": 1.0157244205474854
+    },
+    {
+      "update": 1,
+      "minibatch": 5,
+      "learning_rate_before": 7.593750000000002e-05,
+      "learning_rate_after": 0.00011390625000000003,
+      "optimizer_lr": [
+        0.00011390625000000003
+      ],
+      "kl": 0.00032765668584033847,
+      "exact_kl": 3.727688454091549e-05,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9615659117698669,
+      "ratio_max": 1.028128743171692
+    },
+    {
+      "update": 1,
+      "minibatch": 6,
+      "learning_rate_before": 0.00011390625000000003,
+      "learning_rate_after": 0.00017085937500000006,
+      "optimizer_lr": [
+        0.00017085937500000006
+      ],
+      "kl": 0.0003710919991135597,
+      "exact_kl": 8.07034521130845e-05,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9570866227149963,
+      "ratio_max": 1.056299090385437
+    },
+    {
+      "update": 1,
+      "minibatch": 7,
+      "learning_rate_before": 0.00017085937500000006,
+      "learning_rate_after": 0.0002562890625000001,
+      "optimizer_lr": [
+        0.0002562890625000001
+      ],
+      "kl": 0.00046371715143322945,
+      "exact_kl": 0.000173363063368015,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.9190317988395691,
+      "ratio_max": 1.0661362409591675
+    },
+    {
+      "update": 1,
+      "minibatch": 8,
+      "learning_rate_before": 0.0002562890625000001,
+      "learning_rate_after": 0.00038443359375000017,
+      "optimizer_lr": [
+        0.00038443359375000017
+      ],
+      "kl": 0.0006613728473894298,
+      "exact_kl": 0.00037107663229107857,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.866762638092041,
+      "ratio_max": 1.0790821313858032
+    },
+    {
+      "update": 1,
+      "minibatch": 9,
+      "learning_rate_before": 0.00038443359375000017,
+      "learning_rate_after": 0.0005766503906250003,
+      "optimizer_lr": [
+        0.0005766503906250003
+      ],
+      "kl": 0.0010662180138751864,
+      "exact_kl": 0.0007759338477626443,
+      "clip_fraction": 0.0,
+      "ratio_min": 0.8344196081161499,
+      "ratio_max": 1.1756658554077148
+    },
+    {
+      "update": 1,
+      "minibatch": 10,
+      "learning_rate_before": 0.0005766503906250003,
+      "learning_rate_after": 0.0008649755859375004,
+      "optimizer_lr": [
+        0.0008649755859375004
+      ],
+      "kl": 0.0018973532132804394,
+      "exact_kl": 0.001607082667760551,
+      "clip_fraction": 0.010416666977107525,
+      "ratio_min": 0.8066244125366211,
+      "ratio_max": 1.3404828310012817
+    },
+    {
+      "update": 1,
+      "minibatch": 11,
+      "learning_rate_before": 0.0008649755859375004,
+      "learning_rate_after": 0.0012974633789062506,
+      "optimizer_lr": [
+        0.0012974633789062506
+      ],
+      "kl": 0.003942869137972593,
+      "exact_kl": 0.0036524757742881775,
+      "clip_fraction": 0.0416666679084301,
+      "ratio_min": 0.6583677530288696,
+      "ratio_max": 1.3382039070129395
+    },
+    {
+      "update": 1,
+      "minibatch": 12,
+      "learning_rate_before": 0.0012974633789062506,
+      "learning_rate_after": 0.0012974633789062506,
+      "optimizer_lr": [
+        0.0012974633789062506
+      ],
+      "kl": 0.008954714052379131,
+      "exact_kl": 0.008664565160870552,
+      "clip_fraction": 0.1536458432674408,
+      "ratio_min": 0.49445462226867676,
+      "ratio_max": 1.5303654670715332
+    },
+    {
+      "update": 1,
+      "minibatch": 13,
+      "learning_rate_before": 0.0012974633789062506,
+      "learning_rate_after": 0.0012974633789062506,
+      "optimizer_lr": [
+        0.0012974633789062506
+      ],
+      "kl": 0.017154758796095848,
+      "exact_kl": 0.01686449907720089,
+      "clip_fraction": 0.2786458432674408,
+      "ratio_min": 0.3883788287639618,
+      "ratio_max": 2.353374481201172
+    },
+    {
+      "update": 1,
+      "minibatch": 14,
+      "learning_rate_before": 0.0012974633789062506,
+      "learning_rate_after": 0.0008649755859375004,
+      "optimizer_lr": [
+        0.0008649755859375004
+      ],
+      "kl": 0.02647385746240616,
+      "exact_kl": 0.02618364989757538,
+      "clip_fraction": 0.4505208432674408,
+      "ratio_min": 0.39671027660369873,
+      "ratio_max": 2.84574818611145
+    },
+    {
+      "update": 1,
+      "minibatch": 15,
+      "learning_rate_before": 0.0008649755859375004,
+      "learning_rate_after": 0.0005766503906250003,
+      "optimizer_lr": [
+        0.0005766503906250003
+      ],
+      "kl": 0.0345606803894043,
+      "exact_kl": 0.034270595759153366,
+      "clip_fraction": 0.5494791865348816,
+      "ratio_min": 0.35299891233444214,
+      "ratio_max": 2.359748125076294
+    },
+    {
+      "update": 1,
+      "minibatch": 16,
+      "learning_rate_before": 0.0005766503906250003,
+      "learning_rate_after": 0.00038443359375000017,
+      "optimizer_lr": [
+        0.00038443359375000017
+      ],
+      "kl": 0.03847142308950424,
+      "exact_kl": 0.038181371986866,
+      "clip_fraction": 0.5885416865348816,
+      "ratio_min": 0.36346593499183655,
+      "ratio_max": 2.6073341369628906
+    },
+    {
+      "update": 1,
+      "minibatch": 17,
+      "learning_rate_before": 0.00038443359375000017,
+      "learning_rate_after": 0.0002562890625000001,
+      "optimizer_lr": [
+        0.0002562890625000001
+      ],
+      "kl": 0.042614325881004333,
+      "exact_kl": 0.04232422262430191,
+      "clip_fraction": 0.5416666865348816,
+      "ratio_min": 0.28627318143844604,
+      "ratio_max": 3.2754733562469482
+    },
+    {
+      "update": 1,
+      "minibatch": 18,
+      "learning_rate_before": 0.0002562890625000001,
+      "learning_rate_after": 0.00017085937500000009,
+      "optimizer_lr": [
+        0.00017085937500000009
+      ],
+      "kl": 0.04256906360387802,
+      "exact_kl": 0.04227892681956291,
+      "clip_fraction": 0.578125,
+      "ratio_min": 0.33098873496055603,
+      "ratio_max": 3.161018133163452
+    },
+    {
+      "update": 1,
+      "minibatch": 19,
+      "learning_rate_before": 0.00017085937500000009,
+      "learning_rate_after": 0.00011390625000000006,
+      "optimizer_lr": [
+        0.00011390625000000006
+      ],
+      "kl": 0.044639766216278076,
+      "exact_kl": 0.044349443167448044,
+      "clip_fraction": 0.6171875,
+      "ratio_min": 0.3081696033477783,
+      "ratio_max": 2.4178466796875
+    }
+  ],
+  "rollout_consistency": [
+    {
+      "update": 0,
+      "old_mu_max_error": 2.086162567138672e-07,
+      "old_sigma_max_error": 0.0,
+      "old_log_prob_max_error": 7.62939453125e-06,
+      "normalizer_counts": {
+        "policy": 1536,
+        "critic": 1536
+      }
+    },
+    {
+      "update": 1,
+      "old_mu_max_error": 2.682209014892578e-07,
+      "old_sigma_max_error": 0.0,
+      "old_log_prob_max_error": 7.62939453125e-06,
+      "normalizer_counts": {
+        "policy": 3072,
+        "critic": 3072
+      }
+    }
+  ],
+  "limitation": "Diagnostic replay from E1 initial checkpoint; not a bit-exact reproduction of pilot RNG."
+}

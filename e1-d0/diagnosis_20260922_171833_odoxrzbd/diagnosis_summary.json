@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "archive": "logs/e1-d0/diagnosis_20260922_171833_odoxrzbd",
+  "original_evaluation": {"model_initial_mean_steps": 14.5, "model_200_mean_steps": 5.71875, "initial_base_contact": "32/32", "model_200_base_contact": "32/32"},
+  "runtime_termination": {"function": "isaaclab.envs.mdp.terminations.illegal_contact", "threshold_N": 1.0, "history_length": 3, "update_period_s": 0.005, "uses": "max norm over history then any monitored body", "monitored_count": 23, "sensor_count": 29},
+  "runtime_finding": "Representative model_200 triggers are confirmed robot-to-robot self contacts between same-side wrist_yaw_link and hip_roll_link near z=0.66m; root remains near 0.78-0.81m. Ground object not confirmed by the available GPU filter API.",
+  "short_controls": {"zero_original": {"mean_steps": 10.875, "contacts": "8/8"}, "model_initial": {"mean_steps": 16.125, "contacts": "8/8", "raw_action_abs_max": 0.255}, "model_200": {"mean_steps": 5.25, "contacts": "8/8", "raw_action_abs_max": 2.497, "hard_target_violation_rows": 12}, "nominal": {"steps": 12, "contact": true, "root_height_m": 0.777}},
+  "ppo_normalizer": {"old_mu_sigma_logprob_consistent": true, "normalizers_separate_and_frozen_in_eval": true, "optimizer_lr_matches_variable": true, "adaptive_kl_reaches_floor": true, "lr_floor_reason": "high minibatch KL; implementation bug not confirmed"},
+  "answers": {"implementation_error": "No sensor/index/PPO/normalizer error confirmed; evaluator fall naming hides self-contact semantics.", "rerun_after_collision_fix": true, "budget_only": false, "unconfirmed": ["all original contact objects", "ground-only trigger", "post-fix 2s support", "long-budget learnability"]}
+}

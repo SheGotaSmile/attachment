@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/nominal_root_vel_verified",
+    "--mode",
+    "nominal",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "1",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0",
+    "--pair-forces",
+    "--restore",
+    "root_vel"
+  ],
+  "pid": 1672700,
+  "mode": "nominal",
+  "controller": "zero",
+  "seed": 12345,
+  "num_envs": 1,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "runtime": "runtime.json",
+  "nominal_initial_state_checks": {
+    "default_joint_pos": true,
+    "zero_joint_vel": true,
+    "zero_root_vel": false,
+    "default_root_height": true,
+    "zero_command": true,
+    "observation_noise_disabled": true
+  },
+  "episodes": [
+    {
+      "case_id": 0,
+      "length": 42,
+      "seconds": 0.84,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        0.7446313500404358,
+        0.5320987701416016,
+        0.34113940596580505,
+        0.8566781878471375,
+        -0.29839614033699036,
+        0.3809315860271454,
+        -0.178754523396492,
+        1.7607810497283936,
+        0.9138676524162292,
+        -2.6639347076416016,
+        -0.1261347234249115,
+        3.119149923324585,
+        -0.8926430344581604
+      ],
+      "first_crossing": {
+        "physics_step": 165,
+        "control_step": 42,
+        "time": 0.8250000000000001,
+        "links": [
+          "left_wrist_yaw_link"
+        ],
+        "forces": [
+          223.4290313720703
+        ]
+      },
+      "result": "base_contact"
+    }
+  ],
+  "reset_checks": [
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 1323.1181640625,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    }
+  ],
+  "contact_callback_count": 0,
+  "continue_after_termination": false,
+  "restored_factor": "root_vel",
+  "pair_view_net_max_error": 0.0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "final_root_state": [
+    [
+      0.0,
+      0.0,
+      0.8199999928474426,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.4646031856536865,
+      -0.4962734282016754,
+      0.07058849185705185,
+      -0.12652558088302612,
+      0.48198401927948,
+      -0.27672433853149414
+    ]
+  ]
+}

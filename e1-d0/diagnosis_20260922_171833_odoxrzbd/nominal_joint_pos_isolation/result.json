@@ -1,0 +1,118 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/nominal_joint_pos_isolation",
+    "--mode",
+    "nominal",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "1",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0",
+    "--pair-forces",
+    "--restore",
+    "joint_pos"
+  ],
+  "pid": 1480901,
+  "mode": "nominal",
+  "controller": "zero",
+  "seed": 12345,
+  "num_envs": 1,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "runtime": "runtime.json",
+  "episodes": [
+    {
+      "case_id": 0,
+      "length": 12,
+      "seconds": 0.24,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -0.009664827957749367,
+        0.0010693615768104792,
+        0.7762435674667358,
+        0.9994878172874451,
+        0.002002447610720992,
+        0.031040901318192482,
+        -0.007513468153774738,
+        0.08241076022386551,
+        -0.015747297555208206,
+        0.012440439313650131,
+        -0.06020992621779442,
+        -0.3709256947040558,
+        0.03789660334587097
+      ],
+      "first_crossing": {
+        "physics_step": 47,
+        "control_step": 12,
+        "time": 0.23500000000000001,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          3.4195618629455566,
+          3.4195618629455566
+        ]
+      },
+      "result": "base_contact"
+    }
+  ],
+  "reset_checks": [
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 187.98822021484375,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    }
+  ],
+  "contact_callback_count": 0,
+  "continue_after_termination": false,
+  "restored_factor": "joint_pos",
+  "pair_view_net_max_error": 0.0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "final_root_state": [
+    [
+      -0.009664827957749367,
+      0.0010693615768104792,
+      0.7762435674667358,
+      0.9994878172874451,
+      0.002002447610720992,
+      0.031040901318192482,
+      -0.007513468153774738,
+      0.08241076022386551,
+      -0.015747297555208206,
+      0.012440439313650131,
+      -0.06020992621779442,
+      -0.3709256947040558,
+      0.03789660334587097
+    ]
+  ]
+}

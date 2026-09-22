@@ -1,0 +1,36 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/zero",
+    "--mode",
+    "original",
+    "--controller",
+    "zero",
+    "--num-envs",
+    "8",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 1207001,
+  "mode": "original",
+  "controller": "zero",
+  "seed": 12345,
+  "num_envs": 8,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "task_section_mismatches": [],
+  "runtime": "runtime.json",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/e1_d0_probe.py\", line 372, in main\n    run(args,out,report)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/e1_d0_probe.py\", line 178, in run\n    external_force=robot._external_force_b, external_torque=robot._external_torque_b,\n                   ^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Articulation' object has no attribute '_external_force_b'\n"
+}

@@ -1,0 +1,596 @@
+{
+  "status": "PASS",
+  "argv": [
+    "scripts/instinct_rl/e1_d0_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/initial_v2",
+    "--mode",
+    "original",
+    "--controller",
+    "model_initial",
+    "--num-envs",
+    "8",
+    "--seed",
+    "12345",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 1223346,
+  "mode": "original",
+  "controller": "model_initial",
+  "seed": 12345,
+  "num_envs": 8,
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt",
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "task_section_mismatches": [],
+  "runtime": "runtime.json",
+  "episodes": [
+    {
+      "case_id": 0,
+      "length": 10,
+      "seconds": 0.2,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        3.9120054244995117,
+        -1.6691945791244507,
+        0.7795946002006531,
+        0.9171633720397949,
+        -0.013497807085514069,
+        0.0060387770645320415,
+        0.39823687076568604,
+        0.49136805534362793,
+        -0.3415340781211853,
+        -0.0458749383687973,
+        0.3376287817955017,
+        0.009369663894176483,
+        0.23958535492420197
+      ],
+      "first_crossing": {
+        "physics_step": 37,
+        "control_step": 10,
+        "time": 0.185,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          36.698951721191406,
+          36.698951721191406
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 1,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        3.3574211597442627,
+        1.2388265132904053,
+        0.7746216654777527,
+        0.9424279928207397,
+        -0.006165278144180775,
+        0.04681917652487755,
+        -0.3310577869415283,
+        0.11298796534538269,
+        0.43073758482933044,
+        -0.0349985808134079,
+        -0.5090005993843079,
+        -0.00844553206115961,
+        0.43844422698020935
+      ],
+      "first_crossing": {
+        "physics_step": 41,
+        "control_step": 11,
+        "time": 0.20500000000000002,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          26.062402725219727,
+          26.062402725219727
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 3,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        1.712306022644043,
+        1.0539171695709229,
+        0.7663539052009583,
+        0.14650188386440277,
+        0.061477456241846085,
+        -0.02315540611743927,
+        0.987026572227478,
+        0.35453224182128906,
+        -0.3493964672088623,
+        -0.045554470270872116,
+        0.6475221514701843,
+        1.1197649240493774,
+        0.34578466415405273
+      ],
+      "first_crossing": {
+        "physics_step": 42,
+        "control_step": 11,
+        "time": 0.21,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          32.94171905517578,
+          32.94171905517578
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 4,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -1.4832236766815186,
+        -1.5746450424194336,
+        0.7773883938789368,
+        0.9925589561462402,
+        -0.007559286896139383,
+        0.07520028203725815,
+        -0.09546885639429092,
+        0.0034646764397621155,
+        0.46370527148246765,
+        -0.030456647276878357,
+        -0.4018954038619995,
+        0.15853120386600494,
+        -0.11679104715585709
+      ],
+      "first_crossing": {
+        "physics_step": 43,
+        "control_step": 11,
+        "time": 0.215,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          31.111621856689453,
+          31.111621856689453
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 5,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -0.7557737827301025,
+        1.283179759979248,
+        0.7685166001319885,
+        0.3549879193305969,
+        0.050205741077661514,
+        -0.05355078727006912,
+        -0.9319844245910645,
+        0.4438234269618988,
+        -0.09206674993038177,
+        -0.07691891491413116,
+        -0.6532150506973267,
+        -0.06692036986351013,
+        -0.2020593285560608
+      ],
+      "first_crossing": {
+        "physics_step": 42,
+        "control_step": 11,
+        "time": 0.21,
+        "links": [
+          "right_wrist_yaw_link",
+          "right_hip_roll_link"
+        ],
+        "forces": [
+          44.108375549316406,
+          44.108375549316406
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 6,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -3.31118106842041,
+        -1.5229769945144653,
+        0.7769785523414612,
+        0.3736761510372162,
+        -0.027893749997019768,
+        -0.04386477917432785,
+        0.9261015057563782,
+        -0.04431246221065521,
+        0.013379386626183987,
+        -0.02252243459224701,
+        0.5074553489685059,
+        -0.14254146814346313,
+        0.46603190898895264
+      ],
+      "first_crossing": {
+        "physics_step": 43,
+        "control_step": 11,
+        "time": 0.215,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          40.99842834472656,
+          40.99842834472656
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 7,
+      "length": 11,
+      "seconds": 0.22,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        -3.262636661529541,
+        1.3567358255386353,
+        0.7760438323020935,
+        0.47783026099205017,
+        -0.02424217201769352,
+        0.03724189102649689,
+        0.8773274421691895,
+        0.2279786616563797,
+        0.028150755912065506,
+        -0.010994861833751202,
+        -0.011342057026922703,
+        0.36117616295814514,
+        0.39097538590431213
+      ],
+      "first_crossing": {
+        "physics_step": 44,
+        "control_step": 11,
+        "time": 0.22,
+        "links": [
+          "left_wrist_yaw_link",
+          "left_hip_roll_link"
+        ],
+        "forces": [
+          3.714165210723877,
+          3.714165210723877
+        ]
+      },
+      "result": "base_contact"
+    },
+    {
+      "case_id": 2,
+      "length": 53,
+      "seconds": 1.06,
+      "terminated": true,
+      "truncated": false,
+      "base_contact": true,
+      "root_state": [
+        1.7401373386383057,
+        -0.16859246790409088,
+        0.2809547483921051,
+        0.6311588287353516,
+        -0.2228776067495346,
+        0.5761967301368713,
+        0.46900027990341187,
+        0.7537513375282288,
+        1.5378814935684204,
+        -3.2302887439727783,
+        -2.9984278678894043,
+        0.38486331701278687,
+        0.7230745553970337
+      ],
+      "first_crossing": {
+        "physics_step": 210,
+        "control_step": 53,
+        "time": 1.05,
+        "links": [
+          "right_wrist_yaw_link"
+        ],
+        "forces": [
+          18.418840408325195
+        ]
+      },
+      "result": "base_contact"
+    }
+  ],
+  "reset_checks": [
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 204.34054565429688,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "before_history_abs_max": 211.92984008789062,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        0,
+        3
+      ],
+      "before_history_abs_max": 232.25047302246094,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        7
+      ],
+      "before_history_abs_max": 190.93817138671875,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        1,
+        4,
+        5
+      ],
+      "before_history_abs_max": 210.63323974609375,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 195.59109497070312,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        3
+      ],
+      "before_history_abs_max": 225.23410034179688,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        1,
+        5,
+        7
+      ],
+      "before_history_abs_max": 264.5486145019531,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        4
+      ],
+      "before_history_abs_max": 198.51747131347656,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 208.16641235351562,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        7
+      ],
+      "before_history_abs_max": 220.17987060546875,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        1,
+        5
+      ],
+      "before_history_abs_max": 196.6031494140625,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true,
+        true
+      ],
+      "after_episode_length": [
+        0,
+        0
+      ]
+    },
+    {
+      "ids": [
+        4
+      ],
+      "before_history_abs_max": 197.68710327148438,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        0
+      ],
+      "before_history_abs_max": 166.41159057617188,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        6
+      ],
+      "before_history_abs_max": 1556.10009765625,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    },
+    {
+      "ids": [
+        2
+      ],
+      "before_history_abs_max": 1139.28173828125,
+      "after_history_abs_max": 0.0,
+      "after_current_abs_max": 0.0,
+      "after_termination_flags": [
+        true
+      ],
+      "after_episode_length": [
+        0
+      ]
+    }
+  ],
+  "contact_callback_count": 0,
+  "states_unchanged": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  }
+}
