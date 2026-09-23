@@ -1,0 +1,97 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/train/20260923_200912_G1ResearchPrimaryFall_E1_D2_Research_s42/model_initial.pt",
+    "--output-dir",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_initial_attempt2",
+    "--cases",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_cases.json",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n/train/20260923_200912_G1ResearchPrimaryFall_E1_D2_Research_s42/model_initial.pt",
+  "seed": 12345,
+  "command_mode": "original",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_cases.json",
+  "vector_steps": 0,
+  "episodes": [],
+  "sampled": false,
+  "definitions": {
+    "primary_fall": "root height <0.45 m or tilt >1.2 rad; independent of legacy base_contact",
+    "foot_ground_steps": "normal foot contact, not illegal ground contact",
+    "nonfoot_ground": "confirmed robot-ground PhysX filtered pair only",
+    "episode_return": "sum of reward manager outputs including terminal step"
+  },
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_iteration": 0,
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "step_dt": 0.02,
+  "cases_sha256": "e92c0028f0e1fcb1f1126ae5852ed40221dcd7688639c3f27a39e472440f201a",
+  "case_commands": [
+    [
+      0.04839484393596649,
+      0.43398529291152954,
+      -1.355811357498169
+    ],
+    [
+      0.13246354460716248,
+      -0.32669180631637573,
+      0.41904115676879883
+    ],
+    [
+      0.6499168276786804,
+      0.3278226852416992,
+      -0.022016555070877075
+    ],
+    [
+      -0.18342730402946472,
+      -0.12394765019416809,
+      0.5739210247993469
+    ],
+    [
+      0.8618363738059998,
+      0.005036473274230957,
+      0.02950376272201538
+    ],
+    [
+      0.013546377420425415,
+      -0.4562090039253235,
+      0.4947434663772583
+    ],
+    [
+      0.2095775455236435,
+      0.05841398239135742,
+      -1.1457871198654175
+    ],
+    [
+      -0.4304376244544983,
+      0.11374980211257935,
+      0.03165990114212036
+    ]
+  ],
+  "ground_paths": [
+    "/World/ground/terrain/GroundPlane/CollisionPlane"
+  ],
+  "contact_evidence": "PhysX filtered contact force matrix; one event per env/link/control step",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 291, in main\n    evaluate(args, report, output)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 250, in evaluate\n    obs, reward, done, extras = env.step(act)\n                                ^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/utils/wrappers/instinct_rl/vecenv_wrapper.py\", line 164, in step\n    obs_pack, rew, terminated, truncated, extras = self.env.step(actions)\n                                                   ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/gymnasium/wrappers/common.py\", line 393, in step\n    return super().step(action)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/gymnasium/core.py\", line 327, in step\n    return self.env.step(action)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/envs/manager_based_rl_env.py\", line 38, in step\n    return_ = super().step(action)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py\", line 208, in step\n    self.reward_buf = self.reward_manager.compute(dt=self.step_dt)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 142, in compute\n    metrics = measurements(raw)\n              ^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/flat_metrics.py\", line 20, in measurements\n    'base_contact': raw.termination_manager.get_term('base_contact').clone(),\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/managers/termination_manager.py\", line 193, in get_term\n    return self._term_dones[:, self._term_name_to_term_idx[name]]\n                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\nKeyError: 'base_contact'\n"
+}

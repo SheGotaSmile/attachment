@@ -1,0 +1,51 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/train/20260923_200912_G1ResearchPrimaryFall_E1_D2_Research_s42/model_initial.pt",
+    "--output-dir",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_initial",
+    "--cases",
+    "logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_cases.json",
+    "--create-cases",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n/train/20260923_200912_G1ResearchPrimaryFall_E1_D2_Research_s42/model_initial.pt",
+  "seed": 12345,
+  "command_mode": "original",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n/evaluation_cases.json",
+  "vector_steps": 0,
+  "episodes": [],
+  "sampled": false,
+  "definitions": {
+    "primary_fall": "root height <0.45 m or tilt >1.2 rad; independent of legacy base_contact",
+    "foot_ground_steps": "normal foot contact, not illegal ground contact",
+    "nonfoot_ground": "confirmed robot-ground PhysX filtered pair only",
+    "episode_return": "sum of reward manager outputs including terminal step"
+  },
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "checkpoint_sha256": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+  "loaded_iteration": 0,
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "step_dt": 0.02,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 291, in main\n    evaluate(args, report, output)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 78, in evaluate\n    assert not cases_path.exists()\n           ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

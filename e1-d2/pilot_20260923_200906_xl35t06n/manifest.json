@@ -1,0 +1,42 @@
+{
+  "status": "COMPLETED",
+  "started": "2026-09-23T20:09:06.504835",
+  "archive": "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n",
+  "argv": [
+    "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+    "-B",
+    "-u",
+    "scripts/instinct_rl/train.py",
+    "--task",
+    "Instinct-Locomotion-Flat-G1-Research-v0",
+    "--num_envs",
+    "64",
+    "--seed",
+    "42",
+    "--max_iterations",
+    "200",
+    "--headless",
+    "--device",
+    "cuda:0",
+    "--logroot",
+    "/home/xiexuhui/InstinctLab/logs/e1-d2/pilot_20260923_200906_xl35t06n/train",
+    "--run_name",
+    "E1_D2_Research_s42",
+    "--e1_d2_audit"
+  ],
+  "source_hashes_before": {
+    "scripts/instinct_rl/train.py": "e30aa3c35cca1ab03ba8229da0861b50f8c073e5d4d1c842d96e6512d54ddea0",
+    "scripts/instinct_rl/e1_d2_training_audit.py": "bfb21b9a17c5b2f41238e4633ef1ed6d2afc7ee014bf78be86cd0981b49f418b",
+    "source/instinctlab/instinctlab/tasks/locomotion/config/g1/research_env_cfg.py": "bfd8502b9a1f9e130eebc914fba7f8bb2e7e22d54b0850557ec3c1150f92fc8a",
+    "source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py": "c3eb71c26c82e34f3cc46a17fe570fbd9eb2975b68a6065c037c1febf7cef092",
+    "source/instinctlab/instinctlab/tasks/locomotion/config/g1/agents/instinct_rl_ppo_cfg.py": "159dd0c2a2832d9707a9c8630da448cb18eae7315f1a51ec922f7905ca3ca57d"
+  },
+  "requested_transitions": 307200,
+  "training_task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "resume": false,
+  "pid": 2804738,
+  "returncode": 0,
+  "elapsed_s": 162.46896170900436,
+  "ended": "2026-09-23T20:11:48.973980",
+  "source_unchanged": true
+}

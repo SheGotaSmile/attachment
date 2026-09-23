@@ -1,0 +1,72 @@
+{
+  "zero_action_cases": 8,
+  "joint_violation_cases": 11,
+  "initial_hard_limit_violations": [],
+  "joint_max_excess_rad": 0.0033312439918518066,
+  "nominal_first_physics_step_s": 0.005,
+  "reset_root_height_m": 0.8199999928474426,
+  "first_step_root_height_m": 0.8197546601295471,
+  "first_step_foot_min_z_m": 0.018732678145170212,
+  "first_step_nonfoot_min_z_m": 0.10832936689257622,
+  "first_step_foot_forces_N": {
+    "left_ankle_roll_link": 0.0,
+    "right_ankle_roll_link": 0.0
+  },
+  "first_step_max_applied_torque_Nm": 0.0,
+  "nominal_max_applied_torque_Nm": 24.148197174072266,
+  "first_nonzero_sensor_force": [
+    {
+      "time_s": 0.06,
+      "link": "left_ankle_roll_link",
+      "force_N": 424.9141540527382
+    },
+    {
+      "time_s": 0.06,
+      "link": "right_ankle_roll_link",
+      "force_N": 425.47418212891006
+    },
+    {
+      "time_s": 0.065,
+      "link": "left_ankle_roll_link",
+      "force_N": 660.5960083007872
+    },
+    {
+      "time_s": 0.065,
+      "link": "right_ankle_roll_link",
+      "force_N": 664.3616943359435
+    },
+    {
+      "time_s": 0.07,
+      "link": "left_ankle_roll_link",
+      "force_N": 235.21292114258026
+    },
+    {
+      "time_s": 0.07,
+      "link": "right_ankle_roll_link",
+      "force_N": 235.88690185547088
+    },
+    {
+      "time_s": 0.075,
+      "link": "left_ankle_roll_link",
+      "force_N": 232.81826782226773
+    },
+    {
+      "time_s": 0.075,
+      "link": "right_ankle_roll_link",
+      "force_N": 234.13882446289273
+    },
+    {
+      "time_s": 0.08,
+      "link": "left_ankle_roll_link",
+      "force_N": 225.4634399414083
+    },
+    {
+      "time_s": 0.08,
+      "link": "right_ankle_roll_link",
+      "force_N": 226.6217651367208
+    }
+  ],
+  "first_step_target_equals_default": true,
+  "nominal_trace_steps": 276,
+  "evidence": "min_z is analytic collision primitive envelope after first physics step; not a pre-step penetration test"
+}
