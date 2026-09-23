@@ -1,0 +1,100 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+    "--headless",
+    "--device",
+    "cuda:0",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124157_p2n_1xzh/ground_positive",
+    "--mode",
+    "ground_positive"
+  ],
+  "pid": 2624270,
+  "probe_version": 2,
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "controller": "zero",
+  "action_mode": "legacy_raw",
+  "mode": "ground_positive",
+  "cases": 1,
+  "seed": 12345,
+  "max_duration_s": 2.0,
+  "observation_noise": false,
+  "training": false,
+  "action_transform": "q_default + scale * raw",
+  "checkpoint": null,
+  "policy": "zero raw action; no model loaded",
+  "nominal_initial_checks": {
+    "default_joint_pose": true,
+    "zero_joint_velocity": true,
+    "zero_root_velocity": true,
+    "default_root_height": true,
+    "zero_command": true,
+    "observation_noise_off": true,
+    "no_dynamics_randomization": true
+  },
+  "initial_contact_history_cleared": true,
+  "ground_positive_links": [
+    "left_ankle_roll_link",
+    "left_shoulder_yaw_link",
+    "pelvis",
+    "right_ankle_roll_link",
+    "right_shoulder_yaw_link",
+    "torso_link"
+  ],
+  "ground_positive_torso_pelvis_verified": {
+    "torso_link": true,
+    "pelvis": true
+  },
+  "ground_positive_indirect_support": {
+    "torso_link": true,
+    "pelvis": true
+  },
+  "states_unchanged": {},
+  "episodes": [],
+  "action_rows": 0,
+  "contact_rows": 2220,
+  "finite": true,
+  "max_affine_error": 0.0,
+  "max_target_application_error": 0.0,
+  "max_pair_net_error": 0.0,
+  "reset_history_checks": [
+    {
+      "case_ids": [
+        0
+      ],
+      "before_history_max_N": 135.28623962402344,
+      "after_history_max_N": 0.0,
+      "after_current_max_N": 0.0
+    }
+  ],
+  "policy_critic_shapes": {
+    "policy": [
+      1,
+      96
+    ],
+    "critic": [
+      1,
+      99
+    ]
+  },
+  "action_shape": [
+    1,
+    29
+  ],
+  "pair_view_count": 14,
+  "pair_view_errors": [],
+  "callback_count": 0,
+  "raw_action_abs_max": 0,
+  "applied_action_abs_max": 0,
+  "hard_target_violation_rows": 0,
+  "soft_target_violation_rows": 0,
+  "actual_q_hard_violation_rows": 0,
+  "primary_fall_count": 0,
+  "ground_pair_rows": 1109,
+  "self_pair_rows": 0,
+  "unknown_sensor_rows": 1111,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 525, in main\n    run(args, out, report)\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 502, in run\n    write_csv(out / \"contact_taxonomy.csv\", contacts)\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 53, in write_csv\n    writer.writerow({k: json.dumps(v, allow_nan=False) if isinstance(v, (list, dict)) else v\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/csv.py\", line 154, in writerow\n    return self.writer.writerow(self._dict_to_list(rowdict))\n                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/csv.py\", line 149, in _dict_to_list\n    raise ValueError(\"dict contains fields not in fieldnames: \"\nValueError: dict contains fields not in fieldnames: 'ground_prim_candidate', 'geometry_min_z_m'\n"
+}

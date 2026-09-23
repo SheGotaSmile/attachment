@@ -1,0 +1,111 @@
+{
+  "stage": "E1-D1",
+  "date": "2026-09-23",
+  "status": "completed_bounded_diagnosis_with_physics_blocker",
+  "task_id": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "play_task_id": "Instinct-Locomotion-Flat-G1-Research-Play-v0",
+  "original_task_id": "Instinct-Locomotion-Flat-G1-v0",
+  "original_task_unchanged": true,
+  "training_started": false,
+  "training_budget_increased": false,
+  "task_definition_fix": {
+    "primary_fall": {
+      "root_height_below_m": 0.45,
+      "root_tilt_above_rad": 1.2,
+      "legacy_base_contact_used_for_termination": false
+    },
+    "raw_contact": "legacy base_contact is retained as a diagnostic field",
+    "self_collision": "robot-robot pairs are recorded separately and do not imply primary_fall",
+    "implementation": "source/instinctlab/instinctlab/tasks/locomotion/config/g1/research_env_cfg.py"
+  },
+  "confirmed_facts": {
+    "legacy_base_contact": {
+      "termination_function": "isaaclab.envs.mdp.terminations.illegal_contact",
+      "threshold_N": 1.0,
+      "history_length": 3,
+      "update_period_s": 0.005,
+      "monitored_nonfoot_bodies": 23,
+      "contact_sensor_bodies": 30,
+      "source": "logs/e1-d0/diagnosis_20260922_171833_odoxrzbd/final_pairs/runtime.json"
+    },
+    "articulation_self_collision_enabled": true,
+    "contact_pair_classification": {
+      "robot_robot_self_contact": "confirmed by PhysX filtered contact matrix",
+      "robot_ground_contact": "confirmed against /World/ground/terrain/GroundPlane/CollisionPlane",
+      "unconfirmed": "net-force-only observations are retained and not treated as absent contacts"
+    },
+    "shape_and_action": {
+      "policy": [8, 96],
+      "critic": [8, 99],
+      "action": [8, 29],
+      "physics_dt_s": 0.005,
+      "control_dt_s": 0.02,
+      "decimation": 4,
+      "q_target": "q_default + action_scale * raw_action",
+      "zero_action_q_target_equals_q_default": true,
+      "max_affine_error": 1.1920928955078125e-07,
+      "max_target_application_error": 0.0
+    },
+    "runtime_acceptance": {
+      "reset_contact_history_cleared": true,
+      "self_contact_not_primary_fall_at_sample": true,
+      "torso_ground_pair_recorded": true,
+      "pelvis_ground_pair_recorded": true,
+      "finite_no_nan_inf": true,
+      "legacy_field_retained": true
+    }
+  },
+  "bounded_no_training_matrix": {
+    "cases_per_controller_mode": 8,
+    "max_duration_s": 2.0,
+    "observation_noise": false,
+    "controllers": ["zero", "model_initial", "model_200"],
+    "action_modes": ["legacy_raw", "raw_clip", "hard_target_clip"],
+    "results_csv": "logs/e1-d1/action_safety.csv",
+    "archives": [
+      "logs/e1-d1/acceptance_20260923_123426_229wgskq",
+      "logs/e1-d1/acceptance_20260923_124656_7y14lqkw"
+    ],
+    "model_initial_shared_reset_status": "single-archive bounded result; strict final cross-controller shared-reset rerun was blocked by CUDA availability",
+    "diagnostic_only": true
+  },
+  "nominal_support": {
+    "result": "FAIL_2S_SUPPORT",
+    "duration_s": 1.38,
+    "primary_fall": true,
+    "first_self_collision_s": 0.225,
+    "self_collision_primary_fall_at_sample": false,
+    "root_height_at_first_self_collision_m": 0.7772687673568726,
+    "root_height_at_terminal_m": 0.42493295669555664,
+    "root_tilt_at_terminal_rad": 1.116673503150694,
+    "initial_checks_all_passed": true,
+    "source": "logs/e1-d1/acceptance_20260923_100554_cscbqle0/nominal/result.json"
+  },
+  "unconfirmed_physics": [
+    "nominal root collapse cause (initial pose, URDF collision geometry, actuator parameters, or contact dynamics)",
+    "long-horizon ground-only primary_fall behavior",
+    "same-final-probe research-vs-legacy per-episode side-by-side replay",
+    "post-fix pilot behavior"
+  ],
+  "failed_attempts_not_results": [
+    {
+      "archive": "logs/e1-d1/acceptance_20260923_125132_v_v877kl",
+      "cause": "used /usr/bin/python3 without IsaacLab",
+      "error": "missing IsaacLab"
+    },
+    {
+      "archive": "logs/e1-d1/acceptance_20260923_125153_oqxu1qsi",
+      "cause": "CUDA runtime unavailable",
+      "error": "No CUDA GPUs are available"
+    }
+  ],
+  "decisions": {
+    "A_primary_fall_definition_reasonable": true,
+    "B_retrain_E1_flat": false,
+    "C_fix_action_clipping": false,
+    "D_nominal_support_2s": false,
+    "E_enter_repaired_E1_flat_pilot": false,
+    "F_minimal_blocker": "confirm and repair nominal root collapse, then restore a repeatable Isaac GPU/ground runtime for the final shared-reset regression"
+  },
+  "stop_condition": "E1-D1 complete; do not start training automatically"
+}

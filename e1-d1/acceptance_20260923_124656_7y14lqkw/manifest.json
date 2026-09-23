@@ -1,0 +1,117 @@
+{
+  "started": "2026-09-23T12:46:56.603324",
+  "training": false,
+  "archive": "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124656_7y14lqkw",
+  "protected_before": {
+    "/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/tasks/locomotion/config/g1/flat_env_cfg.py": "56480273d8f838f4e6da5ec961da4e089c5063aef73d96a5a96bdd29bb723571",
+    "/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/assets/unitree_g1.py": "2f8be645c654804f2301c5cfd62b1c0cfaf5d596af71a6c39e578166666d116f",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt": "1b311022af5900ad4b56383b5be48be0dca2738329ba38090cdc9921e43e08ea",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_200.pt": "4df39669c75d9c784a414f2c64e5ea98255a561fb2d54677db1ee05786617626"
+  },
+  "runs": [
+    {
+      "name": "ground_positive",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--train-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+        "--output-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124656_7y14lqkw/ground_positive",
+        "--mode",
+        "ground_positive"
+      ],
+      "started": "2026-09-23T12:46:56.606341",
+      "pid": 2626765,
+      "exitcode": 0,
+      "status": "PASS",
+      "finished": "2026-09-23T12:47:15.354614"
+    },
+    {
+      "name": "model_200_legacy_raw",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--train-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+        "--output-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124656_7y14lqkw/model_200_legacy_raw",
+        "--controller",
+        "model_200",
+        "--action-mode",
+        "legacy_raw"
+      ],
+      "started": "2026-09-23T12:47:15.356976",
+      "pid": 2627305,
+      "exitcode": 0,
+      "status": "PASS",
+      "finished": "2026-09-23T12:47:47.430536"
+    },
+    {
+      "name": "model_200_raw_clip",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--train-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+        "--output-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124656_7y14lqkw/model_200_raw_clip",
+        "--controller",
+        "model_200",
+        "--action-mode",
+        "raw_clip"
+      ],
+      "started": "2026-09-23T12:47:47.433047",
+      "pid": 2627924,
+      "exitcode": 0,
+      "status": "PASS",
+      "finished": "2026-09-23T12:48:11.751959"
+    },
+    {
+      "name": "model_200_hard_target_clip",
+      "argv": [
+        "/home/xiexuhui/miniconda3/envs/instinctlab/bin/python",
+        "-B",
+        "-u",
+        "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+        "--headless",
+        "--device",
+        "cuda:0",
+        "--train-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+        "--output-dir",
+        "/home/xiexuhui/InstinctLab/logs/e1-d1/acceptance_20260923_124656_7y14lqkw/model_200_hard_target_clip",
+        "--controller",
+        "model_200",
+        "--action-mode",
+        "hard_target_clip"
+      ],
+      "started": "2026-09-23T12:48:11.755371",
+      "pid": 2628482,
+      "exitcode": 0,
+      "status": "PASS",
+      "finished": "2026-09-23T12:48:36.367312"
+    }
+  ],
+  "protected_unchanged": {
+    "/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/tasks/locomotion/config/g1/flat_env_cfg.py": true,
+    "/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/assets/unitree_g1.py": true,
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_initial.pt": true,
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42/model_200.pt": true
+  }
+}

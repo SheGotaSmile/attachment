@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py", line 538, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py", line 517, in main
+    from isaaclab.app import AppLauncher
+ModuleNotFoundError: No module named 'isaaclab'

@@ -1,0 +1,19 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d1-probe-zero-v4",
+    "--controller",
+    "zero",
+    "--action-mode",
+    "legacy_raw",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 2298727,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 240, in main\n    run(args, out, report); report[\"status\"] = \"PASS\"\n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 50, in run\n    agent = load_exported_yaml(train / \"params/agent.yaml\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_flat.py\", line 29, in load_exported_yaml\n    return yaml.load(Path(path).read_text(), Loader=ExportLoader)\n                     ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/pathlib.py\", line 1058, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/pathlib.py\", line 1044, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_E1_flat_pilot_s42/params/agent.yaml'\n"
+}

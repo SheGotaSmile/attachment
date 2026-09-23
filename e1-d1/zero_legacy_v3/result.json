@@ -1,0 +1,19 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/diagnostics/e1_d1_probe.py",
+    "--train-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-flat-pilot/pilot_20260922_110715_nsfqypgl/train/20260922_110723_G1Flat_feetAirTime1.00_standStill0.80_actionRate0.05_jointDeviationKnee0.05_E1_flat_pilot_s42",
+    "--output-dir",
+    "/home/xiexuhui/InstinctLab/logs/e1-d1/zero_legacy_v3",
+    "--controller",
+    "zero",
+    "--action-mode",
+    "legacy_raw",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "pid": 2,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 337, in main\n    run(args, out, report); report[\"status\"] = \"PASS\"\n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py\", line 76, in run\n    env = InstinctRlVecEnvWrapper(gym.make(TASK, cfg=cfg))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/gymnasium/envs/registration.py\", line 734, in make\n    env = env_creator(**env_spec_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py\", line 77, in __init__\n    self.episode_length_buf = torch.zeros(cfg.scene.num_envs, device=cfg.sim.device, dtype=torch.long)\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/torch/cuda/__init__.py\", line 372, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+}

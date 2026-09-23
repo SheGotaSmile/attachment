@@ -1,0 +1,39 @@
+{
+  "task_id": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "test": {
+    "default_joint_pose": true,
+    "root_velocity_zero": true,
+    "joint_velocity_zero": true,
+    "zero_velocity_command": true,
+    "observation_noise": false,
+    "dynamics_randomization": false,
+    "real_actuators_and_contact_physics": true,
+    "maximum_duration_s": 2.0
+  },
+  "initial_checks": {
+    "default_joint_pose": true,
+    "zero_joint_velocity": true,
+    "zero_root_velocity": true,
+    "default_root_height": true,
+    "zero_command": true,
+    "observation_noise_off": true,
+    "no_dynamics_randomization": true,
+    "contact_history_cleared": true,
+    "finite": true
+  },
+  "corrected_primary_fall_result": {
+    "status": "FAIL_2S_SUPPORT",
+    "duration_s": 1.38,
+    "control_steps": 69,
+    "primary_fall": true,
+    "terminal_root_height_m": 0.42493295669555664,
+    "terminal_root_tilt_rad": 1.116673503150694,
+    "first_self_collision_s": 0.225,
+    "first_self_collision_root_height_m": 0.7772687673568726,
+    "first_self_collision_primary_fall_at_sample": false,
+    "first_robot_ground_contact": null,
+    "root_collapse_or_height_failure": true
+  },
+  "interpretation": "Nominal does not support 2 seconds under corrected primary_fall. The first self-contact is not itself a primary fall; the later root-height failure remains a physical/initialization issue to isolate.",
+  "source": "logs/e1-d1/acceptance_20260923_100554_cscbqle0/nominal/result.json"
+}

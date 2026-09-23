@@ -1,0 +1,78 @@
+[INFO][AppLauncher]: Using device: cuda:0
+[INFO][AppLauncher]: Loading experience file: /home/xiexuhui/IsaacLab-Instinct/apps/isaaclab.python.headless.kit
+Loading user config located at: '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: /home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260923_125153.log
+2026-09-23T04:51:53Z [67ms] [Error] [omni.datastore] Failed to acquire exclusive lock to data store (256>=256)
+2026-09-23T04:51:53Z [67ms] [Error] [omni.datastore] Failed to create local file data store at '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/cache/DerivedDataCache'
+2026-09-23T04:51:53Z [80ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-09-23T04:51:53Z [338ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-09-23T04:51:54Z [508ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-23T04:51:54Z [517ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+2026-09-23T04:51:54Z [692ms] [Error] [omni.physx.tensors.plugin] CUDA error: no CUDA-capable device is detected: ../../../extensions/runtime/source/omni.physx.tensors/plugins/gpu/CudaCommon.h: 111
+2026-09-23T04:51:54Z [692ms] [Error] [omni.physx.tensors.plugin] Failed to create primary CUDA context
+Warp CUDA error 100: no CUDA-capable device is detected (in function init_cuda_driver, /builds/omniverse/warp/warp/native/cuda_util.cpp:266)
+Warp CUDA error 3: initialization error (in function cuda_device_get_count, /builds/omniverse/warp/warp/native/warp.cu:1769)
+2026-09-23T04:51:56Z [2,917ms] [Warning] [matplotlib] /home/xiexuhui/.config/matplotlib is not a writable directory
+2026-09-23T04:51:56Z [2,917ms] [Warning] [matplotlib] Matplotlib created a temporary cache directory at /tmp/matplotlib-phl6alxj because there was an issue with the default path (/home/xiexuhui/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+2026-09-23T04:51:56Z [2,980ms] [Error] [omni.kit.app.plugin] failed to open file '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json' - unable to save the dictionary
+2026-09-23T04:51:56Z [3,010ms] [Error] [omni.gpucompute-cuda.plugin] CUDA error in createContext: no CUDA-capable device is detected: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 179 (device -266869232)
+2026-09-23T04:51:56Z [3,048ms] [Error] [carb.cudainterop.plugin] Could not initialize NVML: return code 9 (NVML_ERROR_DRIVER_NOT_LOADED: NVIDIA driver is not loaded.)
+2026-09-23T04:51:56Z [3,055ms] [Error] [carb.cudainterop.plugin] Could not initialize NVML: return code 9 (NVML_ERROR_DRIVER_NOT_LOADED: NVIDIA driver is not loaded.)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 0             | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|=============================================================================================|
+| OS: 24.04.3 LTS (Noble Numbat) ubuntu, Version: 24.04.3, Kernel: 7.0.0-30-generic
+| Processor: Intel(R) Core(TM) Ultra 9 275HX
+| Cores: 24 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31511 | Free Memory: 19635
+| Total Page/Swap (MB): 15624 | Free Page/Swap: 15624
+|---------------------------------------------------------------------------------------------|
+2026-09-23T04:51:57Z [3,794ms] [Error] [gpu.foundation.plugin] No device could be created. Some known system issues:
+- The driver is not installed properly and requires a clean re-install.
+- Your GPUs do not support RayTracing: DXR or Vulkan ray_tracing, or hardware is excluded due to performance.
+- The driver cannot enumerate any GPU: driver, display, TCC mode or a docker issue. For Vulkan, test it with Vulkaninfo tool from Vulkan SDK, instead of nvidia-smi.
+- For Ubuntu, it requires server-xorg-core 1.20.7+ and a display to work without --no-window.
+- For Linux dockers, the setup is not complete. Install the latest driver, xServer and NVIDIA container runtime.
+
+2026-09-23T04:51:57Z [3,795ms] [Error] [gpu.foundation.plugin] Invalid getDeviceInfo parameters.
+2026-09-23T04:51:57Z [3,795ms] [Warning] [omni.physx.foundation.plugin] PhysXFoundation: Couldn't get driver version, failed to getDeviceInfo
+2026-09-23T04:51:57Z [3,795ms] [Warning] [omni.physx.foundation.plugin] PhysXFoundation: Unable to get IGpuFoundation, GpuDevices or Graphics!
+2026-09-23T04:51:57Z [3,798ms] [Error] [carb.cudainterop.plugin] CUDA error 100: cudaErrorNoDevice - no CUDA-capable device is detected)
+2026-09-23T04:51:57Z [3,798ms] [Error] [carb.cudainterop.plugin] Failed to get the CUDA device.
+2026-09-23T04:51:57Z [3,798ms] [Error] [carb.cudainterop.plugin] CUDA error 100: cudaErrorNoDevice - no CUDA-capable device is detected)
+2026-09-23T04:51:57Z [3,798ms] [Error] [carb.cudainterop.plugin] Failed to set the CUDA device: 0
+2026-09-23T04:51:57Z [3,798ms] [Error] [omni.physx.plugin] No CUDA devices found
+2026-09-23T04:51:57Z [3,798ms] [Error] [omni.physx.plugin] Unable to create PxCudaContextManager!
+2026-09-23T04:51:57Z [3,798ms] [Warning] [omni.kvdb.plugin] Disabling key-value database because another kit process is locking it
+2026-09-23T04:51:57Z [3,816ms] [Error] [omni.kit.app.plugin] failed to open file '/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json' - unable to save the dictionary
+Failed to import RslRlVecEnvWrapper, ignoring...
+[INFO]: Parsing configuration from: <class 'instinctlab.tasks.locomotion.config.g1.research_env_cfg.G1ResearchEnvCfg'>
+Traceback (most recent call last):
+  File "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py", line 526, in main
+    run(args, out, report)
+  File "/home/xiexuhui/InstinctLab/scripts/diagnostics/e1_d1_probe.py", line 108, in run
+    env = InstinctRlVecEnvWrapper(gym.make(task, cfg=cfg))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/gymnasium/envs/registration.py", line 734, in make
+    env = env_creator(**env_spec_kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py", line 77, in __init__
+    self.episode_length_buf = torch.zeros(cfg.scene.num_envs, device=cfg.sim.device, dtype=torch.long)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/torch/cuda/__init__.py", line 372, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+Exception ignored in: <function ManagerBasedEnv.__del__ at 0x7a96bf735e40>
+Traceback (most recent call last):
+  File "/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_env.py", line 216, in __del__
+    self.close()
+  File "/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py", line 308, in close
+    if not self._is_closed:
+           ^^^^^^^^^^^^^^^
+AttributeError: 'InstinctRlEnv' object has no attribute '_is_closed'
