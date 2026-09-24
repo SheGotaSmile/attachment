@@ -1,0 +1,183 @@
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/instinct_rl/train.py
+	modified:   source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	Research State.md
+	docs/
+	scripts/diagnostics/
+	scripts/instinct_rl/e0_reset_probe.py
+	scripts/instinct_rl/e0_training_audit.py
+	scripts/instinct_rl/e1_d0_probe.py
+	scripts/instinct_rl/e1_d2_training_audit.py
+	scripts/instinct_rl/e1_d3_training_audit.py
+	scripts/instinct_rl/e1_d4_training_audit.py
+	scripts/instinct_rl/e1_d5_training_audit.py
+	scripts/instinct_rl/e1_training_audit.py
+	scripts/instinct_rl/evaluate_flat.py
+	scripts/instinct_rl/evaluate_research_flat.py
+	scripts/instinct_rl/flat_metrics.py
+	scripts/instinct_rl/ppo_monitor_probe.py
+	source/instinctlab/instinctlab/tasks/locomotion/config/g1/research_env_cfg.py
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/instinct_rl/train.py b/scripts/instinct_rl/train.py
+index 5a0e906..ed39c70 100644
+--- a/scripts/instinct_rl/train.py
++++ b/scripts/instinct_rl/train.py
+@@ -30,6 +30,7 @@ parser.add_argument(
+     "--logroot", type=str, default=None, help="Override default log root path, typically `log/instinct_rl/`."
+ )
+ parser.add_argument("--max_iterations", type=int, default=None, help="RL Policy training iterations.")
++parser.add_argument("--init_noise_std", type=float, default=None, help="Override policy initial Gaussian std for bounded diagnostics.")
+ parser.add_argument(
+     "--distributed",
+     action="store_true",
+@@ -44,6 +45,13 @@ parser.add_argument(
+ parser.add_argument("--debug", action="store_true", default=False, help="Enable debug mode.")
+ # train.py specific arguments
+ parser.add_argument("--cprofile", action="store_true", default=False, help="Enable cProfile.")
++parser.add_argument("--e0_audit", action="store_true", help="Record E0 runtime checks without changing the task.")
++parser.add_argument("--e0_reference", type=str, default=None, help="E0 pre-save action reference for a resumed run.")
++parser.add_argument("--e1_audit", action="store_true", help="Read-only diagnostics for a fresh Flat pilot.")
++parser.add_argument("--e1_d2_audit", action="store_true", help="Audit the bounded Research Flat pilot.")
++parser.add_argument("--e1_d3_diagnostic", action="store_true", help="Read-only E1-D3 update diagnostics and snapshots.")
++parser.add_argument("--e1_d4_diagnostic", action="store_true", help="Read-only E1-D4 action-distribution diagnostics.")
++parser.add_argument("--e1_d5_diagnostic", action="store_true", help="Read-only E1-D5 bounded Research Flat diagnostics.")
+ # append Instinct-RL cli arguments
+ cli_args.add_instinct_rl_args(parser)
+ # append AppLauncher cli args
+@@ -127,6 +135,10 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+     agent_cfg.max_iterations = (
+         args_cli.max_iterations if args_cli.max_iterations is not None else agent_cfg.max_iterations
+     )
++    if args_cli.init_noise_std is not None:
++        if args_cli.init_noise_std <= 0:
++            raise ValueError("--init_noise_std must be positive")
++        agent_cfg.policy.init_noise_std = args_cli.init_noise_std
+ 
+     # set the environment seed
+     # note: certain randomizations occur in the environment initialization so we set the seed here
+@@ -209,6 +221,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
+         # load previously trained model
+         runner.load(resume_path)
++        # The current external PPO checkpoint restores the optimizer but not the
++        # scalar used by its adaptive KL schedule. Keep both states consistent.
++        if getattr(runner.alg, "schedule", None) == "adaptive":
++            learning_rates = {group["lr"] for group in runner.alg.optimizer.param_groups}
++            if len(learning_rates) != 1:
++                raise RuntimeError("Adaptive PPO resume requires one common optimizer learning rate.")
++            restored_lr = learning_rates.pop()
++            print(f"[INFO]: Restoring adaptive learning rate: {runner.alg.learning_rate} -> {restored_lr}")
++            runner.alg.learning_rate = restored_lr
+ 
+     # dump the configuration into log-directory
+     if not ("LOCAL_RANK" in os.environ and dist.get_rank() > 0):
+@@ -226,11 +247,53 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         )
+         cprofile.enable()
+ 
++    audit = None
++    if args_cli.e1_d2_audit or args_cli.e1_d3_diagnostic or args_cli.e1_d4_diagnostic or args_cli.e1_d5_diagnostic:
++        if args_cli.e0_audit or args_cli.e1_audit or agent_cfg.resume:
++            raise ValueError('Research pilot must be fresh and use only its own audit.')
++        if sum([args_cli.e1_d2_audit, args_cli.e1_d3_diagnostic, args_cli.e1_d4_diagnostic, args_cli.e1_d5_diagnostic]) > 1:
++            raise ValueError('Select only one Research audit mode.')
++    if args_cli.e1_d2_audit:
++        from e1_d2_training_audit import E1D2TrainingAudit
++
++        audit = E1D2TrainingAudit(runner, env, log_dir)
++    if args_cli.e1_d3_diagnostic:
++        from e1_d3_training_audit import E1D3TrainingAudit
++
++        audit = E1D3TrainingAudit(runner, env, log_dir)
++    if args_cli.e1_d4_diagnostic:
++        from e1_d4_training_audit import E1D4TrainingAudit
++
++        audit = E1D4TrainingAudit(runner, env, log_dir)
++    if args_cli.e1_d5_diagnostic:
++        from e1_d5_training_audit import E1D5TrainingAudit
++
++        audit = E1D5TrainingAudit(runner, env, log_dir)
++    if args_cli.e1_audit:
++        if args_cli.e0_audit or agent_cfg.resume:
++            raise ValueError('E1 pilot audit requires fresh initialization and no E0 audit.')
++        from e1_training_audit import E1TrainingAudit
++
++        audit = E1TrainingAudit(runner, env, log_dir)
++    if args_cli.e0_audit:
++        from e0_training_audit import E0TrainingAudit
++
++        audit = E0TrainingAudit(runner, env, log_dir, args_cli.e0_reference)
++
+     # run training
+-    runner.learn(
+-        num_learning_iterations=agent_cfg.max_iterations,
+-        init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
+-    )
++    success = False
++    try:
++        runner.learn(
++            num_learning_iterations=agent_cfg.max_iterations,
++            init_at_random_ep_len=getattr(agent_cfg, "init_at_random_ep_len", False),
++        )
++        success = True
++    finally:
++        if audit is not None:
++            audit.finish(success)
++        if runner.writer is not None:
++            runner.writer.flush()
++            runner.writer.close()
+ 
+     if args_cli.cprofile:
+         cprofile.disable()
+diff --git a/source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py b/source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py
+index fcd78e7..84d2b40 100644
+--- a/source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py
++++ b/source/instinctlab/instinctlab/tasks/locomotion/config/g1/__init__.py
+@@ -2,6 +2,7 @@ import gymnasium as gym
+ 
+ from . import agents
+ from .flat_env_cfg import G1FlatEnvCfg, G1FlatEnvCfg_PLAY
++from .research_env_cfg import G1ResearchEnvCfg, G1ResearchEnvCfg_PLAY
+ 
+ gym.register(
+     id="Instinct-Locomotion-Flat-G1-v0",
+@@ -13,6 +14,26 @@ gym.register(
+     },
+ )
+ 
++gym.register(
++    id="Instinct-Locomotion-Flat-G1-Research-v0",
++    entry_point="instinctlab.envs:InstinctRlEnv",
++    disable_env_checker=True,
++    kwargs={
++        "env_cfg_entry_point": G1ResearchEnvCfg,
++        "instinct_rl_cfg_entry_point": f"{agents.__name__}.instinct_rl_ppo_cfg:G1FlatPPORunnerCfg",
++    },
++)
++
++gym.register(
++    id="Instinct-Locomotion-Flat-G1-Research-Play-v0",
++    entry_point="instinctlab.envs:InstinctRlEnv",
++    disable_env_checker=True,
++    kwargs={
++        "env_cfg_entry_point": G1ResearchEnvCfg_PLAY,
++        "instinct_rl_cfg_entry_point": f"{agents.__name__}.instinct_rl_ppo_cfg:G1FlatPPORunnerCfg",
++    },
++)
++
+ gym.register(
+     id="Instinct-Locomotion-Flat-G1-Play-v0",
+     entry_point="instinctlab.envs:InstinctRlEnv",

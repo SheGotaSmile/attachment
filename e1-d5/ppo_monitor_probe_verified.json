@@ -1,0 +1,16 @@
+{
+  "pre_update_count": 0,
+  "post_update_count": 20,
+  "optimizer_step_count": 20,
+  "expected_minibatch_count": 20,
+  "kl_value_count": 7680,
+  "kl_mean_of_minibatch_means": 0.02042672112584114,
+  "kl_mean_of_all_values": 0.02042672112584114,
+  "kl_max_of_minibatch_means": 0.029254844412207603,
+  "kl_all_finite": true,
+  "learning_rate_scalar": 1.734152991583261e-05,
+  "optimizer_param_group_lrs": [
+    1.734152991583261e-05
+  ],
+  "optimizer_lr_matches_scalar": true
+}

@@ -1,0 +1,2 @@
+status,reason
+BLOCKED,"Isaac Sim could not create the requested CUDA environment: no CUDA-capable device was detected"

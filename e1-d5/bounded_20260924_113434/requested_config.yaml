@@ -1,0 +1,24 @@
+task: Instinct-Locomotion-Flat-G1-Research-v0
+seed: 42
+num_envs: 64
+num_steps_per_env: 24
+max_iterations: 200
+device: cuda:0
+resume: false
+random_initialization: true
+policy_init_noise_std: 0.2
+policy_hidden_dims: [256, 128, 128]
+ppo:
+  num_learning_epochs: 5
+  num_mini_batches: 4
+  learning_rate: 0.001
+  schedule: adaptive
+  desired_kl: 0.01
+  clip_param: 0.2
+  gamma: 0.99
+  lam: 0.95
+  entropy_coef: 0.008
+  max_grad_norm: 1.0
+action_clip: null
+action_mapping: q_target = q_default + action_scale * raw_action
+snapshots: [0, 20, 50, 100, 150, 200]
