@@ -1,0 +1,26 @@
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   instinct_rl/algorithms/ppo.py
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/instinct_rl/algorithms/ppo.py b/instinct_rl/algorithms/ppo.py
+index 5fe78ab..ab9286f 100644
+--- a/instinct_rl/algorithms/ppo.py
++++ b/instinct_rl/algorithms/ppo.py
+@@ -236,7 +236,7 @@ class PPO:
+         if self.desired_kl != None and self.schedule == "adaptive":
+             with torch.inference_mode():
+                 kl = torch.sum(
+-                    torch.log(sigma_batch / minibatch.old_sigma + 1.0e-5)
++                    torch.log(sigma_batch / minibatch.old_sigma)
+                     + (torch.square(minibatch.old_sigma) + torch.square(minibatch.old_mu - mu_batch))
+                     / (2.0 * torch.square(sigma_batch))
+                     - 0.5,
