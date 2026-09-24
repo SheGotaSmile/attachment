@@ -1,0 +1,21 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_100.pt",
+    "--output-dir",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/eval_update_100",
+    "--cases",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_100.pt",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+  "episodes": [],
+  "sampled": false,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 309, in main\n    evaluate(args, report, output)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 48, in evaluate\n    env = InstinctRlVecEnvWrapper(gym.make(TASK, cfg=cfg))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/gymnasium/envs/registration.py\", line 734, in make\n    env = env_creator(**env_spec_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py\", line 77, in __init__\n    self.episode_length_buf = torch.zeros(cfg.scene.num_envs, device=cfg.sim.device, dtype=torch.long)\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/torch/cuda/__init__.py\", line 372, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+}

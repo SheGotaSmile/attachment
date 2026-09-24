@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "run": "logs/e1-d3/diagnostic_20260924_004916__swyel2y",
+  "fixed_case_mapping": "Each row is keyed by case_id; env_id and asynchronous completion order are not used.",
+  "snapshot_updates": [
+    0,
+    10,
+    25,
+    50,
+    100,
+    150,
+    200
+  ],
+  "case_counts": [
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8
+  ],
+  "normalizer_checks": {
+    "training_manifest": "normalizer_initial, normalizer_after_update, normalizer_final present",
+    "evaluation": "each eval_retry3_*/episodes.json reports normalizers_frozen=true and checkpoint iteration match"
+  },
+  "diagnostic_log_gap": {
+    "empty_fields": [
+      "kl_mean",
+      "kl_max",
+      "minibatch_count",
+      "current_log_prob_mean",
+      "old_log_prob_mean",
+      "log_ratio_mean",
+      "log_ratio_abs_max",
+      "ratio_clip_fraction"
+    ],
+    "interpretation": "No per-minibatch KL/log-prob values were persisted; learning-rate transitions are observed but KL magnitude is not recoverable from these artifacts."
+  },
+  "manifest_status": "COMPLETED"
+}

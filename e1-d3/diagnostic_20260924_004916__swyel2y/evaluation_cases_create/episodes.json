@@ -1,0 +1,43 @@
+{
+  "status": "PASS_CASES_CREATED",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+    "--output-dir",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases_create",
+    "--cases",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+    "--create-cases",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+  "episodes": [],
+  "sampled": false,
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "checkpoint_sha256": "ecebbaca74b2a54c0c3d9ca55db2fe6064ea7a54f638763dd58c92f14f71a42d",
+  "loaded_iteration": 0,
+  "step_dt": 0.02,
+  "normalizers_frozen": true,
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "case_manifest_created": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json"
+}

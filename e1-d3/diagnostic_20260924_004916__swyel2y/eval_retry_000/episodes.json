@@ -1,0 +1,65 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+    "--output-dir",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/eval_retry_000",
+    "--cases",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+  "episodes": [],
+  "sampled": false,
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "checkpoint_sha256": "ecebbaca74b2a54c0c3d9ca55db2fe6064ea7a54f638763dd58c92f14f71a42d",
+  "loaded_iteration": 0,
+  "step_dt": 0.02,
+  "normalizers_frozen": true,
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "cases_sha256": "027dcde653e00005759ce3738a3242f6054a026b23cd0e927d7159a0463a869c",
+  "case_ids": [
+    "case_00",
+    "case_01",
+    "case_02",
+    "case_03",
+    "case_04",
+    "case_05",
+    "case_06",
+    "case_07"
+  ],
+  "ground_paths": [
+    "/World/ground/terrain/GroundPlane/CollisionPlane"
+  ],
+  "contact_evidence": "PhysX filtered robot-link vs robot-link/ground contact matrix",
+  "definitions": {
+    "primary_fall": "root height <0.45 m or tilt >1.2 rad, independent of legacy base_contact",
+    "foot_ground_steps": "ankle_roll_link ground contacts; normal foot contact is not illegal ground contact",
+    "confirmed_nonfoot_ground_steps": "filtered robot-ground contact for links other than ankle_roll_link",
+    "self_collision_steps": "filtered robot-link to robot-link contacts",
+    "episode_return": "sum of reward manager outputs including terminal step",
+    "episode_scope": "exactly the first episode from each stable case_id; reset is intercepted before execution"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 309, in main\n    evaluate(args, report, output)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 231, in evaluate\n    robot.root_physx_view.set_material_properties(material_properties, indices=ids)\n  File \"/home/xiexuhui/miniconda3/envs/instinctlab/lib/python3.11/site-packages/isaacsim/extscache/omni.physics.tensors-107.3.26+107.3.3.lx64.r.cp311.u353/omni/physics/tensors/impl/api.py\", line 2816, in set_material_properties\n    raise Exception(\"Failed to set articulation material properties in backend\")\nException: Failed to set articulation material properties in backend\n"
+}

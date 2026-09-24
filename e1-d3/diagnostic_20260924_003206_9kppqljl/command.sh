@@ -1,0 +1,1 @@
+/home/xiexuhui/miniconda3/envs/instinctlab/bin/python -B -u scripts/instinct_rl/train.py --task Instinct-Locomotion-Flat-G1-Research-v0 --num_envs 64 --seed 42 --max_iterations 200 --headless --device cuda:0 --logroot /home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_003206_9kppqljl/train --run_name E1_D3_Research_s42 --e1_d3_diagnostic

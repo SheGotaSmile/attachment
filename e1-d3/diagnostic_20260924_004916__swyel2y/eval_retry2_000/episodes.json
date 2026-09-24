@@ -1,0 +1,65 @@
+{
+  "status": "FAIL",
+  "argv": [
+    "scripts/instinct_rl/evaluate_research_flat.py",
+    "--checkpoint",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+    "--output-dir",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/eval_retry2_000",
+    "--cases",
+    "logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+    "--headless",
+    "--device",
+    "cuda:0"
+  ],
+  "task": "Instinct-Locomotion-Flat-G1-Research-v0",
+  "checkpoint": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/train/20260924_004921_G1ResearchPrimaryFall_E1_D3_Research_s42/snapshot_update_000.pt",
+  "cases": "/home/xiexuhui/InstinctLab/logs/e1-d3/diagnostic_20260924_004916__swyel2y/evaluation_cases.json",
+  "episodes": [],
+  "sampled": false,
+  "loaded_states_equal": {
+    "model": true,
+    "policy": true,
+    "critic": true
+  },
+  "checkpoint_sha256": "ecebbaca74b2a54c0c3d9ca55db2fe6064ea7a54f638763dd58c92f14f71a42d",
+  "loaded_iteration": 0,
+  "step_dt": 0.02,
+  "normalizers_frozen": true,
+  "configuration_sections_equal": [
+    "actions",
+    "observations",
+    "commands",
+    "rewards",
+    "terminations",
+    "events",
+    "curriculum",
+    "decimation",
+    "episode_length_s",
+    "actuators"
+  ],
+  "cases_sha256": "027dcde653e00005759ce3738a3242f6054a026b23cd0e927d7159a0463a869c",
+  "case_ids": [
+    "case_00",
+    "case_01",
+    "case_02",
+    "case_03",
+    "case_04",
+    "case_05",
+    "case_06",
+    "case_07"
+  ],
+  "ground_paths": [
+    "/World/ground/terrain/GroundPlane/CollisionPlane"
+  ],
+  "contact_evidence": "PhysX filtered robot-link vs robot-link/ground contact matrix",
+  "definitions": {
+    "primary_fall": "root height <0.45 m or tilt >1.2 rad, independent of legacy base_contact",
+    "foot_ground_steps": "ankle_roll_link ground contacts; normal foot contact is not illegal ground contact",
+    "confirmed_nonfoot_ground_steps": "filtered robot-ground contact for links other than ankle_roll_link",
+    "self_collision_steps": "filtered robot-link to robot-link contacts",
+    "episode_return": "sum of reward manager outputs including terminal step",
+    "episode_scope": "exactly the first episode from each stable case_id; reset is intercepted before execution"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 313, in main\n    evaluate(args, report, output)\n  File \"/home/xiexuhui/InstinctLab/scripts/instinct_rl/evaluate_research_flat.py\", line 225, in evaluate\n    original_reset(ids)\n  File \"/home/xiexuhui/InstinctLab/source/instinctlab/instinctlab/envs/manager_based_rl_env.py\", line 46, in _reset_idx\n    return_ = super()._reset_idx(env_ids)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/manager_based_rl_env.py\", line 362, in _reset_idx\n    self.event_manager.apply(mode=\"reset\", env_ids=env_ids, global_env_step_count=env_step_count)\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/managers/event_manager.py\", line 247, in apply\n    term_cfg.func(self._env, env_ids, **term_cfg.params)\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/envs/mdp/events.py\", line 1115, in reset_root_state_uniform\n    asset.write_root_pose_to_sim(torch.cat([positions, orientations], dim=-1), env_ids=env_ids)\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/assets/articulation/articulation.py\", line 408, in write_root_pose_to_sim\n    self.write_root_link_pose_to_sim(root_pose, env_ids=env_ids)\n  File \"/home/xiexuhui/IsaacLab-Instinct/source/isaaclab/isaaclab/assets/articulation/articulation.py\", line 427, in write_root_link_pose_to_sim\n    self._data.root_link_pose_w[env_ids] = root_pose.clone()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\nRuntimeError: Inplace update to inference tensor outside InferenceMode is not allowed.You can make a clone to get a normal tensor before doing inplace update.See https://github.com/pytorch/rfcs/pull/17 for more details.\n"
+}
